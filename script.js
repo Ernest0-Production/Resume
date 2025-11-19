@@ -198,6 +198,31 @@ function focusLanguageTrigger(trigger) {
 }
 
 /**
+ * Download resume as PDF
+ */
+function downloadResumeAsPDF() {
+    // Use browser's print dialog to save as PDF
+    window.print();
+}
+
+/**
+ * Initialize PDF download button
+ */
+function initPDFDownloadButton() {
+    const pdfButton = document.getElementById('pdfDownloadBtn');
+    if (!pdfButton) {
+        console.warn('PDF download button not found.');
+        return;
+    }
+
+    pdfButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        downloadResumeAsPDF();
+    });
+}
+
+/**
  * Initialize language switcher interactions
  */
 function initLanguageSwitcher() {
@@ -883,6 +908,7 @@ function initializeResume() {
     setDocumentLanguage(initialConfig);
     updateLanguageSwitcherUI(initialLanguage);
     initLanguageSwitcher();
+    initPDFDownloadButton();
     loadResumeData(initialLanguage);
 }
 

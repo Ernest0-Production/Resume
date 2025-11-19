@@ -11,26 +11,33 @@
 
 <body>
     <div class="header-bar">
-        <div class="language-switcher" id="languageSwitcher" data-open="false">
-            <button type="button" class="language-switcher__trigger" id="languageSwitcherTrigger"
-                aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
-                <span class="language-switcher__label" id="languageSwitcherCurrent">RUS</span>
-                <span class="iconify language-switcher__icon" data-icon="mdi:chevron-down" aria-hidden="true"></span>
+        <div class="header-bar__controls">
+            <button type="button" class="pdf-download-btn" id="pdfDownloadBtn" aria-label="Download resume as PDF">
+                <span class="iconify pdf-download-btn__icon" data-icon="mdi:download" aria-hidden="true"></span>
+                <span class="pdf-download-btn__text">Download PDF</span>
             </button>
-            <ul class="language-switcher__list" id="languageSwitcherList" role="listbox">
-                <li>
-                    <button type="button" class="language-switcher__option" data-lang="ru" role="option"
-                        aria-selected="false">
-                        RUS
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="language-switcher__option" data-lang="en" role="option"
-                        aria-selected="false">
-                        ENG
-                    </button>
-                </li>
-            </ul>
+            <div class="language-switcher" id="languageSwitcher" data-open="false">
+                <button type="button" class="language-switcher__trigger" id="languageSwitcherTrigger"
+                    aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
+                    <span class="language-switcher__label" id="languageSwitcherCurrent">RUS</span>
+                    <span class="iconify language-switcher__icon" data-icon="mdi:chevron-down"
+                        aria-hidden="true"></span>
+                </button>
+                <ul class="language-switcher__list" id="languageSwitcherList" role="listbox">
+                    <li>
+                        <button type="button" class="language-switcher__option" data-lang="ru" role="option"
+                            aria-selected="false">
+                            RUS
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="language-switcher__option" data-lang="en" role="option"
+                            aria-selected="false">
+                            ENG
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="container">
