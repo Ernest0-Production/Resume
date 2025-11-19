@@ -25,7 +25,7 @@ Static HTML resume site with PDF export capability. This project allows you to m
 
 1. Navigate to the project directory:
 ```bash
-cd cv-generator
+cd <path/to/repository>
 ```
 
 2. Install dependencies:
@@ -180,8 +180,6 @@ The language preference is saved in your browser and will persist across session
 
 ## 📥 Exporting to PDF
 
-### Method 1: Browser Print (Recommended)
-
 1. Open your resume in the browser (`http://localhost:3000`)
 2. Press **Ctrl+P** (Windows/Linux) or **Cmd+P** (Mac)
 3. In the print dialog:
@@ -191,12 +189,6 @@ The language preference is saved in your browser and will persist across session
    - **Margins**: Default or Custom
    - **Options**: Enable "Background graphics" for best results
 4. Click "Save" and choose where to save your PDF
-
-### Method 2: Browser Menu
-
-1. Open your resume in the browser
-2. Go to **File → Print** (or right-click → Print)
-3. Follow the same steps as Method 1
 
 ### Tips for Best PDF Output
 
@@ -248,52 +240,6 @@ Edit the CSS variables in `styles.css`:
 }
 ```
 
-### Fonts
-
-The project uses **SF Pro Rounded** font by default (Apple's system font). Change the font family in `styles.css`:
-
-```css
-:root {
-    --font-main: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-```
-
-Note: SF Pro Rounded is available on macOS/iOS by default. On other systems, it will fallback to system fonts.
-
-### Layout
-
-The resume uses a two-column grid layout. Adjust spacing and layout in `styles.css` under the "Main Content - Two Columns" section.
-
-## 🔧 Troubleshooting
-
-### Server won't start
-
-**Error**: "Port 3000 is already in use"
-
-**Solution**: Use a different port:
-```bash
-PORT=3001 npm start
-```
-
-### Resume data not loading
-
-1. Check that `resume.toml` exists in the project root
-2. Open browser console (F12) to see error messages
-3. Verify TOML syntax is valid (use a TOML validator online)
-4. Make sure multilanguage properties use the correct format: `"propertyName.language"`
-
-### Styles not working in PDF
-
-1. Enable "Background graphics" in print settings
-2. Check that `@media print` styles in `styles.css` are correct
-3. Try a different browser (Chrome usually has best print support)
-
-### Images not showing
-
-1. Use absolute URLs for images (https://...)
-2. Or place images in the project folder and use relative paths
-3. Check image URLs are accessible
-
 ## 🌐 Browser Support
 
 - ✅ Chrome/Edge (Recommended for PDF export)
@@ -305,22 +251,6 @@ PORT=3001 npm start
 
 MIT License - feel free to use this for your personal resume!
 
-## 🤝 Contributing
-
-This is a personal resume template, but feel free to:
-- Fork and customize for your own use
-- Report bugs or issues
-- Suggest improvements
-
-## 📞 Support
-
-If you encounter any issues:
-1. Check the browser console for error messages (F12)
-2. Verify your TOML syntax is valid
-3. Make sure the server is running
-4. Try refreshing the page (Ctrl+R / Cmd+R)
-
 ---
 
 **Happy job hunting! 🎯**
-
