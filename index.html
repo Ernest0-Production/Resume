@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume - Loading...</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+</head>
+
+<body>
+    <div class="header-bar">
+        <div class="language-switcher" id="languageSwitcher" data-open="false">
+            <button type="button" class="language-switcher__trigger" id="languageSwitcherTrigger"
+                aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
+                <span class="language-switcher__label" id="languageSwitcherCurrent">RUS</span>
+                <span class="iconify language-switcher__icon" data-icon="mdi:chevron-down" aria-hidden="true"></span>
+            </button>
+            <ul class="language-switcher__list" id="languageSwitcherList" role="listbox">
+                <li>
+                    <button type="button" class="language-switcher__option" data-lang="ru" role="option"
+                        aria-selected="false">
+                        RUS
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="language-switcher__option" data-lang="en" role="option"
+                        aria-selected="false">
+                        ENG
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-avatar">
+                    <img id="avatar" src="" alt="Avatar" class="avatar">
+                </div>
+                <div class="header-info">
+                    <div class="header-text">
+                        <h1 class="name" id="fullName">Loading...</h1>
+                        <p class="job-title" id="jobTitle">Loading...</p>
+                    </div>
+                    <div class="contact-info">
+                        <span class="contact-item" id="email">
+                            <span class="icon">@</span>
+                            <span class="text">loading...</span>
+                        </span>
+                        <span class="contact-item" id="location">
+                            <span class="icon">📍</span>
+                            <span class="text">loading...</span>
+                        </span>
+                        <span class="references" id="references"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content - Two Columns -->
+        <div class="main-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- About Me Section -->
+                <section class="section" id="aboutSection">
+                    <h2 class="section-title">
+                        <span class="icon">
+                            <span class="iconify" data-icon="mdi:account"></span>
+                        </span>
+                        ABOUT ME
+                    </h2>
+                    <div class="section-content" id="about">
+                        <p>Loading...</p>
+                    </div>
+                </section>
+
+                <!-- Tech Stack / Skills Section -->
+                <section class="section" id="skillsSection">
+                    <h2 class="section-title">
+                        <span class="icon">
+                            <span class="iconify" data-icon="mdi:toolbox"></span>
+                        </span>
+                        SKILLS
+                    </h2>
+                    <div class="section-content">
+                        <div class="skills-intro" id="skillsIntro"></div>
+                        <div id="skills">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- What I'm Looking For Section -->
+                <section class="section" id="expectationSection">
+                    <h2 class="section-title accent-red">
+                        <span class="icon">
+                            <span class="iconify" data-icon="mdi:target"></span>
+                        </span>
+                        WHAT I'M LOOKING FOR
+                    </h2>
+                    <div class="section-content" id="expectation">
+                        <p>Loading...</p>
+                    </div>
+                </section>
+
+                <!-- Right stack under SKILLS -->
+                <div class="right-stack" id="rightStack">
+                    <!-- Extra Skills Section -->
+                    <section class="section" id="extraSkillsSection">
+                        <h2 class="section-title">
+                            <span class="icon">
+                                <span class="iconify" data-icon="mdi:star-circle"></span>
+                            </span>
+                            EXTRA SKILLS
+                        </h2>
+                        <div class="section-content" id="extraSkills">
+                            <p>Loading...</p>
+                        </div>
+                    </section>
+
+                    <!-- Interests Section -->
+                    <section class="section" id="interestsSection">
+                        <h2 class="section-title">
+                            <span class="icon">
+                                <span class="iconify" data-icon="mdi:sparkles"></span>
+                            </span>
+                            INTERESTS
+                        </h2>
+                        <div class="section-content" id="interests">
+                            <p>Loading...</p>
+                        </div>
+                    </section>
+
+                    <!-- Education & Languages Section -->
+                    <section class="section" id="educationLanguagesSection">
+                        <h2 class="section-title accent-yellow">
+                            <span class="icon">
+                                <span class="iconify" data-icon="mdi:school"></span>
+                            </span>
+                            EDUCATION & LANGUAGES
+                        </h2>
+                        <div class="section-content" id="educationLanguages">
+                            <p>Loading...</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Experience Section - Full Width -->
+            <section class="section section-full-width" id="experienceSection">
+                <h2 class="section-title">
+                    <span class="icon">
+                        <span class="iconify" data-icon="mdi:briefcase"></span>
+                    </span>
+                    EXPERIENCE
+                </h2>
+                <div class="section-content" id="experience">
+                    <p>Loading...</p>
+                </div>
+            </section>
+
+            <!-- Projects Section - Full Width -->
+            <section class="section section-full-width" id="projectsSection">
+                <h2 class="section-title">
+                    <span class="icon">
+                        <span class="iconify" data-icon="mdi:folder-outline"></span>
+                    </span>
+                    PET PROJECTS
+                </h2>
+                <div class="section-content" id="projects">
+                    <p>Loading...</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

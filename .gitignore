@@ -1,0 +1,29 @@
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Images (uncomment if you don't want to commit images)
+# *.jpg
+# *.jpeg
+# *.png
+# *.gif
+# *.svg
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+

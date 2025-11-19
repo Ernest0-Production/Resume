@@ -1,0 +1,514 @@
+# Multilanguage Resume Data
+# Language-specific properties use format: "propertyName.language"
+
+# Common properties (no language suffix)
+pageTitle = "Resume Page"
+avatar = "avatar.jpg"
+
+# Multilanguage properties
+"firstName.ru" = "Эрнест"
+"firstName.en" = "Ernest"
+"lastName.ru" = "Бабаян"
+"lastName.en" = "Babayan"
+
+jobTitle = "Tech Lead • iOS Developer • Infra Architect"
+
+location = "Yerevan, Armenia • Moscow, Russia"
+email = "magatar136@gmail.com"
+
+"about.ru" = """
+7 лет опыта — **A-player**, неформальный лидер, **founding engineer**
+• Побывал в аутсорсе, стартапе, mid-tech, big-tech
+• С нуля писал множество приложений и библиотек в отраслях **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
+• Дважды собирал себе команду разработки
+• **Люблю браться за что-то крупное**, а не тонуть в крупном корпорате
+• Открыт к коммуникации; сам приду и подсвечу риски
+• За **практичный и рациональный** подход к построению архитектуре, а не buzzword-ный
+"""
+
+"about.en" = """
+7 years of experience – **A-player**, informal leader, **founding engineer**
+• Been through **outsourcing, startup, mid-tech, big-tech**
+• Built many apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
+• Twice built my own development team
+• **Love taking on big challenges**, not sinking in a big corporate
+• Open to communication; I'll come forward and highlight risks
+• For a **practical and rational** approach to building architecture, not buzzword-driven
+"""
+
+"expectation.ru" = """
+• Возможность самостоятельно **принимать решения**, а **не ждать инструкций** от линейного руководителя
+• Отвечать за домен целиком *(например: приложение, команда, сдк, инфра)*
+• Готов лидить команду, но продолжать **писать код**
+• Отзывчивых ребят в **неформальной коммуникации**
+• Не боюсь плохо настроенных процессов, если на них реально можно влиять
+• Не привязан к конкретной отрасли — интересна сама роль и **влияние на проект**
+"""
+
+"expectation.en" = """
+• Ability to **make decisions independently**, **not wait for instructions** from a line manager
+• Own a domain end-to-end *(e.g.: app, team, SDK, infra)*
+• Ready to lead a team, but continue **writing code**
+• Responsive people in **informal communication**
+• Not afraid of poorly configured processes if I can actually influence them
+• Not tied to a specific industry — interested in the role itself and **impact on the project**
+"""
+
+"skillsIntro" = "Перечислены только практические навыки"
+
+"extraSkills.ru" = """
+• **Публикация в App Store** и Reject Resolution
+• **Mobile DevOps** — настройка инфраструктуры проекта, CI/CD с нуля
+• **Pixel Perfect** верстка и снапшот-тестирование
+• Создание **Backend Driven UI**
+• **Аудио/видео** плееры, скачивание медиа-контента
+• **GIS** системы и картография
+"""
+
+"extraSkills.en" = """
+• **App Store publishing** and Reject Resolution
+• **Mobile DevOps** — project infrastructure setup, CI/CD from scratch
+• Creating **Backend Driven UI**
+• **GIS** systems and cartography
+• **Audio/video** players, media content downloading
+"""
+
+"interests" = """
+**Подкасты**: КОДА КОДА, Podlodka, Запуск завтра, Бреслав и Ложечкин
+**Конференции**: CocoaHeads, Swift Heroes
+**Сообщества**: Вастрик.Клуб, твиттер
+"""
+
+[[references]]
+type = "website"
+url = "https://www.linkedin.com/in/ernest0n/"
+text = "linkedin.com/in/ernest0n"
+
+[[references]]
+type = "telegram"
+url = "https://t.me/ernest0n"
+text = "t.me/ernest0n"
+
+[[references]]
+type = "github"
+url = "https://github.com/Ernest0-Production"
+text = "github.com/Ernest0-Production"
+
+[[references]]
+type = "twitter"
+url = "https://x.com/ernest0n"
+text = "x.com/ernest0n"
+
+############################################
+################# Languages ################
+############################################
+
+[[languages]]
+name = "Russian"
+level = "Native"
+
+[[languages]]
+name = "English"
+level = "B1"
+
+############################################
+################### Skills #################
+############################################
+
+[[skills]]
+category = "iOS Development"
+keywords = [
+    "Swift",
+    "Objective-C",
+    "UIKit",
+    "SwiftUI",
+    "GCD",
+    "Swift Concurrency",
+    "Combine / RxSwift",
+    "XCTest",
+]
+
+[[skills]]
+category = "DevOps & Infrastructure"
+keywords = [
+    "CocoaPods",
+    "SPM",
+    "Tuist",
+    "Fastlane",
+    "Ruby",
+    "Bash",
+    "SwiftGen",
+    "SwiftLint",
+    "Sourcery",
+    "Periphery",
+]
+
+[[skills]]
+category = "SDKs"
+keywords = [
+    "URLSession",
+    "Alamofire / Moya",
+    "Nuke / Kingfisher",
+    "CoreAnimation",
+    "SnapKit",
+    "Lottie",
+    "Swinject",
+    "CoreData",
+    "Realm",
+    "StoreKit",
+    "AVFoundation",
+    "AVKit",
+    "Firebase",
+    "Mindbox",
+    "MapBox",
+    "MapKit",
+    "swift-snapshot-testing",
+]
+
+[[skills]]
+category = "Architecture"
+keywords = [
+    "MVC",
+    "MVP",
+    "MVVM",
+    "TCA",
+    "VIP",
+    "VIPER",
+    "GoF",
+    "SOLID",
+    "UDF",
+    "OOP",
+    "FRP",
+]
+
+[[skills]]
+category = "Tools"
+keywords = ["Xcode", "Instruments", "Test Flight", "Proxyman", "Cursor"]
+
+
+############################################
+################### Okko ###################
+############################################
+
+[[experience]]
+position = "iOS Infra Architect"
+company = "Okko"
+period = "Apr 2023 — Nov 2025"
+
+"about.ru" = "Онлайн-кинотеатр • стриминговый сервис"
+"about.en" = "Online cinema • streaming platform (top-3 in Russia)"
+
+"responsibilities.ru" = """
+Курировал всю инфраструктуру iOS-отдела из **30-ти разработчиков**:
+• **CI/CD и автоматизация** — улучшение DX/QX, quality gate
+• Проектирование архитектуры — **модуляризация** проекта и арх.ревью на этапе проработки решений
+• Создание и рефакторинг **core-модулей** приложения
+• Направление тех.вектора развития — стэк, архитектура, инструменты итп.
+• Член тех.коммитета — **квартальное планирование**, руководство командой дежурных
+• Knowledge-sharing — техническая документация, демо, анонсы, Q&A сессии
+"""
+"responsibilities.en" = """
+Oversaw the entire iOS department infrastructure of **30 developers**:
+• **CI/CD and automation** — improving DX/QX, quality gate
+• Architecture design — project **modularization** and architecture review at the solution design stage
+• Creation and refactoring of **core modules** of the application
+• Technical direction — stack, architecture, tools, etc.
+• Member of technical committee — **quarterly planning**, leading the on-call team
+• Knowledge-sharing — technical documentation, demos, announcements, Q&A sessions
+"""
+
+"achievements.ru" = """
+• Полностью переписанный модуль __сетевого слоя__
+• Новый модуль in-house __аналитики__ (батчинг, сжатие, кэширование, итп)
+• Миграция проекта с __CocoaPods__ на __Tuist + SPM__
+• Самописный анализатор __Objective-C__ Dead Code, удаливший ~40% objc кода
+• Сокращение времени сборки __CI/CD__ с 40 до 10 минут
+• Уменьшение бандла приложения на 25% (~45 МБ)
+• In-house система дистрибуции Ad-Hoc сборок
+• Автоматизация релизов/меты/скриншотов/сертификатов через __Jenkins CI__
+• __Кодогенератор__ моков для юнит-тестов
+• Интеграция __Kotlin Multiplatform__
+"""
+"achievements.en" = """
+• Completely rewritten __network layer__ module
+• New in-house __analytics__ module (batching, compression, caching, etc.)
+• Project migration from __CocoaPods__ to __Tuist + SPM__
+• Custom __Objective-C__ Dead Code analyzer, which removed ~40% of objc code
+• Reduced __CI/CD__ build time from 40 to 10 minutes
+• Reduced application bundle size by 25% (~45 MB)
+• In-house Ad-Hoc build distribution system
+• Automation of releases/meta/screenshots/certificates through __Jenkins CI__
+• __Code generator__ for unit test mocks
+• __Kotlin Multiplatform__ integration
+"""
+
+[[experience.links]]
+title = "Okko: кино, сериалы, спорт, ТВ"
+url = "https://apps.apple.com/ru/app/id448868000"
+
+############################################
+################### Ozon ###################
+############################################
+
+[[experience]]
+position = "iOS Tech Lead"
+company = "OZON"
+period = "Jan 2022 — Apr 2023"
+
+"about.ru" = "БигТех • Маркетплейс • Логистика"
+"about.en" = "Big Tech • Marketplace platform • Logistics (top-2 in Russia)"
+
+"responsibilities.ru" = """
+Участвовал в создании двух проектов:
+1. **MVP-версия** приложения для доставки посылок
+2. In-house картографический **SDK**, независимый от внешних вендоров (Google, Yandex, Mapbox)
+Основные обязанности:
+• Проектирование и разработка приложения/SDK с нуля, включая выбор стека технологий
+• **Найм**, формирование будущей команды
+• Настройка **GitLab CI** пайплайна
+• Сопровождение и интеграция SDK во внутренние продукты
+"""
+
+"responsibilities.en" = """
+Participated in creating two projects:
+1. **MVP version** of the package delivery application
+2. In-house cartographic **SDK**, independent of external vendors (Google, Yandex, Mapbox)
+Main responsibilities:
+• Design and development of application/SDK from scratch, including technology stack selection
+• **Hiring**, forming the future team
+• Setting up **GitLab CI** pipeline
+• Maintenance and integration of SDK into internal products
+"""
+
+"achievements.ru" = """
+• Сокращение __TTM__ MVP-версии приложения с 6 месяцев до 3 месяцев
+• Первопроходец по внедрению __Tuist__ в компании
+• 2 мажорные версии in-house __Map SDK__
+• Покрытие __интеграционными тестами__ на 70%
+• CI/CD __пайплайн__ сборки, тестирования, деплоя и релиза библиотеки
+• Поддержка SDK под __Android__ на __Kotlin__
+"""
+
+"achievements.en" = """
+• Reduced __TTM__ of MVP version of the application from 6 months to 3 months
+• Pioneer in implementing __Tuist__ in the company
+• 2 major versions of in-house __Map SDK__
+• __Integration tests__ coverage of 70%
+• CI/CD __pipeline__ for building, testing, deployment and release of the library
+• SDK support for __Android__ on __Kotlin__
+"""
+
+[[experience.links]]
+title = "Ozon Travel"
+url = "https://apps.apple.com/app/id959592459"
+
+[[experience.links]]
+title = "Ozon Курьер"
+url = "https://apps.apple.com/app/id6458101936"
+
+[[experience.links]]
+title = "Вози Ozon"
+url = "https://apps.apple.com/app/id6478118390"
+
+[[experience.links]]
+title = "Пункт Ozon"
+url = "https://apps.apple.com/app/id1535791151"
+
+[[experience.links]]
+title = "Ozon Marketplace"
+url = "https://apps.apple.com/app/id407804998"
+
+
+############################################
+############### BestDoctor ################
+############################################
+
+[[experience]]
+position = "Senior iOS Developer"
+company = "BestDoctor"
+period = "Sep 2021 — Feb 2022"
+
+"about.ru" = "Стартап • Услуги мед.страхования сотрудников для бизнеса • Телемедицина"
+"about.en" = "Startup • Medical insurance services for employees of businesses • Telemedicine"
+
+"responsibilities.ru" = """
+Участвовал в развитии мобильного приложения в команде из **6-ти разработчиков**:
+• Стандартный цикл разработки (спринты, грумминги, ревью кода, итп)
+• Планирование задач в рамках **OKR**
+• Внедрение нового стека технологий (**SwiftUI** 1.0, **Combine** итп) в проект
+• Поддержка **GitLab CI** пайплайна
+"""
+
+"responsibilities.en" = """
+Participated in mobile application development in a team of **6 developers**:
+• Standard development cycle (sprints, groomings, code reviews, etc.)
+• Task planning within **OKR** framework
+• Introducing new technology stack (**SwiftUI** 1.0, **Combine**, etc.) into the project
+• **GitLab CI** pipeline maintenance
+"""
+
+"achievements.ru" = """
+• Интерактивные __виджеты в чате__ с терапевтом
+• Раздел/вкладка управления мед.__документами__ (диагнозы, анализы, назначения, итп)
+• Механизм обработки __DeepLinks__
+• Рефакторинг многоступенчатой __навигации__ для записи на прием к врачу
+• Обучение команды разработки ФРП с помощью __Combine__
+"""
+
+"achievements.en" = """
+• Interactive __chat widgets__ with therapist
+• Medical __documents__ management section/tab (diagnoses, tests, prescriptions, etc.)
+• __DeepLinks__ handling mechanism
+• Refactoring multi-step __navigation__ for doctor appointment booking
+• Teaching the development team FRP using __Combine__
+"""
+
+[[experience.links]]
+title = "Лучи Здоровье"
+url = "https://apps.apple.com/app/id1367539047"
+
+
+############################################
+################## Binet ###################
+############################################
+
+[[experience]]
+position = "Middle → Senior → Team Lead iOS Developer"
+company = "Binet"
+period = "May 2019 — Sep 2021"
+
+"about.ru" = "Аутсорс • Разработка под ключ"
+"about.en" = "Outsourcing • Turn-key development"
+
+"responsibilities.ru" = """
+Разрабатывал с нуля и поддерживал существующие приложения в команде из **3-х разработчиков**.
+Со временем, по мере увеличения навыков и вклада в проекты, **дорос до тимлида**.
+• Декомпозиция и оценка задач, **ревью дизайна** и backend-контрактов
+• Полный цикл разработки приложения от создания репозитория до **публикации в App Store**
+• Решение проблем и **согласование с заказчиком**
+• Интервью и найм Junior/Middle разработчиков
+• **Менторство** разработчиков, парное программирование и проведение performance reviews
+"""
+
+"responsibilities.en" = """
+Developed from scratch and maintained existing applications in a team of **3 developers**.
+Over time, as skills and contribution to projects increased, **grew to team lead**.
+• Independent task decomposition and estimation, **design review** and backend contracts
+• Full application development cycle from repository creation to **App Store publishing**
+• Problem solving and **coordination with the client**
+• Interviewing and hiring Junior/Middle developers
+• **Mentoring** developers, pair programming and conducting performance reviews
+"""
+
+"achievements.ru" = """
+• __Backend Driven UI__ движок для горнолыжного курорта
+• Сквозная навигация экранов и состояния __карты__ через __диплинки__
+• Форма для прохождения __онлайн-тестирования__ на время (олимпиада, закрепление материала, итп)
+• __Плеер__ для прослушивания подкастов с плавающющей панелью управления
+• Поддержка __оффлайн__ режима с кэшированием в __Realm__
+• Кастомные __анимации__ переходов между экранами
+• Оптимизация метрики __Hitch Rate__ при скролле списков
+"""
+"achievements.en" = """
+• __Backend Driven UI__ engine for ski resort
+• End-to-end navigation of screens and __map__ state through __deeplinks__
+• Form for __online testing__ with time limit (olympiad, material reinforcement, etc.)
+• __Player__ for listening to podcasts with floating control panel
+• __Offline__ mode support with caching in __Realm__
+• Custom __animations__ for transitions between screens
+• Optimization of __Hitch Rate__ metric when scrolling lists
+"""
+
+[[experience.links]]
+title = "Мембраны и PIR ТЕХНОНИКОЛЬ"
+url = "https://apps.apple.com/ru/app/id1501684562"
+
+[[experience.links]]
+title = "TN LEARN - Учебная программа"
+url = "https://apps.apple.com/app/id1470670122"
+
+[[experience.links]]
+title = "Revitonica"
+url = "https://apps.apple.com/app/id1540988867"
+
+[[experience.links]]
+title = "Лекторий «Достоевский»"
+url = "https://apps.apple.com/app/id1513138478"
+
+[[experience.links]]
+title = "Роза Хутор"
+url = "https://apps.apple.com/app/id1325096949"
+
+[[experience.links]]
+title = "СторожОК - мониторинг реестров"
+url = "https://apps.apple.com/ru/app/id1549274265"
+
+
+############################################
+################# LifeIT ###################
+############################################
+
+[[experience]]
+position = ".NET Junior Developer"
+company = "LifeIT"
+period = "Jan 2018 — May 2019"
+
+"about.ru" = "Аутсорс • Разработка под ключ"
+"about.en" = "Outsourcing • Turn-key development"
+
+"responsibilities.ru" = """
+Занимался мелкими доработками приложения для грузоперевозок
+• Верстка простых экранов на WPF с использованием MVVM и Bindings
+• Написание автотестов с использованием C# Script и Selenium
+"""
+"responsibilities.en" = """
+Worked on minor improvements to a freight transportation application
+• Layout of simple screens on WPF using MVVM and Bindings
+• Writing automated tests using C# Script and Selenium
+"""
+
+"achievements.ru" = ""
+"achievements.en" = ""
+
+
+############################################
+################# Projects #################
+############################################
+
+[[projects]]
+title = "DeclarativeLayoutKit"
+link = "https://github.com/Ernest0-Production/DeclarativeLayoutKit"
+"description.ru" = "Декларативная верстка на UIKit"
+"description.en" = "Declarative layout on UIKit"
+
+[[projects]]
+title = "Git Client for Raycast"
+link = "https://www.raycast.com/ernest0n/git"
+"description.ru" = "Полноценный Git GUI клиент"
+"description.en" = "Full-featured Git GUI client"
+
+[[projects]]
+title = "FunctionalNavigationFlowKit"
+link = "https://github.com/Ernest0-Production/FunctionalNavigationFlowKit"
+"description.ru" = "Декларативная навигация через ФП"
+"description.en" = "Declarative navigation through FP"
+
+[[projects]]
+title = "Mattermost for Raycast"
+link = "https://www.raycast.com/ernest0n/mattermost"
+"description.ru" = "Набор быстрых команд для Mattermost"
+"description.en" = "Quick commands/shortcuts for Mattermost"
+
+
+############################################
+################ Education #################
+############################################
+
+[[education]]
+period = "Sep 2016 - Jul 2020"
+
+"degree.ru" = "Бакалавр"
+"degree.en" = "Bachelor's degree"
+
+"university.ru" = "Московский государственный технологический университет \"Станкин\""
+"university.en" = "Moscow State Technological University \"Stankin\""

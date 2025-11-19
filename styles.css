@@ -1,0 +1,1181 @@
+/* ==================== Font Face for SF Pro Rounded ==================== */
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: local('SF Pro Rounded');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ==================== CSS Variables ==================== */
+:root {
+    --color-black: #000000;
+    --color-blue: #2196F3;
+    --color-red: #E53935;
+    --color-gray: #666666;
+    --color-light-gray: #F5F5F5;
+    --color-border: #CCCCCC;
+
+    --font-main: ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    --page-padding: 14mm;
+}
+
+@page {
+    size: A4 portrait;
+    margin: 14mm;
+}
+
+/* ==================== Base Styles ==================== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+html,
+body {
+    font-family: var(--font-main);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-black);
+    background: #f0f2f8;
+    padding: 0;
+    margin: 0;
+    display: block;
+    min-height: 100vh;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px;
+    min-width: calc(210mm + 48px);
+}
+
+/* Page container with simulated A4 pages */
+.container {
+    width: 210mm;
+    min-width: 210mm;
+    max-width: 210mm;
+    padding: var(--page-padding);
+    margin: 0 auto;
+    background: #ffffff;
+    overflow: visible;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+@media print {
+    html {
+        background: #ffffff;
+    }
+
+    body {
+        background: #ffffff;
+        padding: 0;
+        min-width: auto;
+        min-height: auto;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+        min-width: auto;
+        min-height: auto;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        overflow: visible;
+        background-image: none;
+    }
+
+    /* Force page breaks to respect element boundaries */
+    .header,
+    .header-content,
+    .header-info,
+    .contact-info {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .experience-content {
+        page-break-inside: auto;
+        break-inside: auto;
+    }
+
+    .header-bar {
+        display: none !important;
+    }
+}
+
+/* ==================== Typography ==================== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    line-height: 1.2;
+}
+
+p {
+    margin-bottom: 16px;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+a {
+    color: var(--color-blue);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    image-rendering: auto;
+}
+
+/* Ensure icons don't inherit link color */
+a .iconify {
+    color: currentColor !important;
+}
+
+strong,
+b {
+    font-weight: 700;
+    color: var(--color-blue);
+}
+
+em,
+i {
+    font-style: italic;
+}
+
+u {
+    text-decoration: underline;
+}
+
+/* ==================== Header Section ==================== */
+.header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+
+.header-bar {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    display: flex;
+    justify-content: flex-end;
+    width: auto;
+    z-index: 2000;
+    pointer-events: none;
+}
+
+.language-switcher {
+    position: relative;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    pointer-events: auto;
+}
+
+.language-switcher__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background-color: #ffffff;
+    color: var(--color-black);
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.language-switcher__trigger:hover,
+.language-switcher__trigger:focus-visible {
+    border-color: var(--color-blue);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.language-switcher__label {
+    min-width: 32px;
+    text-align: center;
+}
+
+.language-switcher__icon {
+    font-size: 16px;
+}
+
+.language-switcher__list {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+    min-width: 140px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background-color: #ffffff;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.language-switcher[data-open="true"] .language-switcher__list {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.language-switcher__option {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-black);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.language-switcher__option:hover,
+.language-switcher__option:focus-visible {
+    background-color: var(--color-light-gray);
+    color: var(--color-blue);
+}
+
+.language-switcher__option--active,
+.language-switcher__option[aria-selected="true"] {
+    color: var(--color-blue);
+}
+
+@media (max-width: 1024px) {
+    .header-bar {
+        top: 16px;
+        right: 16px;
+    }
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    align-items: flex-start;
+}
+
+.name {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--color-black);
+    letter-spacing: -1px;
+    margin-bottom: 0px;
+    text-transform: uppercase;
+}
+
+.job-title {
+    font-size: 17px;
+    color: var(--color-blue);
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.contact-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 6px;
+    row-gap: 4px;
+    width: 100%;
+}
+
+.contact-info>.contact-item {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.contact-info>.references {
+    grid-column: 1 / -1;
+    margin-top: 0;
+}
+
+
+.contact-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    margin: 0;
+}
+
+.contact-item a {
+    color: var(--color-black);
+}
+
+.contact-item a:hover {
+    color: var(--color-black);
+    text-decoration: none;
+}
+
+.contact-item .icon {
+    font-style: normal;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+#location .icon {
+    color: var(--color-red);
+}
+
+.contact-item .icon .iconify {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+.references {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 6px;
+    row-gap: 4px;
+    width: 100%;
+    margin: 0;
+}
+
+.references a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--color-black);
+    margin: 0;
+}
+
+.references a:hover {
+    color: var(--color-black);
+    text-decoration: none;
+}
+
+.references a .icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 2px;
+}
+
+.references a .icon .favicon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    border-radius: 4px;
+    object-fit: contain;
+}
+
+.references a .icon .iconify {
+    width: 16px;
+    height: 16px;
+    color: inherit !important;
+}
+
+.header-avatar {
+    flex-shrink: 0;
+}
+
+.avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-light-gray);
+}
+
+/* ==================== Main Content - Two Columns ==================== */
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "about expectation"
+        "skills right-stack"
+        "experience experience"
+        "projects projects";
+    column-gap: 16px;
+    row-gap: 12px;
+    align-items: start;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+
+.main-content>* {
+    min-width: 0;
+    overflow: visible;
+}
+
+.left-column,
+.right-column {
+    display: contents;
+}
+
+#aboutSection {
+    grid-area: about;
+}
+
+#expectationSection {
+    grid-area: expectation;
+}
+
+#skillsSection {
+    grid-area: skills;
+}
+
+#rightStack {
+    grid-area: right-stack;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#experienceSection {
+    grid-area: experience;
+}
+
+#projectsSection {
+    grid-area: projects;
+}
+
+.section-full-width {
+    grid-column: 1 / -1;
+}
+
+/* ==================== Section Styles ==================== */
+.section {
+    page-break-inside: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    overflow: visible;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-black);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--color-black);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    page-break-after: avoid;
+    break-after: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.section-title .icon {
+    font-style: normal;
+    font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.section-title .icon .iconify {
+    width: 20px;
+    height: 20px;
+    color: inherit !important;
+}
+
+.section-title.accent-red {
+    color: var(--color-red);
+    border-bottom-color: var(--color-red);
+}
+
+.section-title.accent-yellow {
+    color: #FFC107;
+    border-bottom-color: #FFC107;
+}
+
+.section-content {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    overflow: visible;
+}
+
+.section-content>*:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* ==================== Common List Styles ==================== */
+.section-content ul,
+#about ul,
+.experience-responsibilities ul,
+#extraSkills ul,
+#interests ul,
+#expectation ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.section-content ol,
+#about ol,
+.experience-responsibilities ol,
+#extraSkills ol,
+#interests ol,
+#expectation ol {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: list-counter;
+}
+
+.section-content li,
+#about li,
+.experience-responsibilities li,
+#extraSkills li,
+#interests li,
+#expectation li {
+    position: relative;
+    padding-left: 16px;
+    line-height: 1.5;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.section-content li:before,
+#about li:before,
+.experience-responsibilities li:before,
+#extraSkills li:before,
+#interests li:before,
+#expectation li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* Numbered list items */
+.section-content ol li,
+#about ol li,
+.experience-responsibilities ol li,
+#extraSkills ol li,
+#interests ol li,
+#expectation ol li {
+    counter-increment: list-counter;
+}
+
+.section-content ol li:before,
+#about ol li:before,
+.experience-responsibilities ol li:before,
+#extraSkills ol li:before,
+#interests ol li:before,
+#expectation ol li:before {
+    content: counter(list-counter) ".";
+    position: absolute;
+    left: 0;
+}
+
+/* ==================== About Section ==================== */
+#about {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#about p {
+    margin-bottom: 8px;
+}
+
+#about ul {
+    margin-bottom: 0;
+}
+
+#about li {
+    margin-bottom: 4px;
+}
+
+#about p:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* ==================== Experience Section ==================== */
+.experience-item {
+    page-break-inside: auto;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dotted var(--color-border);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+}
+
+.experience-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.experience-header {
+    margin-bottom: 6px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+.experience-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 2px;
+    flex-wrap: wrap;
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+.experience-title-row__left {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.experience-position {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-black);
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+.experience-company {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-blue);
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+#extraSkillsSection .section-title {
+    color: #5a17e8;
+    border-bottom-color: #5a17e8;
+}
+
+.experience-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 10px;
+    color: var(--color-gray);
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+.experience-meta .icon {
+    font-style: normal;
+    display: inline-flex;
+    align-items: center;
+}
+
+.experience-meta .icon .iconify {
+    width: 14px;
+    height: 14px;
+    color: inherit !important;
+}
+
+.experience-about {
+    font-size: 13px;
+    color: var(--color-gray);
+    font-style: italic;
+    margin-bottom: 8px;
+}
+
+.experience-content {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    align-items: flex-start;
+    flex: 1;
+}
+
+.experience-responsibilities,
+.experience-achievements {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.experience-responsibilities p {
+    margin-bottom: 3px;
+}
+
+.experience-responsibilities p:last-child {
+    margin-bottom: 0;
+}
+
+.experience-responsibilities li {
+    margin-bottom: 3px;
+}
+
+/* ==================== Experience Achievements - Enhanced Styles ==================== */
+.experience-achievements {
+    background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
+    border-left: 4px solid #FFC107;
+    border-radius: 8px;
+    padding: 12px 14px;
+    min-width: 0;
+}
+
+.experience-achievements__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.experience-achievements__header .icon {
+    font-style: normal;
+    display: inline-flex;
+    align-items: center;
+}
+
+.experience-achievements__header .icon .iconify {
+    width: 18px;
+    height: 18px;
+    color: #FFC107;
+}
+
+.experience-achievements__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #F57C00;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.experience-achievements__content {
+    margin-top: 0;
+}
+
+.experience-achievements__content ul {
+    margin: 0;
+    padding-left: 0;
+}
+
+.experience-achievements__content ol {
+    margin: 0;
+    padding-left: 0;
+    counter-reset: achievements-counter;
+}
+
+.experience-achievements__content li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 6px;
+    line-height: 1.5;
+    color: var(--color-black);
+    font-weight: normal;
+}
+
+.experience-achievements__content li:before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    top: 0.25em;
+    color: #FFC107;
+    font-weight: bold;
+    font-size: 10px;
+}
+
+/* Numbered list items in achievements section */
+.experience-achievements__content ol li {
+    counter-increment: achievements-counter;
+}
+
+.experience-achievements__content ol li:before {
+    content: counter(achievements-counter) ".";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #FFC107;
+    font-size: 13px;
+}
+
+.experience-achievements__content li:last-child {
+    margin-bottom: 0;
+}
+
+.experience-achievements__content p {
+    margin-bottom: 6px;
+    font-weight: normal;
+}
+
+.experience-achievements__content p:last-child {
+    margin-bottom: 0;
+}
+
+.experience-achievements__content u {
+    text-decoration: none;
+    border-bottom: 3px solid #FFC107;
+    border-radius: 3px;
+    padding-bottom: 1px;
+}
+
+.experience-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: stretch;
+    width: 85%;
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+.experience-link {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    text-decoration: none;
+    background: #f7f8fb;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    color: inherit;
+    flex: 0 1 calc(50% - 5px);
+    min-width: 0;
+    min-height: 44px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Специфичные стили для секции experience - ссылки по размеру контента */
+#experienceSection .experience-links {
+    width: fit-content;
+}
+
+#experienceSection .experience-link {
+    flex: 0 0 auto;
+}
+
+.experience-link--no-description {
+    min-height: 15px;
+}
+
+.experience-link__preview {
+    position: relative;
+    flex: 0 0 auto;
+    width: 50px;
+    height: 100%;
+    background: #e9ecf6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 0;
+}
+
+.experience-link--no-description .experience-link__preview {
+    width: 30px;
+}
+
+.experience-link__favicon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+    border-radius: 4px;
+}
+
+.experience-link--no-description .experience-link__favicon {
+    width: 16px;
+    height: 16px;
+}
+
+.experience-link__preview--fallback {
+    background: #e9ecf6;
+}
+
+.experience-link__fallback {
+    width: 20px;
+    height: 20px;
+    color: var(--color-blue);
+}
+
+.experience-link--no-description .experience-link__fallback {
+    width: 16px;
+    height: 16px;
+}
+
+
+.experience-link__content {
+    flex: 1;
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+}
+
+.experience-link__title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-black);
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: 1.3;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.experience-link__description {
+    font-size: 11px;
+    color: var(--color-gray);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ==================== Skills Section ==================== */
+.skills-intro {
+    margin-bottom: 5px;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--color-gray);
+}
+
+.skill-category {
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--color-border);
+    page-break-inside: avoid;
+    break-inside: avoid;
+    overflow: visible;
+}
+
+.skill-category:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.skill-category-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+
+.skill-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -6px 0 0 -6px;
+}
+
+.skill-keyword {
+    background-color: var(--color-light-gray);
+    color: var(--color-black);
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    display: inline-block;
+    margin: 6px 0 0 6px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* ==================== Extra Skills Section ==================== */
+#extraSkills p {
+    margin-bottom: 4px;
+    line-height: 1.5;
+}
+
+#extraSkills p:last-child {
+    margin-bottom: 0;
+}
+
+#extraSkills li {
+    margin-bottom: 4px;
+    line-height: 1.5;
+}
+
+#extraSkills strong,
+#extraSkills b {
+    color: #5a17e8;
+}
+
+/* ==================== Interests Section ==================== */
+#interestsSection .section-title {
+    color: #10B981;
+    border-bottom-color: #10B981;
+}
+
+#interests p {
+    margin-bottom: 4px;
+    line-height: 1.5;
+}
+
+#interests p:last-child {
+    margin-bottom: 0;
+}
+
+#interests li {
+    margin-bottom: 4px;
+    line-height: 1.5;
+}
+
+#interests strong,
+#interests b {
+    color: #10B981;
+}
+
+/* ==================== Projects Section ==================== */
+.project-item {
+    margin-bottom: 10px;
+    overflow: visible;
+}
+
+.project-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+.project-description {
+    font-size: 14px;
+    color: var(--color-black);
+}
+
+#projectsSection .experience-links {
+    width: 100%;
+    row-gap: 8px;
+    column-gap: 10px;
+}
+
+#projectsSection .experience-link:last-child,
+#projectsSection .experience-link:nth-last-child(2):nth-child(odd) {
+    margin-bottom: 0;
+}
+
+/* ==================== Education Section ==================== */
+.education-item {
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    overflow: visible;
+}
+
+.education-item:last-child {
+    margin-bottom: 0;
+}
+
+.education-degree {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+.education-university {
+    color: var(--color-gray);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.education-period {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--color-gray);
+    margin-bottom: 4px;
+}
+
+.education-period .icon {
+    font-style: normal;
+    display: inline-flex;
+    align-items: center;
+}
+
+.education-period .icon .iconify {
+    width: 14px;
+    height: 14px;
+    color: inherit !important;
+}
+
+/* ==================== Expectation Section ==================== */
+#expectation li {
+    margin-bottom: 4px;
+    line-height: 1.5;
+}
+
+#expectation strong,
+#expectation b {
+    color: var(--color-red);
+}
+
+/* ==================== General Text Flow Control ==================== */
+.page-break-before {
+    page-break-before: always;
+    break-before: always;
+}
