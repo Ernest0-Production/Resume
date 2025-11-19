@@ -27,3 +27,6 @@ npm-debug.log*
 .env
 .env.local
 
+# Generated files (created during build)
+data/
+

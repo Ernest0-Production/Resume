@@ -106,13 +106,13 @@ const LANGUAGE_CONFIG = {
     ru: {
         label: 'RUS',
         path: '/api/resume?lang=ru',
-        staticPath: '/data/resume-ru.json',
+        staticPath: 'data/resume-ru.json',
         htmlLang: 'ru',
     },
     en: {
         label: 'ENG',
         path: '/api/resume?lang=en',
-        staticPath: '/data/resume-en.json',
+        staticPath: 'data/resume-en.json',
         htmlLang: 'en',
     },
 };
@@ -796,8 +796,8 @@ function renderEducationLanguages(data) {
         content += `
             <div class="skill-keywords">
                 ${data.languages.map(lang =>
-                    `<span class="skill-keyword">${formatLanguageTag(lang)}</span>`
-                ).join('\n                ')}
+            `<span class="skill-keyword">${formatLanguageTag(lang)}</span>`
+        ).join('\n                ')}
             </div>
         `;
     }
@@ -819,9 +819,14 @@ async function loadResumeData(language = currentLanguage) {
 
         if (!response || !response.ok) {
             // Fallback to static JSON file
-            response = await fetch(config.staticPath, { cache: 'no-cache' });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            console.log(`API unavailable, trying static file: ${config.staticPath}`);
+            response = await fetch(config.staticPath, { cache: 'no-cache' }).catch((fetchError) => {
+                console.error(`Failed to fetch static file ${config.staticPath}:`, fetchError);
+                throw new Error(`Failed to load resume data from ${config.staticPath}. Make sure the file exists and the build process completed successfully.`);
+            });
+
+            if (!response || !response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}. Failed to load ${config.staticPath}`);
             }
         }
 
@@ -847,14 +852,21 @@ async function loadResumeData(language = currentLanguage) {
 
         console.log('Resume data loaded successfully!');
     } catch (error) {
-        console.error(`Error loading resume data for language "${language}" from ${config.path}:`, error);
+        console.error(`Error loading resume data for language "${language}":`, error);
+        console.error(`Tried API: ${config.path}`);
+        console.error(`Tried static file: ${config.staticPath}`);
 
         // Show error message to user
         document.body.innerHTML = `
             <div style="padding: 40px; text-align: center; font-family: sans-serif;">
                 <h1 style="color: #E53935;">Error Loading Resume</h1>
-                <p>Could not load resume data. Please make sure the server is running and ${config.path} exists.</p>
-                <p style="color: #666; font-size: 14px;">Error: ${error.message}</p>
+                <p>Could not load resume data. Tried:</p>
+                <ul style="text-align: left; display: inline-block; color: #666;">
+                    <li>API: ${config.path}</li>
+                    <li>Static file: ${config.staticPath}</li>
+                </ul>
+                <p style="color: #666; font-size: 14px; margin-top: 20px;">Error: ${error.message}</p>
+                <p style="color: #999; font-size: 12px; margin-top: 10px;">Please check the browser console for more details.</p>
             </div>
         `;
     }

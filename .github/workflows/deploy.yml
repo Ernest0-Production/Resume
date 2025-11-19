@@ -39,6 +39,14 @@ jobs:
       - name: Build static files
         run: npm run build
 
+      - name: Verify build output
+        run: |
+          echo "Checking if data directory exists..."
+          ls -la data/ || echo "ERROR: data directory not found!"
+          echo "Checking for JSON files..."
+          ls -la data/*.json || echo "ERROR: JSON files not found!"
+          echo "Build verification complete"
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
