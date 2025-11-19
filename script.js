@@ -99,6 +99,132 @@ function createElement(tag, content, className = '') {
     return element;
 }
 
+// ==================== Theme Toggle Config ====================
+
+const THEME_STORAGE_KEY = 'cv-generator-theme';
+const THEME_ATTRIBUTE = 'data-theme';
+
+/**
+ * Get current theme from HTML element
+ */
+function getCurrentTheme() {
+    return document.documentElement.getAttribute(THEME_ATTRIBUTE) || 'light';
+}
+
+/**
+ * Set theme on HTML element
+ */
+function setTheme(theme) {
+    if (theme === 'dark' || theme === 'light') {
+        document.documentElement.setAttribute(THEME_ATTRIBUTE, theme);
+        updateThemeIcon(theme);
+    }
+}
+
+/**
+ * Toggle between light and dark theme
+ */
+function toggleTheme() {
+    const current = getCurrentTheme();
+    const newTheme = current === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    persistTheme(newTheme);
+}
+
+/**
+ * Persist theme preference to localStorage
+ */
+function persistTheme(theme) {
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch (error) {
+        console.warn('Unable to persist theme preference:', error);
+    }
+}
+
+/**
+ * Read theme from localStorage
+ */
+function readStoredTheme() {
+    try {
+        const stored = localStorage.getItem(THEME_STORAGE_KEY);
+        if (stored === 'dark' || stored === 'light') {
+            return stored;
+        }
+    } catch (error) {
+        console.warn('Unable to access localStorage for theme preferences:', error);
+    }
+    return null;
+}
+
+/**
+ * Get initial theme based on storage or system preference
+ */
+function getInitialTheme() {
+    const stored = readStoredTheme();
+    if (stored) return stored;
+
+    // Check system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+    }
+
+    return 'light';
+}
+
+/**
+ * Update theme toggle icon based on current theme
+ */
+function updateThemeIcon(theme) {
+    const themeButton = document.getElementById('themeToggleBtn');
+    if (!themeButton) return;
+
+    const icon = themeButton.querySelector('.theme-toggle-btn__icon');
+    if (!icon) return;
+
+    if (theme === 'dark') {
+        icon.setAttribute('data-icon', 'mdi:weather-sunny');
+    } else {
+        icon.setAttribute('data-icon', 'mdi:weather-night');
+    }
+}
+
+/**
+ * Initialize theme toggle button
+ */
+function initThemeToggle() {
+    const themeButton = document.getElementById('themeToggleBtn');
+    if (!themeButton) {
+        console.warn('Theme toggle button not found.');
+        return;
+    }
+
+    // Set initial theme
+    const initialTheme = getInitialTheme();
+    setTheme(initialTheme);
+    persistTheme(initialTheme);
+
+    // Add click event listener
+    themeButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleTheme();
+    });
+
+    // Listen for system theme changes
+    if (window.matchMedia) {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addEventListener('change', (e) => {
+            // Only update if user hasn't manually set a preference
+            const stored = readStoredTheme();
+            if (!stored) {
+                const newTheme = e.matches ? 'dark' : 'light';
+                setTheme(newTheme);
+            }
+        });
+    }
+}
+
 // ==================== Language Switcher Config ====================
 
 const LANGUAGE_STORAGE_KEY = 'cv-generator-language';
@@ -386,6 +512,12 @@ function handlePreviewImageError(img) {
  * Build favicon URL that preserves original icon colors
  */
 function getFaviconUrl(url) {
+    // Special handling for GitHub to use mdi:github icon instead of favicon
+    if (url.includes('github.com')) {
+        // Return invalid URL to trigger onerror and show fallback icon
+        return 'data:,';
+    }
+
     // Special handling for Twitter/X to use old Twitter logo
     if (url.includes('twitter.com') || url.includes('x.com')) {
         // Use old Twitter favicon
@@ -907,6 +1039,7 @@ function initializeResume() {
     const initialConfig = getLanguageConfig(initialLanguage);
     setDocumentLanguage(initialConfig);
     updateLanguageSwitcherUI(initialLanguage);
+    initThemeToggle();
     initLanguageSwitcher();
     initPDFDownloadButton();
     loadResumeData(initialLanguage);

@@ -20,6 +20,16 @@
     --page-padding: 14mm;
 }
 
+/* Dark mode variables */
+[data-theme="dark"] {
+    --color-black: #AAA599;
+    --color-blue: #64B5F6;
+    --color-red: #EF5350;
+    --color-gray: #B0B0B0;
+    --color-light-gray: #2A2A2A;
+    --color-border: #404040;
+}
+
 @page {
     size: A4 portrait;
     margin: 14mm;
@@ -47,6 +57,11 @@ body {
     margin: 0;
     display: block;
     min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] body {
+    background: #1f1f1f;
 }
 
 body {
@@ -68,31 +83,157 @@ body {
     overflow: visible;
     position: relative;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="dark"] .container {
+    background: #1a1a1a;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 
 @media print {
-    html {
-        background: #ffffff;
+
+    /* Force light theme for printing */
+    html,
+    html[data-theme="dark"] {
+        background: #ffffff !important;
+        --color-black: #000000 !important;
+        --color-blue: #2196F3 !important;
+        --color-red: #E53935 !important;
+        --color-gray: #666666 !important;
+        --color-light-gray: #F5F5F5 !important;
+        --color-border: #CCCCCC !important;
     }
 
-    body {
-        background: #ffffff;
+    body,
+    body[data-theme="dark"] {
+        background: #ffffff !important;
         padding: 0;
         min-width: auto;
         min-height: auto;
+        color: #000000 !important;
     }
 
-    .container {
+    .container,
+    [data-theme="dark"] .container {
         width: 100%;
         max-width: 100%;
         min-width: auto;
         min-height: auto;
         padding: 0;
         margin: 0;
-        box-shadow: none;
+        box-shadow: none !important;
         overflow: visible;
         background-image: none;
+        background: #ffffff !important;
+    }
+
+    /* Override dark theme styles for print */
+    [data-theme="dark"] .section-title {
+        color: #000000 !important;
+        border-bottom-color: #000000 !important;
+    }
+
+    [data-theme="dark"] .section-title.accent-red {
+        color: #E53935 !important;
+        border-bottom-color: #E53935 !important;
+    }
+
+    [data-theme="dark"] .section-title.accent-yellow {
+        color: #FFC107 !important;
+        border-bottom-color: #FFC107 !important;
+    }
+
+    [data-theme="dark"] .name {
+        color: #000000 !important;
+    }
+
+    [data-theme="dark"] .job-title {
+        color: #2196F3 !important;
+    }
+
+    [data-theme="dark"] .experience-company {
+        color: #2196F3 !important;
+    }
+
+    [data-theme="dark"] .experience-position {
+        color: #000000 !important;
+    }
+
+    [data-theme="dark"] .experience-achievements {
+        background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%) !important;
+        border-left-color: #FFC107 !important;
+    }
+
+    [data-theme="dark"] .experience-achievements__header {
+        border-bottom-color: rgba(255, 193, 7, 0.3) !important;
+    }
+
+    [data-theme="dark"] .experience-achievements__header .icon .iconify {
+        color: #FFC107 !important;
+    }
+
+    [data-theme="dark"] .experience-achievements__title {
+        color: #F57C00 !important;
+    }
+
+    [data-theme="dark"] .experience-achievements__content li:before {
+        color: #FFC107 !important;
+    }
+
+    [data-theme="dark"] .experience-achievements__content ol li:before {
+        color: #FFC107 !important;
+    }
+
+    [data-theme="dark"] .experience-achievements__content u {
+        border-bottom-color: #FFC107 !important;
+    }
+
+    [data-theme="dark"] .experience-link {
+        background: #f7f8fb !important;
+        border-color: rgba(0, 0, 0, 0.18) !important;
+    }
+
+    [data-theme="dark"] .experience-link__preview {
+        background: #e9ecf6 !important;
+    }
+
+    [data-theme="dark"] .skill-keyword {
+        background-color: #F5F5F5 !important;
+        color: #000000 !important;
+    }
+
+    [data-theme="dark"] #extraSkillsSection .section-title {
+        color: #5a17e8 !important;
+        border-bottom-color: #5a17e8 !important;
+    }
+
+    [data-theme="dark"] #extraSkills strong,
+    [data-theme="dark"] #extraSkills b {
+        color: #5a17e8 !important;
+    }
+
+    [data-theme="dark"] #interestsSection .section-title {
+        color: #10B981 !important;
+        border-bottom-color: #10B981 !important;
+    }
+
+    [data-theme="dark"] #interests strong,
+    [data-theme="dark"] #interests b {
+        color: #10B981 !important;
+    }
+
+    [data-theme="dark"] .contact-item a {
+        color: #000000 !important;
+    }
+
+    [data-theme="dark"] .references a {
+        color: #000000 !important;
+    }
+
+    [data-theme="dark"] .avatar {
+        border-color: #F5F5F5 !important;
     }
 
     /* Force page breaks to respect element boundaries */
@@ -111,7 +252,8 @@ body {
 
     .header-bar,
     .header-bar__controls,
-    .pdf-download-btn {
+    .pdf-download-btn,
+    .theme-toggle-btn {
         display: none !important;
     }
 }
@@ -220,6 +362,17 @@ u {
     background-color: #f0f7ff;
 }
 
+[data-theme="dark"] .pdf-download-btn {
+    background-color: #2a2a2a;
+    color: var(--color-black);
+}
+
+[data-theme="dark"] .pdf-download-btn:hover,
+[data-theme="dark"] .pdf-download-btn:focus-visible {
+    background-color: #353535;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
 .pdf-download-btn__icon {
     font-size: 16px;
     color: var(--color-blue);
@@ -237,6 +390,48 @@ u {
     pointer-events: auto;
 }
 
+.theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background-color: #ffffff;
+    color: var(--color-black);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.theme-toggle-btn:hover,
+.theme-toggle-btn:focus-visible {
+    border-color: var(--color-blue);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background-color: #f0f7ff;
+}
+
+.theme-toggle-btn__icon {
+    font-size: 20px;
+    color: var(--color-blue);
+    transition: transform 0.3s ease;
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    background-color: #2a2a2a;
+    color: var(--color-black);
+}
+
+[data-theme="dark"] .theme-toggle-btn:hover,
+[data-theme="dark"] .theme-toggle-btn:focus-visible {
+    background-color: #353535;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .theme-toggle-btn__icon {
+    color: #FFC107;
+}
+
 .language-switcher__trigger {
     display: inline-flex;
     align-items: center;
@@ -248,13 +443,24 @@ u {
     color: var(--color-black);
     font-weight: 600;
     cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .language-switcher__trigger:hover,
 .language-switcher__trigger:focus-visible {
     border-color: var(--color-blue);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .language-switcher__trigger {
+    background-color: #2a2a2a;
+    color: var(--color-black);
+}
+
+[data-theme="dark"] .language-switcher__trigger:hover,
+[data-theme="dark"] .language-switcher__trigger:focus-visible {
+    background-color: #353535;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .language-switcher__label {
@@ -281,7 +487,12 @@ u {
     opacity: 0;
     transform: translateY(-4px);
     pointer-events: none;
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    transition: opacity 0.15s ease, transform 0.15s ease, background-color 0.3s ease;
+}
+
+[data-theme="dark"] .language-switcher__list {
+    background-color: #2a2a2a;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
 .language-switcher[data-open="true"] .language-switcher__list {
@@ -478,6 +689,7 @@ u {
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--color-light-gray);
+    transition: border-color 0.3s ease;
 }
 
 /* ==================== Main Content - Two Columns ==================== */
@@ -584,6 +796,11 @@ u {
 .section-title.accent-yellow {
     color: #FFC107;
     border-bottom-color: #FFC107;
+}
+
+[data-theme="dark"] .section-title.accent-yellow {
+    color: #FFD54F;
+    border-bottom-color: #FFD54F;
 }
 
 .section-content {
@@ -754,6 +971,11 @@ u {
     border-bottom-color: #5a17e8;
 }
 
+[data-theme="dark"] #extraSkillsSection .section-title {
+    color: #b794f6;
+    border-bottom-color: #b794f6;
+}
+
 .experience-meta {
     display: flex;
     gap: 8px;
@@ -816,6 +1038,12 @@ u {
     border-radius: 8px;
     padding: 12px 14px;
     min-width: 0;
+    transition: background 0.3s ease;
+}
+
+[data-theme="dark"] .experience-achievements {
+    background: linear-gradient(135deg, #3d2f1a 0%, #4a3a1f 100%);
+    border-left-color: #756226;
 }
 
 .experience-achievements__header {
@@ -825,6 +1053,10 @@ u {
     margin-bottom: 6px;
     padding-bottom: 6px;
     border-bottom: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+[data-theme="dark"] .experience-achievements__header {
+    border-bottom-color: rgba(255, 213, 79, 0.4);
 }
 
 .experience-achievements__header .icon {
@@ -839,12 +1071,20 @@ u {
     color: #FFC107;
 }
 
+[data-theme="dark"] .experience-achievements__header .icon .iconify {
+    color: #FFD54F;
+}
+
 .experience-achievements__title {
     font-size: 13px;
     font-weight: 700;
     color: #F57C00;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .experience-achievements__title {
+    color: #FFB74D;
 }
 
 .experience-achievements__content {
@@ -881,6 +1121,10 @@ u {
     font-size: 10px;
 }
 
+[data-theme="dark"] .experience-achievements__content li:before {
+    color: #ae9236;
+}
+
 /* Numbered list items in achievements section */
 .experience-achievements__content ol li {
     counter-increment: achievements-counter;
@@ -893,6 +1137,10 @@ u {
     top: 0;
     color: #FFC107;
     font-size: 13px;
+}
+
+[data-theme="dark"] .experience-achievements__content ol li:before {
+    color: #FFD54F;
 }
 
 .experience-achievements__content li:last-child {
@@ -913,6 +1161,10 @@ u {
     border-bottom: 3px solid #FFC107;
     border-radius: 3px;
     padding-bottom: 1px;
+}
+
+[data-theme="dark"] .experience-achievements__content u {
+    border-bottom-color: #ae9236;
 }
 
 .experience-links {
@@ -942,6 +1194,12 @@ u {
     min-height: 44px;
     page-break-inside: avoid;
     break-inside: avoid;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .experience-link {
+    background: #353535;
+    border-color: rgba(255, 255, 255, 0.18);
 }
 
 /* Специфичные стили для секции experience - ссылки по размеру контента */
@@ -968,6 +1226,19 @@ u {
     justify-content: center;
     overflow: hidden;
     border-radius: 0;
+    transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .experience-link__preview {
+    background: #404040;
+}
+
+.experience-link__preview--fallback {
+    background: #e9ecf6;
+}
+
+[data-theme="dark"] .experience-link__preview--fallback {
+    background: #404040;
 }
 
 .experience-link--no-description .experience-link__preview {
@@ -1090,6 +1361,7 @@ u {
     margin: 6px 0 0 6px;
     page-break-inside: avoid;
     break-inside: avoid;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ==================== Extra Skills Section ==================== */
@@ -1112,10 +1384,20 @@ u {
     color: #5a17e8;
 }
 
+[data-theme="dark"] #extraSkills strong,
+[data-theme="dark"] #extraSkills b {
+    color: #b794f6;
+}
+
 /* ==================== Interests Section ==================== */
 #interestsSection .section-title {
     color: #10B981;
     border-bottom-color: #10B981;
+}
+
+[data-theme="dark"] #interestsSection .section-title {
+    color: #4ADE80;
+    border-bottom-color: #4ADE80;
 }
 
 #interests p {
@@ -1135,6 +1417,11 @@ u {
 #interests strong,
 #interests b {
     color: #10B981;
+}
+
+[data-theme="dark"] #interests strong,
+[data-theme="dark"] #interests b {
+    color: #4ADE80;
 }
 
 /* ==================== Projects Section ==================== */

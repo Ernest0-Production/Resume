@@ -1,11 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume - Loading...</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        // Apply theme immediately to prevent flash of light theme
+        (function() {
+            try {
+                const stored = localStorage.getItem('cv-generator-theme');
+                if (stored === 'dark' || stored === 'light') {
+                    document.documentElement.setAttribute('data-theme', stored);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {
+                // Ignore errors
+            }
+        })();
+    </script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 </head>
 
@@ -15,6 +30,9 @@
             <button type="button" class="pdf-download-btn" id="pdfDownloadBtn" aria-label="Download resume as PDF">
                 <span class="iconify pdf-download-btn__icon" data-icon="mdi:download" aria-hidden="true"></span>
                 <span class="pdf-download-btn__text">Download PDF</span>
+            </button>
+            <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Переключить темную тему">
+                <span class="iconify theme-toggle-btn__icon" data-icon="mdi:weather-night" aria-hidden="true"></span>
             </button>
             <div class="language-switcher" id="languageSwitcher" data-open="false">
                 <button type="button" class="language-switcher__trigger" id="languageSwitcherTrigger"
