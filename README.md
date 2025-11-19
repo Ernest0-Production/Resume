@@ -14,6 +14,7 @@ Static HTML resume site with PDF export capability. This project allows you to m
 - ✅ **Text formatting support** - Bold, italic, and underline in content
 - ✅ **Automatic icon detection** - LinkedIn, GitHub, Telegram icons automatically detected from URLs
 - ✅ **Local development server** - Easy to preview changes
+- ✅ **GitHub Pages ready** - Automatic deployment with GitHub Actions
 
 ## 🚀 Quick Start
 
@@ -300,6 +301,43 @@ PORT=3001 npm start
 - ✅ Firefox
 - ✅ Safari
 - ✅ Opera
+
+## 🚀 Deploying to GitHub Pages
+
+This project is ready to deploy to GitHub Pages with automatic builds via GitHub Actions.
+
+### Quick Deploy
+
+1. **Create a GitHub repository** and push your code:
+   ```bash
+   git remote add origin https://github.com/YOUR_USERNAME/cv-generator.git
+   git push -u origin main
+   ```
+
+2. **Generate static files** (required before first commit):
+   ```bash
+   npm run build
+   git add .
+   git commit -m "Add GitHub Pages support"
+   git push
+   ```
+
+3. **Enable GitHub Pages**:
+   - Go to your repository → **Settings** → **Pages**
+   - Under **Source**, select **GitHub Actions**
+   - The site will be available at `https://YOUR_USERNAME.github.io/cv-generator/`
+
+### Updating Your Resume
+
+After editing `resume.toml`:
+```bash
+npm run build  # Generate updated JSON files
+git add .
+git commit -m "Update resume"
+git push      # GitHub Actions will automatically deploy
+```
+
+For detailed instructions, see [DEPLOY.md](./DEPLOY.md)
 
 ## 📄 License
 
