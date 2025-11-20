@@ -28,7 +28,7 @@ email = "magatar136@gmail.com"
 
 "about.en" = """
 7 years of experience – **A-player**, informal leader, **founding engineer**
-• Been through **outsourcing, startup, mid-tech, big-tech**
+• Been through outsourcing, startup, mid-tech, big-tech
 • Built many apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
 • Twice built my own development team
 • **Love taking on big challenges**, not sinking in a big corporate
@@ -68,12 +68,13 @@ email = "magatar136@gmail.com"
 "extraSkills.en" = """
 • **App Store publishing** and Reject Resolution
 • **Mobile DevOps** — project infrastructure setup, CI/CD from scratch
+• **Pixel Perfect** layout and snapshot testing
 • Creating **Backend Driven UI**
-• **GIS** systems and cartography
 • **Audio/video** players, media content downloading
+• **GIS** systems and cartography
 """
 
-"interests" = """
+"interests.ru" = """
 **Подкасты**: КОДА КОДА, Podlodka, Запуск завтра, Бреслав и Ложечкин
 **Конференции**: CocoaHeads, Swift Heroes
 **Сообщества**: Вастрик.Клуб, твиттер

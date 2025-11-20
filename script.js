@@ -635,26 +635,39 @@ function renderHeader(data) {
             const iconContainer = document.createElement('span');
             iconContainer.className = 'icon';
 
-            const favicon = document.createElement('img');
-            favicon.className = 'favicon';
-            favicon.src = getFaviconUrl(ref.url);
-            favicon.alt = `${ref.text} favicon`;
-            favicon.loading = 'lazy';
-            favicon.decoding = 'async';
+            // For GitHub, always use iconify icon instead of favicon
+            const isGitHub = ref.url.includes('github.com');
 
-            const fallbackIcon = document.createElement('span');
-            fallbackIcon.className = 'iconify fallback-icon';
-            fallbackIcon.dataset.icon = getIconForLink(ref.url, ref.type);
-            fallbackIcon.setAttribute('aria-hidden', 'true');
-            fallbackIcon.style.display = 'none';
+            if (isGitHub) {
+                // For GitHub, show iconify icon directly
+                const fallbackIcon = document.createElement('span');
+                fallbackIcon.className = 'iconify';
+                fallbackIcon.dataset.icon = getIconForLink(ref.url, ref.type);
+                fallbackIcon.setAttribute('aria-hidden', 'true');
+                iconContainer.appendChild(fallbackIcon);
+            } else {
+                // For other links, try favicon first, fallback to iconify
+                const favicon = document.createElement('img');
+                favicon.className = 'favicon';
+                favicon.src = getFaviconUrl(ref.url);
+                favicon.alt = `${ref.text} favicon`;
+                favicon.loading = 'lazy';
+                favicon.decoding = 'async';
 
-            favicon.addEventListener('error', () => {
-                favicon.style.display = 'none';
-                fallbackIcon.style.display = 'inline-flex';
-            });
+                const fallbackIcon = document.createElement('span');
+                fallbackIcon.className = 'iconify fallback-icon';
+                fallbackIcon.dataset.icon = getIconForLink(ref.url, ref.type);
+                fallbackIcon.setAttribute('aria-hidden', 'true');
+                fallbackIcon.style.display = 'none';
 
-            iconContainer.appendChild(favicon);
-            iconContainer.appendChild(fallbackIcon);
+                favicon.addEventListener('error', () => {
+                    favicon.style.display = 'none';
+                    fallbackIcon.style.display = 'inline-flex';
+                });
+
+                iconContainer.appendChild(favicon);
+                iconContainer.appendChild(fallbackIcon);
+            }
 
             const textElement = document.createElement('span');
             textElement.className = 'text';
@@ -695,6 +708,12 @@ function renderAbout(data) {
  * Render expectation section
  */
 function renderExpectation(data) {
+    if (!data.expectation || (typeof data.expectation === 'string' && data.expectation.trim() === '')) {
+        document.getElementById('expectationSection').style.display = 'none';
+        return;
+    }
+
+    document.getElementById('expectationSection').style.display = '';
     const expectationElement = document.getElementById('expectation');
     const content = parseLists(data.expectation || '');
     expectationElement.innerHTML = content || '<p></p>';
@@ -755,11 +774,12 @@ function renderSkills(data) {
  * Render extra skills section
  */
 function renderExtraSkills(data) {
-    if (!data.extraSkills || data.extraSkills.trim() === '') {
+    if (!data.extraSkills || (typeof data.extraSkills === 'string' && data.extraSkills.trim() === '')) {
         document.getElementById('extraSkillsSection').style.display = 'none';
         return;
     }
 
+    document.getElementById('extraSkillsSection').style.display = '';
     const extraSkillsElement = document.getElementById('extraSkills');
     const content = parseLists(data.extraSkills || '');
     extraSkillsElement.innerHTML = content || '<p></p>';
@@ -769,14 +789,66 @@ function renderExtraSkills(data) {
  * Render interests section
  */
 function renderInterests(data) {
-    if (!data.interests || data.interests.trim() === '') {
+    if (!data.interests || (typeof data.interests === 'string' && data.interests.trim() === '')) {
         document.getElementById('interestsSection').style.display = 'none';
         return;
     }
 
+    document.getElementById('interestsSection').style.display = '';
     const interestsElement = document.getElementById('interests');
     const content = parseLists(data.interests || '');
     interestsElement.innerHTML = content || '<p></p>';
+}
+
+/**
+ * Adjust experience links position based on available width
+ * Positions links in bottom-left of experience-content if they fit, otherwise keeps them at the bottom
+ */
+function adjustExperienceLinksPosition() {
+    const experienceItems = document.querySelectorAll('.experience-item');
+
+    experienceItems.forEach(item => {
+        const links = item.querySelector('.experience-links');
+        const responsibilities = item.querySelector('.experience-responsibilities');
+        const experienceContent = item.querySelector('.experience-content');
+
+        if (!links || !responsibilities || !experienceContent) return;
+
+        // Store current parent
+        const currentParent = links.parentElement;
+        const isInContent = currentParent === experienceContent;
+        const isInResponsibilities = currentParent === responsibilities;
+
+        // Always measure from bottom position to get natural width
+        // Temporarily move to bottom if currently in responsibilities or content
+        let wasMoved = false;
+        if (isInResponsibilities || isInContent) {
+            item.appendChild(links);
+            wasMoved = true;
+            // Force reflow to ensure accurate measurement
+            void links.offsetWidth;
+        }
+
+        // Measure natural width of links (scrollWidth gives content width)
+        const linksNaturalWidth = links.scrollWidth;
+
+        // Measure available width in responsibilities column
+        const responsibilitiesWidth = responsibilities.offsetWidth;
+
+        // Check if links fit in responsibilities column (with small margin for safety)
+        const margin = 5; // Small margin to account for rounding
+        if (linksNaturalWidth <= responsibilitiesWidth - margin) {
+            // Move links inside experience-content with absolute positioning
+            if (!isInContent || links.parentElement !== experienceContent) {
+                experienceContent.appendChild(links);
+            }
+        } else {
+            // Keep links at the bottom (after experience-content)
+            if (isInContent || wasMoved) {
+                item.appendChild(links);
+            }
+        }
+    });
 }
 
 /**
@@ -852,6 +924,43 @@ function renderExperience(data) {
             </div>
         `;
     }).join('');
+
+    // Adjust links position after rendering and images load
+    // Use setTimeout to ensure DOM is fully rendered
+    setTimeout(() => {
+        adjustExperienceLinksPosition();
+
+        // Also adjust after all images in links are loaded
+        const linkImages = experienceElement.querySelectorAll('.experience-link__favicon');
+        let imagesLoaded = 0;
+        const totalImages = linkImages.length;
+
+        if (totalImages === 0) {
+            adjustExperienceLinksPosition();
+        } else {
+            linkImages.forEach(img => {
+                if (img.complete) {
+                    imagesLoaded++;
+                    if (imagesLoaded === totalImages) {
+                        adjustExperienceLinksPosition();
+                    }
+                } else {
+                    img.addEventListener('load', () => {
+                        imagesLoaded++;
+                        if (imagesLoaded === totalImages) {
+                            adjustExperienceLinksPosition();
+                        }
+                    });
+                    img.addEventListener('error', () => {
+                        imagesLoaded++;
+                        if (imagesLoaded === totalImages) {
+                            adjustExperienceLinksPosition();
+                        }
+                    });
+                }
+            });
+        }
+    }, 0);
 }
 
 /**
@@ -1043,6 +1152,15 @@ function initializeResume() {
     initLanguageSwitcher();
     initPDFDownloadButton();
     loadResumeData(initialLanguage);
+
+    // Adjust experience links position on window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            adjustExperienceLinksPosition();
+        }, 100);
+    });
 }
 
 if (document.readyState === 'loading') {
@@ -1057,6 +1175,15 @@ if (document.readyState === 'loading') {
 function normalizeResumeData(data) {
     const safeString = (v) => (typeof v === 'string' ? v.trim() : '');
     const safeArray = (v) => (Array.isArray(v) ? v : []);
+    // For optional fields: return undefined if field is missing, empty string if empty
+    const optionalString = (v) => {
+        if (v === undefined || v === null) return undefined;
+        if (typeof v === 'string') {
+            const trimmed = v.trim();
+            return trimmed === '' ? undefined : trimmed;
+        }
+        return undefined;
+    };
 
     const trimStringFields = (obj) => {
         if (!obj || typeof obj !== 'object') return obj;
@@ -1090,12 +1217,12 @@ function normalizeResumeData(data) {
         references: safeArray(data && data.references).map(ref => trimStringFields(ref)),
         // Content
         about: safeString(data && data.about),
-        expectation: safeString(data && data.expectation),
+        expectation: optionalString(data && data.expectation),
         languages: safeArray(data && data.languages).map(lang => trimStringFields(lang)),
-        skillsIntro: safeString(data && data.skillsIntro),
+        skillsIntro: optionalString(data && data.skillsIntro),
         skills: safeArray(data && data.skills).map(skill => trimStringFields(skill)),
-        extraSkills: safeString(data && data.extraSkills),
-        interests: safeString(data && data.interests),
+        extraSkills: optionalString(data && data.extraSkills),
+        interests: optionalString(data && data.interests),
         experience: safeArray(data && data.experience).map(exp => trimStringFields(exp)),
         projects: safeArray(data && data.projects).map(proj => trimStringFields(proj)),
         education: safeArray(data && data.education).map(edu => trimStringFields(edu)),

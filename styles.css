@@ -1019,6 +1019,7 @@ u {
     margin-bottom: 8px;
     align-items: flex-start;
     flex: 1;
+    position: relative;
 }
 
 .experience-responsibilities,
@@ -1184,6 +1185,23 @@ u {
     width: 85%;
     margin-top: auto;
     align-self: flex-start;
+}
+
+/* When links are positioned absolutely in bottom-left of experience-content */
+.experience-content > .experience-links {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: fit-content;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* When links are inside responsibilities, adjust styling */
+.experience-responsibilities > .experience-links {
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 0;
 }
 
 .experience-link {
