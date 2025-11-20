@@ -54,7 +54,8 @@ email = "magatar136@gmail.com"
 • Not tied to a specific industry — interested in the role itself and **impact on the project**
 """
 
-"skillsIntro" = "Перечислены только практические навыки"
+"skillsIntro.ru" = "Перечислены только практические навыки"
+"skillsIntro.en" = "Only practical skills are listed"
 
 "extraSkills.ru" = """
 • **Публикация в App Store** и Reject Resolution
