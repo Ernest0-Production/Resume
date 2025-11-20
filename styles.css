@@ -1003,6 +1003,14 @@ u {
     color: var(--color-gray);
     font-style: italic;
     margin-bottom: 8px;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+.experience-about p {
+    font-size: 13px;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 
 .experience-content {

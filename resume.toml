@@ -11,7 +11,7 @@ avatar = "avatar.jpg"
 "lastName.ru" = "Бабаян"
 "lastName.en" = "Babayan"
 
-jobTitle = "Tech Lead • iOS Developer • Infra Architect"
+jobTitle = "Tech Lead • iOS Developer"
 
 location = "Yerevan, Armenia • Moscow, Russia"
 email = "magatar136@gmail.com"
@@ -203,7 +203,7 @@ period = "Apr 2023 — Nov 2025"
 • **CI/CD и автоматизация** — улучшение DX/QX, quality gate
 • Проектирование архитектуры — **модуляризация** проекта и арх.ревью на этапе проработки решений
 • Создание и рефакторинг **core-модулей** приложения
-• Направление тех.вектора развития — стэк, архитектура, инструменты итп.
+• Направление тех.вектора — стэк, архитектура, инструменты итп.
 • Член тех.коммитета — **квартальное планирование**, руководство командой дежурных
 • Knowledge-sharing — техническая документация, демо, анонсы, Q&A сессии
 """
