@@ -45,6 +45,8 @@ jobs:
           ls -la data/ || echo "ERROR: data directory not found!"
           echo "Checking for JSON files..."
           ls -la data/*.json || echo "ERROR: JSON files not found!"
+          echo "Checking for generated OpenGraph image..."
+          ls -la og-image.png || echo "ERROR: og-image.png not found!"
           echo "Build verification complete"
 
       - name: Setup Pages

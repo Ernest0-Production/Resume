@@ -7,7 +7,8 @@
     "start": "node server.js",
     "dev": "node server.js",
     "serve": "node server.js",
-    "build": "node build.js"
+    "build": "node build.js && node generate-og-image.js",
+    "og-image": "node generate-og-image.js"
   },
   "keywords": [
     "resume",
@@ -22,6 +23,7 @@
     "node": ">=12.0.0"
   },
   "dependencies": {
-    "@iarna/toml": "^3.0.0"
+    "@iarna/toml": "^3.0.0",
+    "puppeteer": "^24.15.0"
   }
 }

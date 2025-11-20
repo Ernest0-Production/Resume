@@ -45,7 +45,14 @@ npm start
 ```bash
 npm run dev    # Same as npm start
 npm run serve  # Same as npm start
+npm run og-image  # Generate only the OpenGraph image
 ```
+
+### OpenGraph Preview Automation
+
+- `npm run build` now renders `og-preview.html` headlessly with Puppeteer and saves the output as `og-image.png`
+- `og-image.png` is deployed together with the site, so OpenGraph/Twitter cards always have a fresh preview
+- You can regenerate just the preview without rebuilding data via `npm run og-image`
 
 ## 📝 Editing Your Resume
 

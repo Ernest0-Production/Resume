@@ -4,11 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume - Loading...</title>
+    <title>Ernest Babayan</title>
+
+    <!-- OpenGraph Meta Tags (will be updated dynamically) -->
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="profile">
+    <meta property="og:url" content="https://ernest0n.github.io/cv-generator/">
+    <meta property="profile:first_name" content="">
+    <meta property="profile:last_name" content="">
+
+    <!-- Twitter Card Meta Tags (will be updated dynamically) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="og-image.png">
+
     <link rel="stylesheet" href="styles.css">
     <script>
         // Apply theme immediately to prevent flash of light theme
-        (function() {
+        (function () {
             try {
                 const stored = localStorage.getItem('cv-generator-theme');
                 if (stored === 'dark' || stored === 'light') {
@@ -22,6 +40,81 @@
         })();
     </script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script>
+        // Update OpenGraph meta tags from resume.toml (English version)
+        async function updateOpenGraphMetaTags() {
+            try {
+                const response = await fetch('/api/resume?lang=en');
+                if (!response.ok) {
+                    // Try static file as fallback
+                    const staticResponse = await fetch('data/resume-en.json');
+                    if (!staticResponse.ok) {
+                        throw new Error(`HTTP error! status: ${staticResponse.status}`);
+                    }
+                    const data = await staticResponse.json();
+                    updateMetaTags(data);
+                    return;
+                }
+                const data = await response.json();
+                updateMetaTags(data);
+            } catch (error) {
+                console.error('Error loading resume data for OpenGraph meta tags:', error);
+            }
+        }
+
+        function updateMetaTags(data) {
+            const firstName = data.firstName || '';
+            const lastName = data.lastName || '';
+            const fullName = `${firstName} ${lastName}`.trim();
+            const jobTitle = data.jobTitle || '';
+
+            // Get first line from about.en for description
+            let description = '';
+            if (data.about) {
+                const aboutLines = data.about.split('\n');
+                const firstLine = aboutLines[0]?.trim() || '';
+                // Remove markdown formatting (**bold**)
+                description = firstLine.replace(/\*\*/g, '');
+            }
+
+            // Update og:title
+            const ogTitle = fullName && jobTitle ? `${fullName} - ${jobTitle}` : (fullName || jobTitle || 'Resume');
+            updateMetaTag('property', 'og:title', ogTitle);
+            updateMetaTag('name', 'twitter:title', ogTitle);
+
+            // Update og:description
+            if (description) {
+                updateMetaTag('property', 'og:description', description);
+                updateMetaTag('name', 'twitter:description', description);
+            }
+
+            // Update profile names
+            if (firstName) {
+                updateMetaTag('property', 'profile:first_name', firstName);
+            }
+            if (lastName) {
+                updateMetaTag('property', 'profile:last_name', lastName);
+            }
+
+            // Update page title
+            if (fullName && jobTitle) {
+                document.title = `${fullName} - ${jobTitle}`;
+            } else if (fullName) {
+                document.title = `${fullName} - Resume`;
+            }
+        }
+
+        function updateMetaTag(attr, value, content) {
+            const selector = `meta[${attr}="${value}"]`;
+            const metaTag = document.querySelector(selector);
+            if (metaTag) {
+                metaTag.setAttribute('content', content);
+            }
+        }
+
+        // Update meta tags when page loads
+        updateOpenGraphMetaTags();
+    </script>
 </head>
 
 <body>
