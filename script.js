@@ -272,9 +272,16 @@ function persistLanguage(language) {
 }
 
 /**
- * Determine initial language based on storage or browser settings
+ * Determine initial language based on URL parameter, storage or browser settings
  */
 function getInitialLanguage() {
+    // Check URL parameter first (highest priority)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlLang = urlParams.get('lang');
+    if (urlLang && (urlLang === 'ru' || urlLang === 'en')) {
+        return urlLang;
+    }
+
     const stored = readStoredLanguage();
     if (stored) return stored;
 
