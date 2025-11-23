@@ -405,7 +405,7 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 
 "achievements.ru" = """
 • __Backend Driven UI__ движок для горнолыжного курорта
-• Сквозная навигация экранов и состояния __карты__ через __диплинки__f
+• Сквозная навигация экранов и состояния __карты__ через __диплинки__
 • Форма для прохождения __онлайн-тестирования__ на время (олимпиада, закрепление материала, итп)
 • __Плеер__ для прослушивания подкастов с плавающей панелью управления
 • Поддержка __оффлайн__ режима с кэшированием в __Realm__
@@ -423,12 +423,12 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 """
 
 [[experience.links]]
-title = "Мембраны и PIR ТЕХНОНИКОЛЬ"
-url = "https://apps.apple.com/ru/app/id1501684562"
-
-[[experience.links]]
 title = "TN LEARN - Учебная программа"
 url = "https://apps.apple.com/app/id1470670122"
+
+[[experience.links]]
+title = "Мембраны и PIR ТЕХНОНИКОЛЬ"
+url = "https://apps.apple.com/ru/app/id1501684562"
 
 [[experience.links]]
 title = "Revitonica"
