@@ -314,12 +314,10 @@
                     }
                 }
 
-                // Update subtitle from first line of about.en with markdown formatting support
-                if (data.about) {
-                    const aboutLines = data.about.split('\n');
-                    const firstLine = aboutLines[0]?.trim() || '';
+                // Update subtitle from dedicated subtitle field with markdown formatting support
+                if (data.subtitle) {
                     // Convert markdown to HTML: **bold** -> <strong>, *italic* -> <em>
-                    let formattedLine = firstLine
+                    let formattedLine = data.subtitle
                         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
                         .replace(/\*([^*]+)\*/g, '<em>$1</em>');
                     const subtitleElement = document.querySelector('.og-subtitle');
