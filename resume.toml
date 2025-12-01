@@ -33,7 +33,7 @@ subtitle = "7 years of experience • founding engineer"
 • Built many apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
 • Twice built my own development team
 • **Love taking on big challenges**, not drowning in a big corporate
-• Open to communication; I'll come forward and highlight risks
+• Open to communication; I'll personally identify and highlight risks
 • For a **practical and rational** approach to building architecture, not buzzword-driven
 """
 
@@ -152,13 +152,14 @@ keywords = [
     "URLSession",
     "Alamofire / Moya",
     "Nuke / Kingfisher",
-    "CoreAnimation",
+    "Core Animation",
     "SnapKit",
     "Lottie",
     "Swinject",
-    "CoreData",
+    "Core Data",
     "Realm",
     "StoreKit",
+    # "Keychain",
     "AVFoundation",
     "AVKit",
     "Firebase",

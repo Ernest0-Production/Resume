@@ -2,7 +2,7 @@
 @font-face {
     font-family: 'SF Pro Rounded';
     src: local('SF Pro Rounded'),
-         url('fonts/SF-Pro-Rounded-Light.otf') format('opentype');
+        url('fonts/SF-Pro-Rounded-Light.otf') format('opentype');
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -11,7 +11,7 @@
 @font-face {
     font-family: 'SF Pro Rounded';
     src: local('SF Pro Rounded'),
-         url('fonts/SF-Pro-Rounded-Regular.otf') format('opentype');
+        url('fonts/SF-Pro-Rounded-Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -20,7 +20,7 @@
 @font-face {
     font-family: 'SF Pro Rounded';
     src: local('SF Pro Rounded'),
-         url('fonts/SF-Pro-Rounded-Medium.otf') format('opentype');
+        url('fonts/SF-Pro-Rounded-Medium.otf') format('opentype');
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -29,7 +29,7 @@
 @font-face {
     font-family: 'SF Pro Rounded';
     src: local('SF Pro Rounded'),
-         url('fonts/SF-Pro-Rounded-Bold.otf') format('opentype');
+        url('fonts/SF-Pro-Rounded-Bold.otf') format('opentype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -38,7 +38,7 @@
 @font-face {
     font-family: 'SF Pro Rounded';
     src: local('SF Pro Rounded'),
-         url('fonts/SF-Pro-Rounded-Heavy.otf') format('opentype');
+        url('fonts/SF-Pro-Rounded-Heavy.otf') format('opentype');
     font-weight: 800;
     font-style: normal;
     font-display: swap;
@@ -47,7 +47,7 @@
 @font-face {
     font-family: 'SF Pro Rounded';
     src: local('SF Pro Rounded'),
-         url('fonts/SF-Pro-Rounded-Black.otf') format('opentype');
+        url('fonts/SF-Pro-Rounded-Black.otf') format('opentype');
     font-weight: 900;
     font-style: normal;
     font-display: swap;
@@ -137,6 +137,11 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Hide ATS layout by default; ATS stylesheet re-enables it when needed */
+.ats-layout {
+    display: none;
+}
+
 
 @media print {
 
@@ -150,29 +155,44 @@ body {
         --color-gray: #666666 !important;
         --color-light-gray: #F5F5F5 !important;
         --color-border: #CCCCCC !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     body,
-    body[data-theme="dark"] {
+    body[data-theme="dark"],
+    body[data-view-mode="ats-friendly"],
+    body[data-view-mode="ats-friendly"][data-theme="dark"],
+    body[data-view-mode="user-friendly"],
+    body[data-view-mode="user-friendly"][data-theme="dark"] {
         background: #ffffff !important;
-        padding: 0;
-        min-width: auto;
-        min-height: auto;
+        padding: 0 !important;
+        margin: 0 !important;
+        min-width: auto !important;
+        min-height: auto !important;
         color: #000000 !important;
+        display: block !important;
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
     }
 
     .container,
-    [data-theme="dark"] .container {
-        width: 100%;
-        max-width: 100%;
-        min-width: auto;
-        min-height: auto;
-        padding: 0;
-        margin: 0;
+    [data-theme="dark"] .container,
+    .ats-layout,
+    [data-theme="dark"] .ats-layout,
+    body[data-view-mode="ats-friendly"] .ats-layout,
+    body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-layout {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: auto !important;
+        min-height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
         box-shadow: none !important;
         overflow: visible;
         background-image: none;
         background: #ffffff !important;
+        border: none !important;
     }
 
     /* Override dark theme styles for print */
@@ -299,7 +319,8 @@ body {
     .header-bar,
     .header-bar__controls,
     .pdf-download-btn,
-    .theme-toggle-btn {
+    .theme-toggle-btn,
+    .view-mode-switcher {
         display: none !important;
     }
 }
@@ -364,6 +385,94 @@ u {
     overflow: visible;
     position: relative;
     z-index: 1;
+}
+
+.view-mode-switcher {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    z-index: 2000;
+    pointer-events: auto;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background-color: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="dark"] .view-mode-switcher {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.view-mode-switcher__option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: var(--color-black);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    position: relative;
+}
+
+.view-mode-switcher__icon {
+    font-size: 16px;
+    color: currentColor;
+}
+
+.view-mode-switcher__text {
+    min-width: auto;
+}
+
+.view-mode-switcher__option:first-child {
+    border-top-left-radius: 999px;
+    border-bottom-left-radius: 999px;
+}
+
+.view-mode-switcher__option:last-child {
+    border-top-right-radius: 999px;
+    border-bottom-right-radius: 999px;
+}
+
+.view-mode-switcher__option:hover {
+    background-color: var(--color-light-gray);
+}
+
+.view-mode-switcher__option--active {
+    background-color: var(--color-blue);
+    color: #ffffff;
+}
+
+.view-mode-switcher__option--active:hover {
+    background-color: var(--color-blue);
+}
+
+.view-mode-switcher__option--active .view-mode-switcher__icon {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .view-mode-switcher__option {
+    color: var(--color-black);
+}
+
+[data-theme="dark"] .view-mode-switcher__option:hover {
+    background-color: #353535;
+}
+
+[data-theme="dark"] .view-mode-switcher__option--active {
+    background-color: var(--color-blue);
+    color: #ffffff;
 }
 
 .header-bar {
@@ -482,7 +591,7 @@ u {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px;
+    padding: 8px 20px;
     border-radius: 999px;
     border: 1px solid var(--color-border);
     background-color: #ffffff;
@@ -572,6 +681,16 @@ u {
 }
 
 @media (max-width: 1024px) {
+    .view-mode-switcher {
+        top: 16px;
+        left: 16px;
+    }
+
+    .view-mode-switcher__option {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+
     .header-bar {
         top: 16px;
         right: 16px;
@@ -1031,6 +1150,7 @@ u {
     margin-bottom: 0;
     flex-shrink: 0;
 }
+
 
 .experience-meta .icon {
     font-style: normal;
@@ -1588,3 +1708,4 @@ u {
     page-break-before: always;
     break-before: always;
 }
+

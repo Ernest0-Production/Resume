@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ernest Babayan</title>
+    <title>Loading...</title>
 
     <!-- OpenGraph Meta Tags (will be updated dynamically) -->
     <meta property="og:title" content="Ernest Babayan">
@@ -23,7 +23,8 @@
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="og-image.png">
 
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.hr.css">
+    <link rel="stylesheet" href="styles.ats.css" id="atsStylesheet" disabled>
     <script>
         // Apply theme immediately to prevent flash of light theme
         (function () {
@@ -118,11 +119,22 @@
 </head>
 
 <body>
+    <div class="view-mode-switcher" id="viewModeSwitcher">
+        <button type="button" class="view-mode-switcher__option view-mode-switcher__option--active"
+            data-mode="user-friendly" aria-pressed="true">
+            <span class="iconify view-mode-switcher__icon" data-icon="mdi:account-circle" aria-hidden="true"></span>
+            <span class="view-mode-switcher__text">HR Friendly</span>
+        </button>
+        <button type="button" class="view-mode-switcher__option" data-mode="ats-friendly" aria-pressed="false">
+            <span class="iconify view-mode-switcher__icon" data-icon="mdi:robot" aria-hidden="true"></span>
+            <span class="view-mode-switcher__text">ATS Friendly</span>
+        </button>
+    </div>
     <div class="header-bar">
         <div class="header-bar__controls">
-            <button type="button" class="pdf-download-btn" id="pdfDownloadBtn" aria-label="Download resume as PDF">
-                <span class="iconify pdf-download-btn__icon" data-icon="mdi:download" aria-hidden="true"></span>
-                <span class="pdf-download-btn__text">Download PDF</span>
+            <button type="button" class="pdf-download-btn" id="pdfDownloadBtn" aria-label="Печатать резюме">
+                <span class="iconify pdf-download-btn__icon" data-icon="mdi:printer" aria-hidden="true"></span>
+                <span class="pdf-download-btn__text">Печатать</span>
             </button>
             <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Переключить темную тему">
                 <span class="iconify theme-toggle-btn__icon" data-icon="mdi:weather-night" aria-hidden="true"></span>
@@ -130,7 +142,7 @@
             <div class="language-switcher" id="languageSwitcher" data-open="false">
                 <button type="button" class="language-switcher__trigger" id="languageSwitcherTrigger"
                     aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
-                    <span class="language-switcher__label" id="languageSwitcherCurrent">RUS</span>
+                    <span class="language-switcher__label" id="languageSwitcherCurrent">🇷🇺 RUS</span>
                     <span class="iconify language-switcher__icon" data-icon="mdi:chevron-down"
                         aria-hidden="true"></span>
                 </button>
@@ -138,13 +150,13 @@
                     <li>
                         <button type="button" class="language-switcher__option" data-lang="ru" role="option"
                             aria-selected="false">
-                            RUS
+                            🇷🇺 RUS
                         </button>
                     </li>
                     <li>
                         <button type="button" class="language-switcher__option" data-lang="en" role="option"
                             aria-selected="false">
-                            ENG
+                            🇬🇧 ENG
                         </button>
                     </li>
                 </ul>
@@ -298,6 +310,47 @@
         </div>
     </div>
 
+    <div class="ats-layout" id="atsLayout" aria-live="polite">
+        <header class="ats-header">
+            <div class="ats-header__left">
+                <h1 class="ats-header__name" id="atsFullName">Loading...</h1>
+                <p class="ats-header__title" id="atsJobTitle"></p>
+            </div>
+            <div class="ats-header__contacts">
+                <span id="atsEmail">Loading...</span>
+                <span id="atsLinkedIn"></span>
+                <span id="atsLocation"></span>
+            </div>
+        </header>
+
+        <section class="ats-section" id="atsAboutSection">
+            <h2 class="ats-section__title">ABOUT</h2>
+            <div class="ats-section__content" id="atsAbout">
+                <p>Loading...</p>
+            </div>
+        </section>
+
+        <section class="ats-section" id="atsSkillsSection">
+            <h2 class="ats-section__title">SKILLS</h2>
+            <div class="ats-section__content" id="atsSkills">Loading...</div>
+        </section>
+
+        <section class="ats-section" id="atsExperienceSection">
+            <h2 class="ats-section__title">EXPERIENCE</h2>
+            <div class="ats-section__content" id="atsExperience">
+                <p>Loading...</p>
+            </div>
+        </section>
+
+        <section class="ats-section" id="atsEducationSection">
+            <h2 class="ats-section__title">EDUCATION</h2>
+            <div class="ats-section__content" id="atsEducation">
+                <p>Loading...</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="ats-layout.js"></script>
     <script src="script.js"></script>
 </body>
 

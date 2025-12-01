@@ -230,13 +230,13 @@ function initThemeToggle() {
 const LANGUAGE_STORAGE_KEY = 'cv-generator-language';
 const LANGUAGE_CONFIG = {
     ru: {
-        label: 'RUS',
+        label: '🇷🇺 RUS',
         path: '/api/resume?lang=ru',
         staticPath: 'data/resume-ru.json',
         htmlLang: 'ru',
     },
     en: {
-        label: 'ENG',
+        label: '🇬🇧 ENG',
         path: '/api/resume?lang=en',
         staticPath: 'data/resume-en.json',
         htmlLang: 'en',
@@ -352,6 +352,142 @@ function initPDFDownloadButton() {
         event.preventDefault();
         event.stopPropagation();
         downloadResumeAsPDF();
+    });
+}
+
+// ==================== View Mode Switcher Config ====================
+
+const VIEW_MODE_STORAGE_KEY = 'cv-generator-view-mode';
+const DEFAULT_VIEW_MODE = 'user-friendly';
+let currentViewMode = DEFAULT_VIEW_MODE;
+
+/**
+ * Read view mode from localStorage
+ */
+function readStoredViewMode() {
+    try {
+        const stored = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+        if (stored === 'user-friendly' || stored === 'ats-friendly') {
+            return stored;
+        }
+    } catch (error) {
+        console.warn('Unable to access localStorage for view mode preferences:', error);
+    }
+    return null;
+}
+
+/**
+ * Persist selected view mode to localStorage
+ */
+function persistViewMode(mode) {
+    try {
+        localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
+    } catch (error) {
+        console.warn('Unable to persist view mode preference:', error);
+    }
+}
+
+/**
+ * Get initial view mode based on storage
+ */
+function getInitialViewMode() {
+    const stored = readStoredViewMode();
+    return stored || DEFAULT_VIEW_MODE;
+}
+
+/**
+ * Update view mode switcher UI state
+ */
+function updateViewModeSwitcherUI(mode) {
+    const options = document.querySelectorAll('.view-mode-switcher__option');
+
+    options.forEach(option => {
+        const isActive = option.dataset.mode === mode;
+        option.classList.toggle('view-mode-switcher__option--active', isActive);
+        option.setAttribute('aria-pressed', String(isActive));
+    });
+}
+
+/**
+ * Apply layout changes based on selected view mode
+ */
+function applyViewMode(mode) {
+    const body = document.body;
+    if (!body) return;
+    body.dataset.viewMode = mode;
+
+    const atsStylesheet = document.getElementById('atsStylesheet');
+    if (atsStylesheet) {
+        atsStylesheet.disabled = mode !== 'ats-friendly';
+    }
+
+    const hrLayout = document.querySelector('.container');
+    const atsLayout = document.getElementById('atsLayout');
+
+    if (hrLayout) {
+        hrLayout.hidden = mode === 'ats-friendly';
+    }
+
+    if (atsLayout) {
+        atsLayout.hidden = mode !== 'ats-friendly';
+    }
+}
+
+/**
+ * Handle view mode change
+ */
+function handleViewModeChange(mode) {
+    if (mode === currentViewMode) return;
+
+    currentViewMode = mode;
+    persistViewMode(mode);
+    updateViewModeSwitcherUI(mode);
+    applyViewMode(mode);
+    console.log(`View mode changed to: ${mode}`);
+}
+
+/**
+ * Initialize view mode switcher
+ */
+function initViewModeSwitcher() {
+    const switcher = document.getElementById('viewModeSwitcher');
+    if (!switcher) {
+        console.warn('View mode switcher not found.');
+        return;
+    }
+
+    const options = Array.from(switcher.querySelectorAll('.view-mode-switcher__option'));
+    if (options.length === 0) {
+        console.warn('View mode switcher options not found.');
+        return;
+    }
+
+    // Set initial view mode
+    const initialMode = getInitialViewMode();
+    currentViewMode = initialMode;
+    updateViewModeSwitcherUI(initialMode);
+    applyViewMode(initialMode);
+
+    // Add click event listeners
+    options.forEach(option => {
+        option.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const mode = option.dataset.mode;
+            if (mode) {
+                handleViewModeChange(mode);
+            }
+        });
+
+        option.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                const mode = option.dataset.mode;
+                if (mode) {
+                    handleViewModeChange(mode);
+                }
+            }
+        });
     });
 }
 
@@ -583,14 +719,33 @@ function updateLanguageSwitcherUI(language) {
 }
 
 /**
+ * Update print button text based on current language
+ */
+function updatePrintButtonText(language) {
+    const pdfButton = document.getElementById('pdfDownloadBtn');
+    if (!pdfButton) return;
+
+    const buttonText = pdfButton.querySelector('.pdf-download-btn__text');
+    if (buttonText) {
+        buttonText.textContent = language === 'ru' ? 'Распечатать' : 'Print';
+    }
+
+    const ariaLabel = language === 'ru' ? 'Печатать резюме' : 'Print resume';
+    pdfButton.setAttribute('aria-label', ariaLabel);
+}
+
+/**
  * Render header section
  */
 function renderHeader(data) {
-    // Update page title
-    if (data.pageTitle) {
-        document.title = data.pageTitle;
-    } else if (data.firstName && data.lastName) {
-        document.title = `${data.firstName} ${data.lastName} - Resume`;
+    // Update page title using profile name
+    if (data.firstName && data.lastName) {
+        const fullName = `${data.firstName} ${data.lastName}`;
+        if (data.jobTitle) {
+            document.title = `${fullName} - ${data.jobTitle}`;
+        } else {
+            document.title = `${fullName} - Resume`;
+        }
     }
 
     // Full name
@@ -1110,6 +1265,7 @@ async function loadResumeData(language = currentLanguage) {
         persistLanguage(language);
         setDocumentLanguage(config);
         updateLanguageSwitcherUI(language);
+        updatePrintButtonText(language);
 
         // Render all sections
         renderHeader(normalized);
@@ -1122,6 +1278,12 @@ async function loadResumeData(language = currentLanguage) {
         renderExperience(normalized);
         renderProjects(normalized);
         renderEducationLanguages(normalized);
+
+        if (window.AtsLayout && typeof window.AtsLayout.render === 'function') {
+            window.AtsLayout.render(normalized, { language: currentLanguage });
+        } else {
+            console.warn('AtsLayout renderer is not available');
+        }
 
         console.log('Resume data loaded successfully!');
     } catch (error) {
@@ -1155,9 +1317,11 @@ function initializeResume() {
     const initialConfig = getLanguageConfig(initialLanguage);
     setDocumentLanguage(initialConfig);
     updateLanguageSwitcherUI(initialLanguage);
+    updatePrintButtonText(initialLanguage);
     initThemeToggle();
     initLanguageSwitcher();
     initPDFDownloadButton();
+    initViewModeSwitcher();
     loadResumeData(initialLanguage);
 
     // Adjust experience links position on window resize
