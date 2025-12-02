@@ -6,7 +6,7 @@ body[data-view-mode="ats-friendly"] {
 
 [data-theme="dark"] body[data-view-mode="ats-friendly"] {
     background: #1f1f1f;
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 body[data-view-mode="ats-friendly"] .container {
@@ -34,7 +34,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 
 [data-theme="dark"] .ats-layout {
     background-color: #1a1a1a;
-    color: #e0e0e0;
+    color: #AAA599;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -148,7 +148,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 }
 
 [data-theme="dark"] .ats-section__title {
-    border-top-color: #e0e0e0;
+    border-top-color: #AAA599;
 }
 
 .ats-section__content {
@@ -291,7 +291,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 
 [data-theme="dark"] .ats-experience__row--company,
 [data-theme="dark"] .ats-experience__row:has(.ats-experience__company-about) {
-    border-left-color: #e0e0e0;
+    border-left-color: #AAA599;
 }
 
 .ats-experience__period {
@@ -320,7 +320,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 }
 
 [data-theme="dark"] .ats-experience__achievements-label {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 .ats-projects-list {
@@ -409,40 +409,40 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 [data-theme="dark"] .ats-header__name,
 [data-theme="dark"] .ats-header__title,
 [data-theme="dark"] .ats-header__contacts {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-section__content {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-section__content p {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] #atsSkills {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-section__content ul,
 [data-theme="dark"] .ats-section__content ol {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-experience__item {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-experience__row {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-experience__company {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-experience__position {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-experience__company-about {
@@ -454,31 +454,31 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 }
 
 [data-theme="dark"] .ats-experience__item p {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-projects-list {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-project__title-row {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-education__item {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-education__row {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-education__degree {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 [data-theme="dark"] .ats-education__university {
-    color: #e0e0e0;
+    color: #AAA599;
 }
 
 @media print {
