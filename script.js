@@ -719,6 +719,71 @@ function updateLanguageSwitcherUI(language) {
 }
 
 /**
+ * Update section titles based on current language
+ */
+function updateSectionTitles(language) {
+    // Update "About Me" section title
+    const aboutTitleElement = document.querySelector('#aboutSection .section-title');
+    if (aboutTitleElement) {
+        const titleRu = aboutTitleElement.getAttribute('data-title-ru');
+        const titleEn = aboutTitleElement.getAttribute('data-title-en');
+        const iconElement = aboutTitleElement.querySelector('.icon');
+
+        if (iconElement) {
+            const title = language === 'ru' ? titleRu : titleEn;
+            aboutTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
+        }
+    }
+
+    // Update "What I'm Looking For" section title
+    const expectationTitleElement = document.querySelector('#expectationSection .section-title');
+    if (expectationTitleElement) {
+        const titleRu = expectationTitleElement.getAttribute('data-title-ru');
+        const titleEn = expectationTitleElement.getAttribute('data-title-en');
+        const iconElement = expectationTitleElement.querySelector('.icon');
+        const hasAccentClass = expectationTitleElement.classList.contains('accent-red');
+
+        if (iconElement) {
+            const title = language === 'ru' ? titleRu : titleEn;
+            expectationTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
+            if (hasAccentClass) {
+                expectationTitleElement.classList.add('accent-red');
+            }
+        }
+    }
+
+    // Update "Interests" section title
+    const interestsTitleElement = document.querySelector('#interestsSection .section-title');
+    if (interestsTitleElement) {
+        const titleRu = interestsTitleElement.getAttribute('data-title-ru');
+        const titleEn = interestsTitleElement.getAttribute('data-title-en');
+        const iconElement = interestsTitleElement.querySelector('.icon');
+
+        if (iconElement) {
+            const title = language === 'ru' ? titleRu : titleEn;
+            interestsTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
+        }
+    }
+
+    // Update "Education & Languages" section title
+    const educationLanguagesTitleElement = document.querySelector('#educationLanguagesSection .section-title');
+    if (educationLanguagesTitleElement) {
+        const titleRu = educationLanguagesTitleElement.getAttribute('data-title-ru');
+        const titleEn = educationLanguagesTitleElement.getAttribute('data-title-en');
+        const iconElement = educationLanguagesTitleElement.querySelector('.icon');
+        const hasAccentClass = educationLanguagesTitleElement.classList.contains('accent-yellow');
+
+        if (iconElement) {
+            const title = language === 'ru' ? titleRu : titleEn;
+            educationLanguagesTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
+            if (hasAccentClass) {
+                educationLanguagesTitleElement.classList.add('accent-yellow');
+            }
+        }
+    }
+}
+
+/**
  * Update print button text based on current language
  */
 function updatePrintButtonText(language) {
@@ -1266,6 +1331,7 @@ async function loadResumeData(language = currentLanguage) {
         setDocumentLanguage(config);
         updateLanguageSwitcherUI(language);
         updatePrintButtonText(language);
+        updateSectionTitles(language);
 
         // Render all sections
         renderHeader(normalized);
@@ -1318,6 +1384,7 @@ function initializeResume() {
     setDocumentLanguage(initialConfig);
     updateLanguageSwitcherUI(initialLanguage);
     updatePrintButtonText(initialLanguage);
+    updateSectionTitles(initialLanguage);
     initThemeToggle();
     initLanguageSwitcher();
     initPDFDownloadButton();

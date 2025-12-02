@@ -3,8 +3,43 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewport">
     <title>Loading...</title>
+    <script>
+        // Dynamically adjust viewport based on actual content width
+        (function () {
+            function adjustViewport() {
+                const container = document.querySelector('.container');
+                if (!container) {
+                    // Retry after DOM is ready
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', adjustViewport);
+                    }
+                    return;
+                }
+
+                // Get actual content width including padding
+                const contentWidth = container.offsetWidth;
+                const screenWidth = window.screen.width;
+
+                // Only adjust for mobile devices
+                if (screenWidth < contentWidth) {
+                    const viewportMeta = document.getElementById('viewport');
+                    if (viewportMeta) {
+                        viewportMeta.setAttribute('content', `width=${contentWidth}, user-scalable=yes`);
+                    }
+                }
+            }
+
+            // Run after page loads to ensure container is rendered
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', adjustViewport);
+            } else {
+                // DOM already loaded, wait a bit for styles to apply
+                setTimeout(adjustViewport, 100);
+            }
+        })();
+    </script>
 
     <!-- OpenGraph Meta Tags (will be updated dynamically) -->
     <meta property="og:title" content="Ernest Babayan">
@@ -196,7 +231,7 @@
             <div class="left-column">
                 <!-- About Me Section -->
                 <section class="section" id="aboutSection">
-                    <h2 class="section-title">
+                    <h2 class="section-title" data-title-ru="ОБО МНЕ" data-title-en="ABOUT ME">
                         <span class="icon">
                             <span class="iconify" data-icon="mdi:account"></span>
                         </span>
@@ -228,7 +263,8 @@
             <div class="right-column">
                 <!-- What I'm Looking For Section -->
                 <section class="section" id="expectationSection">
-                    <h2 class="section-title accent-red">
+                    <h2 class="section-title accent-red" data-title-ru="ЧТО ИЩУ & ХОЧУ"
+                        data-title-en="WHAT I'M LOOKING FOR">
                         <span class="icon">
                             <span class="iconify" data-icon="mdi:target"></span>
                         </span>
@@ -256,7 +292,7 @@
 
                     <!-- Interests Section -->
                     <section class="section" id="interestsSection">
-                        <h2 class="section-title">
+                        <h2 class="section-title" data-title-ru="ИНТЕРЕСЫ" data-title-en="INTERESTS">
                             <span class="icon">
                                 <span class="iconify" data-icon="mdi:sparkles"></span>
                             </span>
@@ -269,7 +305,8 @@
 
                     <!-- Education & Languages Section -->
                     <section class="section" id="educationLanguagesSection">
-                        <h2 class="section-title accent-yellow">
+                        <h2 class="section-title accent-yellow" data-title-ru="ОБРАЗОВАНИЕ"
+                            data-title-en="EDUCATION & LANGUAGES">
                             <span class="icon">
                                 <span class="iconify" data-icon="mdi:school"></span>
                             </span>

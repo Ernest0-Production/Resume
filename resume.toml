@@ -222,7 +222,7 @@ Oversaw the entire iOS department's infrastructure of **30 developers**:
 """
 
 "achievements.ru" = """
-• Полностью переписанный модуль __сетевого слоя__
+• Новый модуль __сетевого слоя__
 • Новый модуль in-house __аналитики__ (батчинг, сжатие, кэширование, итп)
 • Миграция проекта с __CocoaPods__ на __Tuist + SPM__
 • Самописный анализатор __Objective-C__ Dead Code, удаливший ~40% objc кода
