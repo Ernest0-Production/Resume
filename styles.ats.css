@@ -29,6 +29,8 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     font-family: 'Times New Roman', Garamond, Verdana, sans-serif;
     font-size: 11pt;
     line-height: 1.5;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
