@@ -452,24 +452,24 @@ url = "https://apps.apple.com/ru/app/id1549274265"
 ################# LifeIT ###################
 ############################################
 
-[[experience]]
-position = ".NET Junior Developer"
-company = "LifeIT"
-period = "Jan 2018 — May 2019"
+# [[experience]]
+# position = ".NET Junior Developer"
+# company = "LifeIT"
+# period = "Jan 2018 — May 2019"
 
-"about.ru" = "Аутсорс • Разработка под ключ"
-"about.en" = "Outsourcing • Turn-key development"
+# "about.ru" = "Аутсорс • Разработка под ключ"
+# "about.en" = "Outsourcing • Turn-key development"
 
-"responsibilities.ru" = """
-Занимался мелкими доработками приложения для грузоперевозок
-• Верстка простых экранов на WPF с использованием MVVM и Bindings
-• Написание автотестов с использованием C# Script и Selenium
-"""
-"responsibilities.en" = """
-Worked on minor improvements to a freight transportation application
-• Layout of simple screens on WPF using MVVM and Bindings
-• Writing automated tests using C# Script and Selenium
-"""
+# "responsibilities.ru" = """
+# Занимался мелкими доработками приложения для грузоперевозок
+# • Верстка простых экранов на WPF с использованием MVVM и Bindings
+# • Написание автотестов с использованием C# Script и Selenium
+# """
+# "responsibilities.en" = """
+# Worked on minor improvements to a freight transportation application
+# • Layout of simple screens on WPF using MVVM and Bindings
+# • Writing automated tests using C# Script and Selenium
+# """
 
 "achievements.ru" = ""
 "achievements.en" = ""
