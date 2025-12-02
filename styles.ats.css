@@ -259,6 +259,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 .ats-experience__company {
     flex: 1 1 auto;
     font-weight: normal;
+    color: #666666;
 }
 
 .ats-experience__position {
@@ -438,7 +439,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 }
 
 [data-theme="dark"] .ats-experience__company {
-    color: #AAA599;
+    color: #888888;
 }
 
 [data-theme="dark"] .ats-experience__position {
@@ -538,17 +539,25 @@ body[data-view-mode="ats-friendly"] .ats-layout {
         color: #111111 !important;
     }
 
+    .ats-experience__company,
+    body[data-view-mode="ats-friendly"] .ats-experience__company {
+        color: #666666 !important;
+    }
+
     [data-theme="dark"] .ats-experience__item,
     [data-theme="dark"] .ats-experience__row,
-    [data-theme="dark"] .ats-experience__company,
     [data-theme="dark"] .ats-experience__position,
     [data-theme="dark"] .ats-experience__item p,
     body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-experience__item,
     body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-experience__row,
-    body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-experience__company,
     body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-experience__position,
     body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-experience__item p {
         color: #111111 !important;
+    }
+
+    [data-theme="dark"] .ats-experience__company,
+    body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-experience__company {
+        color: #666666 !important;
     }
 
     [data-theme="dark"] .ats-experience__company-about,
