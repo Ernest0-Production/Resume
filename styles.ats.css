@@ -163,9 +163,14 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     margin-bottom: 0;
 }
 
+.ats-section__content p:has(+ ul),
+.ats-section__content p:has(+ ol) {
+    margin-bottom: 0px;
+}
+
 .ats-section__content p+ul,
 .ats-section__content p+ol {
-    margin-top: 2px;
+    margin-top: 0px;
 }
 
 .ats-section__content strong,
@@ -187,13 +192,13 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 
 .ats-section__content ul,
 .ats-section__content ol {
-    margin: 0 0 4px 12px;
+    margin: 0 0 0px 12px;
     padding-left: 4px;
 }
 
 .ats-section__content ul li,
 .ats-section__content ol li {
-    margin-bottom: 2px;
+    margin-bottom: 0px;
 }
 
 .ats-section__content ul li:last-child,
@@ -230,10 +235,25 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     letter-spacing: 0.05em;
     font-size: 13pt;
     margin-bottom: 0px;
+    padding-left: 12px;
+    border-left: 3px solid #111111;
 }
 
 .ats-experience__row--company+.ats-experience__row {
     margin-top: -4px;
+}
+
+.ats-experience__company-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ats-experience__company-icon {
+    width: 14px;
+    height: 14px;
+    color: currentColor;
+    flex-shrink: 0;
 }
 
 .ats-experience__company {
@@ -255,6 +275,11 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     text-align: left;
 }
 
+.ats-experience__row:has(.ats-experience__company-about) {
+    padding-left: 12px;
+    border-left: 3px solid #111111;
+}
+
 .ats-experience__period {
     flex: 0 0 auto;
     text-align: right;
@@ -262,6 +287,11 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 
 [data-theme="dark"] .ats-experience__company-about {
     color: #999999;
+}
+
+[data-theme="dark"] .ats-experience__row--company,
+[data-theme="dark"] .ats-experience__row:has(.ats-experience__company-about) {
+    border-left-color: #e0e0e0;
 }
 
 .ats-experience__period {

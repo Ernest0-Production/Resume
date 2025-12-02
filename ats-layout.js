@@ -122,6 +122,7 @@
             <article class="ats-experience__item">
                 <div class="ats-experience__row ats-experience__row--company">
                     <span class="ats-experience__company-wrapper">
+                        <span class="iconify ats-experience__company-icon" data-icon="mdi:flag-variant" aria-hidden="true"></span>
                         <span class="ats-experience__company">${company}</span>
                         ${position ? ` <span class="ats-experience__separator">•</span> <span class="ats-experience__position">${position}</span>` : ''}
                     </span>
