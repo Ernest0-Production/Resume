@@ -99,6 +99,135 @@ function createElement(tag, content, className = '') {
     return element;
 }
 
+/**
+ * Load and optimize avatar image
+ * Compresses the image to optimal size for display
+ */
+async function loadOptimizedAvatar(imgElement, avatarUrl, firstName, lastName) {
+    const targetSize = 280; // 2x for retina displays (displayed at 140x140)
+    const quality = 0.85; // JPEG quality (0-1)
+
+    try {
+        // Create a temporary image element to load the original
+        const tempImg = new Image();
+        tempImg.crossOrigin = 'anonymous'; // Enable CORS for same-origin images
+
+        // Wait for image to load
+        const imageLoadPromise = new Promise((resolve, reject) => {
+            tempImg.onload = () => resolve(tempImg);
+            tempImg.onerror = () => reject(new Error('Failed to load image'));
+        });
+
+        tempImg.src = avatarUrl;
+        const loadedImg = await imageLoadPromise;
+
+        // Get original size (approximate)
+        const originalSize = estimateImageSize(loadedImg.naturalWidth, loadedImg.naturalHeight);
+
+        // Create a canvas for compression
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Calculate dimensions maintaining aspect ratio
+        let width = loadedImg.naturalWidth;
+        let height = loadedImg.naturalHeight;
+        const aspectRatio = width / height;
+
+        if (width > height) {
+            width = targetSize;
+            height = targetSize / aspectRatio;
+        } else {
+            height = targetSize;
+            width = targetSize * aspectRatio;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw and compress the image
+        ctx.drawImage(loadedImg, 0, 0, width, height);
+
+        // Try WebP first (better compression)
+        let compressedBlob;
+        let usedFormat = 'webp';
+
+        if (canvas.toBlob) {
+            // Try WebP first
+            try {
+                compressedBlob = await new Promise((resolve, reject) => {
+                    canvas.toBlob((blob) => {
+                        if (blob && blob.size > 0) {
+                            resolve(blob);
+                        } else {
+                            reject(new Error('WebP conversion failed'));
+                        }
+                    }, 'image/webp', quality);
+                });
+
+                // If WebP is too large or failed, try JPEG
+                if (!compressedBlob || compressedBlob.size > originalSize * 0.8) {
+                    usedFormat = 'jpeg';
+                    compressedBlob = await new Promise((resolve) => {
+                        canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
+                    });
+                }
+            } catch (webpError) {
+                // Fallback to JPEG
+                usedFormat = 'jpeg';
+                compressedBlob = await new Promise((resolve) => {
+                    canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
+                });
+            }
+        } else {
+            // Fallback for older browsers - use data URL
+            usedFormat = 'jpeg';
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            const res = await fetch(dataUrl);
+            compressedBlob = await res.blob();
+        }
+
+        // Create object URL and set as image source
+        const optimizedUrl = URL.createObjectURL(compressedBlob);
+        imgElement.src = optimizedUrl;
+        imgElement.alt = `${firstName || ''} ${lastName || ''}`.trim();
+
+        // Log compression results
+        const compressedSize = compressedBlob.size;
+        const savings = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+        console.log(`Avatar optimized: ${(originalSize / 1024).toFixed(1)}KB → ${(compressedSize / 1024).toFixed(1)}KB (${savings}% reduction, format: ${usedFormat})`);
+
+        // Clean up object URL after image loads
+        imgElement.onload = () => {
+            URL.revokeObjectURL(optimizedUrl);
+        };
+
+    } catch (error) {
+        console.warn('Failed to optimize avatar, loading original:', error);
+        // Fallback to original image
+        imgElement.src = avatarUrl;
+        imgElement.alt = `${firstName || ''} ${lastName || ''}`.trim();
+    }
+
+    // Handle loading errors
+    imgElement.onerror = function () {
+        console.warn('Failed to load avatar from:', avatarUrl);
+        const initials = `${(firstName || '?').charAt(0)}${(lastName || '?').charAt(0)}`.toUpperCase();
+        this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%232196F3" width="200" height="200"/%3E%3Ctext fill="white" font-size="80" font-family="sans-serif" text-anchor="middle" x="100" y="130"%3E' + initials + '%3C/text%3E%3C/svg%3E';
+    };
+}
+
+/**
+ * Estimate image file size based on dimensions
+ * This is an approximation for JPEG images
+ */
+function estimateImageSize(width, height) {
+    // Rough estimate: JPEG images are typically 0.5-1 bytes per pixel
+    // We'll use 0.75 as average for estimation
+    const pixelCount = width * height;
+    const estimatedSize = pixelCount * 0.75;
+    return estimatedSize;
+}
+
 // ==================== Theme Toggle Config ====================
 
 const THEME_STORAGE_KEY = 'cv-generator-theme';
@@ -910,15 +1039,7 @@ function renderHeader(data) {
     // Avatar
     const avatar = document.getElementById('avatar');
     if (avatar && data.avatar) {
-        avatar.src = data.avatar;
-        avatar.alt = `${data.firstName || ''} ${data.lastName || ''}`.trim();
-
-        // Handle avatar loading errors
-        avatar.onerror = function () {
-            console.warn('Failed to load avatar from:', data.avatar);
-            const initials = `${(data.firstName || '?').charAt(0)}${(data.lastName || '?').charAt(0)}`.toUpperCase();
-            this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%232196F3" width="200" height="200"/%3E%3Ctext fill="white" font-size="80" font-family="sans-serif" text-anchor="middle" x="100" y="130"%3E' + initials + '%3C/text%3E%3C/svg%3E';
-        };
+        loadOptimizedAvatar(avatar, data.avatar, data.firstName, data.lastName);
     }
 }
 
