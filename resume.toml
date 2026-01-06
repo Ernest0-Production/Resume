@@ -22,8 +22,6 @@ subtitle = "7 years of experience • founding engineer"
 • Побывал в аутсорсе, стартапе, mid-tech, big-tech
 • С нуля писал множество приложений и библиотек в отраслях **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
 • Дважды собирал себе команду разработки
-• Открыт к коммуникации; сам приду и подсвечу риски
-• За **практичный и рациональный** подход к построению архитектуры, а не buzzword-ный
 """
 
 "about.en" = """
@@ -31,24 +29,20 @@ subtitle = "7 years of experience • founding engineer"
 • Worked in outsourcing, startup, mid-tech, big-tech
 • Built many apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
 • Twice built my own development team
-• Open to communication; I'll personally identify and highlight risks
-• For a **practical and rational** approach to building architecture, not buzzword-driven
 """
 
 "expectation.ru" = """
-• Возможность самостоятельно **принимать решения**, а **не ждать инструкций** от линейного руководителя
-• Отвечать за домен целиком *(например: приложение, команда, сдк, инфра)*
+• Возможность самостоятельно **принимать решения**
 • Готов лидить команду, но продолжать **писать код**
-• Общаться в **неформальной манере**
+• **Неформальной коммуникации**
 • Не боюсь плохо настроенных процессов, если на них реально можно влиять
 • Не привязан к конкретной отрасли — интересна сама роль и **влияние на проект**
 """
 
 "expectation.en" = """
-• Ability to **make decisions independently**, **not wait for instructions** from a line manager
-• Own a domain end-to-end *(e.g.: app, team, SDK, infra)*
+• Ability to **make decisions independently**
 • Ready to lead a team, but continue **writing code**
-• Team with **informal communication**
+• **Informal communication**
 • Not afraid of poorly configured processes if I can actually influence them
 • Not tied to a specific industry — interested in the role itself and **impact on the project**
 """
@@ -75,8 +69,7 @@ subtitle = "7 years of experience • founding engineer"
 """
 
 "interests.ru" = """
-**Подкасты**: КОДА КОДА, Podlodka, Запуск завтра, Бреслав и Ложечкин
-**Конференции**: CocoaHeads, Swift Heroes
+**Подкасты**: КОДА КОДА, Podlodka, Coffee&Code, Либо/Либо, Хекслет, Бреслав и Ложечкин
 **Сообщества**: Вастрик.Клуб, твиттер
 """
 
@@ -142,6 +135,7 @@ keywords = [
     "SwiftLint",
     "Sourcery",
     "Periphery",
+    "Danger",
 ]
 
 [[skills]]
@@ -157,9 +151,8 @@ keywords = [
     "Core Data",
     "Realm",
     "StoreKit",
-    # "Keychain",
-    "AVFoundation",
-    "AVKit",
+    "Keychain",
+    "AVFoundation / AVKit",
     "Firebase",
     "Mindbox",
     "MapBox",
@@ -185,7 +178,7 @@ keywords = [
 
 [[skills]]
 category = "Tools"
-keywords = ["Xcode", "Instruments", "Test Flight", "Proxyman", "Cursor"]
+keywords = ["Xcode", "Instruments", "Cursor", "Proxyman", "Charles", "Git"]
 
 
 ############################################
@@ -207,7 +200,7 @@ period = "Apr 2023 — Nov 2025"
 • Создание и рефакторинг **core-модулей** приложения
 • Направление тех.вектора — стэк, архитектура, инструменты итп.
 • Член тех.коммитета — **квартальное планирование**, руководство командой дежурных
-• Knowledge-sharing — техническая документация, демо, анонсы, Q&A сессии
+• **Knowledge-sharing** — техническая документация, демо, анонсы, Q&A сессии
 """
 "responsibilities.en" = """
 Oversaw the entire iOS department's infrastructure of **30 developers**:
@@ -216,32 +209,32 @@ Oversaw the entire iOS department's infrastructure of **30 developers**:
 • Creation and refactoring of **core modules** of the application
 • Technical direction — stack, architecture, tools, etc.
 • Member of technical committee — **quarterly planning**, leading the on-call team
-• Knowledge-sharing — technical documentation, demos, announcements, Q&A sessions
+• **Knowledge-sharing** — technical documentation, demos, announcements, Q&A sessions
 """
 
 "achievements.ru" = """
 • Новый модуль __сетевого слоя__
 • Новый модуль in-house __аналитики__ (батчинг, сжатие, кэширование, итп)
-• Миграция проекта с __CocoaPods__ на __Tuist + SPM__
+• Миграция с __CocoaPods__ на __Tuist + SPM__
 • Самописный анализатор __Objective-C__ Dead Code, удаливший ~40% objc кода
 • Сокращение времени сборки __CI/CD__ с 40 до 10 минут
 • Уменьшение бандла приложения на 25% (~45 МБ)
 • In-house система дистрибуции Ad-Hoc сборок
 • Автоматизация релизов/меты/скриншотов/сертификатов через __Jenkins CI__
 • __Кодогенератор__ моков для юнит-тестов
-• Интеграция __Kotlin Multiplatform__
+• RnD интеграция __Kotlin Multiplatform__
 """
 "achievements.en" = """
 • Completely rewritten __network layer__ module
 • New in-house __analytics__ module (batching, compression, caching, etc.)
-• Project migration from __CocoaPods__ to __Tuist + SPM__
+• Migration from __CocoaPods__ to __Tuist + SPM__
 • Custom __Objective-C__ Dead Code analyzer, removing ~40% of objc code
 • Reduced __CI/CD__ build time from 40 to 10 minutes
 • Reduced application bundle size by 25% (~45 MB)
 • In-house Ad-Hoc build distribution system
 • Automation of releases/meta/screenshots/certificates through __Jenkins CI__
 • __Code generator__ for unit test mocks
-• __Kotlin Multiplatform__ integration
+• RnD integration of __Kotlin Multiplatform__
 """
 
 [[experience.links]]
@@ -261,43 +254,29 @@ period = "Jan 2022 — Apr 2023"
 "about.en" = "Big Tech • Marketplace platform • Logistics (top-2 in Russia)"
 
 "responsibilities.ru" = """
-Участвовал в создании двух проектов:
-1. **MVP-версия** приложения для доставки посылок
-2. In-house картографический **SDK**, независимый от внешних вендоров (Google, Yandex, Mapbox)
-Основные обязанности:
-• Проектирование и разработка приложения/SDK с нуля, включая выбор стека технологий
-• **Найм**, формирование будущей команды
-• Настройка **GitLab CI** пайплайна
-• Сопровождение и интеграция SDK во внутренние продукты
+Создал два проекта:
+1. MVP-версия приложения для **доставки посылок**
+2. In-house **картографический SDK**, независимый от внешних вендоров (Google, Yandex, Mapbox)
 """
 
 "responsibilities.en" = """
 Participated in creating two projects:
-1. **MVP version** of the package delivery application
-2. In-house cartographic **SDK**, independent of external vendors (Google, Yandex, Mapbox)
-Main responsibilities:
-• Design and development of application/SDK from scratch, including technology stack selection
-• **Hiring**, forming the future team
-• Setting up **GitLab CI** pipeline
-• Maintenance and integration of SDK into internal products
+1. MVP version of the **package delivery application**
+2. In-house **cartographic SDK**, independent of external vendors (Google, Yandex, Mapbox)
 """
 
 "achievements.ru" = """
 • Сокращение __TTM__ MVP-версии приложения с 6 месяцев до 3 месяцев
 • Первопроходец по внедрению __Tuist__ в компании
-• 2 мажорные версии in-house __Map SDK__
 • Покрытие __интеграционными тестами__ на 70%
 • CI/CD __пайплайн__ сборки, тестирования, деплоя и релиза библиотеки
-• Поддержка SDK под __Android__ на __Kotlin__
 """
 
 "achievements.en" = """
 • Reduced __TTM__ of MVP version of the application from 6 months to 3 months
 • Pioneer in implementing __Tuist__ in the company
-• 2 major versions of in-house __Map SDK__
 • __Integration tests__ coverage of 70%
 • CI/CD __pipeline__ for building, testing, deployment and release of the library
-• SDK support for __Android__ on __Kotlin__
 """
 
 [[experience.links]]
@@ -313,7 +292,7 @@ title = "Вози Ozon"
 url = "https://apps.apple.com/app/id6478118390"
 
 [[experience.links]]
-title = "Пункт Ozon"
+title = "Ozon ПВЗ"
 url = "https://apps.apple.com/app/id1535791151"
 
 [[experience.links]]
@@ -334,27 +313,23 @@ period = "Sep 2021 — Feb 2022"
 "about.en" = "Startup • Medical insurance services for employees of businesses • Telemedicine"
 
 "responsibilities.ru" = """
-Участвовал в развитии мобильного приложения в команде из **6-ти разработчиков**:
-• Стандартный цикл разработки (спринты, грумминги, ревью кода, итп)
-• Планирование задач в рамках **OKR**
-• Внедрение нового стека технологий (**SwiftUI** 1.0, **Combine** итп) в проект
-• Поддержка **GitLab CI** пайплайна
+Участвовал в развитии мобильного приложения в команде из **6-ти разработчиков**
+• Разработывал новые фичи в рамках **OKR**.
+• Проводил **демо** сделанных фич для фаундеров и менеджеров.
 """
 
 "responsibilities.en" = """
 Participated in mobile application development in a team of **6 developers**:
-• Standard development cycle (sprints, groomings, code reviews, etc.)
-• Task planning within **OKR** framework
-• Introducing new technology stack (**SwiftUI** 1.0, **Combine**, etc.) into the project
-• **GitLab CI** pipeline maintenance
+• Developed new features within **OKR**.
+• Conducted **demos** of made features for founders and managers.
 """
 
 "achievements.ru" = """
 • Интерактивные __виджеты в чате__ с терапевтом
-• Раздел/вкладка управления мед.__документами__ (диагнозы, анализы, назначения, итп)
+• Раздел управления мед.__документами__ (диагнозы, анализы, назначения, итп)
 • Механизм обработки __DeepLinks__
 • Рефакторинг многоступенчатой __навигации__ для записи на прием к врачу
-• Обучение команды разработки ФРП с помощью __Combine__
+• Внедрение нового стека технологий (**SwiftUI** 1.0, **Combine**) в проект
 """
 
 "achievements.en" = """
@@ -362,7 +337,7 @@ Participated in mobile application development in a team of **6 developers**:
 • Medical __documents__ management section/tab (diagnoses, tests, prescriptions, etc.)
 • __DeepLinks__ handling mechanism
 • Refactoring multi-step __navigation__ for doctor appointment booking
-• Teaching the development team FRP using __Combine__
+• Introducing new technology stack (**SwiftUI** 1.0, **Combine**) into the project
 """
 
 [[experience.links]]
@@ -385,21 +360,17 @@ period = "May 2019 — Sep 2021"
 "responsibilities.ru" = """
 Разрабатывал с нуля и поддерживал существующие приложения в команде из **3-х разработчиков**.
 Со временем, по мере увеличения навыков и вклада в проекты, **дорос до тимлида**.
-• Декомпозиция и оценка задач, **ревью дизайна** и backend-контрактов
 • Полный цикл разработки приложения от создания репозитория до **публикации в App Store**
 • Решение проблем и **согласование с заказчиком**
-• Интервью и найм Junior/Middle разработчиков
-• **Менторство** разработчиков, парное программирование и проведение performance reviews
+• **Менторство** разработчиков, парное программирование и проведение **performance reviews**
 """
 
 "responsibilities.en" = """
 Developed from scratch and maintained existing applications in a team of **3 developers**.
 Over time, as skills and contribution to projects increased, **grew to team lead**.
-• Independent task decomposition and estimation, **design review** and backend contracts
 • Full application development cycle from repository creation to **App Store publishing**
 • Problem solving and **coordination with the client**
-• Interviewing and hiring Junior/Middle developers
-• **Mentoring** developers, pair programming and conducting performance reviews
+• **Mentoring** developers, pair programming and conducting **performance reviews**
 """
 
 "achievements.ru" = """
