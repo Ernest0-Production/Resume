@@ -154,7 +154,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 }
 
 .ats-section__content {
-    font-size: 11pt;
+    font-size: 10pt;
 }
 
 .ats-section__content p {
@@ -189,6 +189,10 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 }
 
 #atsSkills {
+    font-size: 11pt;
+}
+
+#atsLanguages {
     font-size: 11pt;
 }
 
@@ -427,6 +431,10 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     color: #AAA599;
 }
 
+[data-theme="dark"] #atsLanguages {
+    color: #AAA599;
+}
+
 [data-theme="dark"] .ats-section__content ul,
 [data-theme="dark"] .ats-section__content ol {
     color: #AAA599;
@@ -531,11 +539,13 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     [data-theme="dark"] .ats-section__content,
     [data-theme="dark"] .ats-section__content p,
     [data-theme="dark"] #atsSkills,
+    [data-theme="dark"] #atsLanguages,
     [data-theme="dark"] .ats-section__content ul,
     [data-theme="dark"] .ats-section__content ol,
     body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-section__content,
     body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-section__content p,
     body[data-view-mode="ats-friendly"][data-theme="dark"] #atsSkills,
+    body[data-view-mode="ats-friendly"][data-theme="dark"] #atsLanguages,
     body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-section__content ul,
     body[data-view-mode="ats-friendly"][data-theme="dark"] .ats-section__content ol {
         color: #111111 !important;

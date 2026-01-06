@@ -167,6 +167,7 @@
         const skillsElement = document.getElementById('atsSkills');
         const experienceElement = document.getElementById('atsExperience');
         const educationElement = document.getElementById('atsEducation');
+        const languagesElement = document.getElementById('atsLanguages');
 
         if (fullNameElement) {
             const nameParts = [data.firstName, data.lastName].filter(Boolean).join(' ').trim();
@@ -334,6 +335,19 @@
                 educationElement.innerHTML = educationHTML || '';
             } else {
                 educationElement.innerHTML = '';
+            }
+        }
+
+        if (languagesElement) {
+            if (Array.isArray(data.languages) && data.languages.length > 0) {
+                const languagesHTML = data.languages.map(lang => {
+                    const name = escapeHTML(lang.name || '');
+                    const level = escapeHTML(lang.level || '');
+                    return name && level ? `${name} – ${level}` : (name || level || '');
+                }).filter(Boolean).join(', ');
+                languagesElement.textContent = languagesHTML || '';
+            } else {
+                languagesElement.textContent = '';
             }
         }
     }
