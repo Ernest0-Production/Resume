@@ -44,7 +44,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
+    margin-bottom: 6px;
     gap: 16px;
 }
 
@@ -143,8 +143,8 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 .ats-section__title {
     font-size: 14pt;
     letter-spacing: 0.3em;
-    margin: 0 0 12px;
-    padding-top: 12px;
+    margin: 0 0 6px;
+    padding-top: 6px;
     border-top: 1px solid #111111;
     font-weight: 700;
 }
@@ -319,7 +319,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     font-size: 11pt;
     font-weight: normal;
     color: #111111;
-    margin-bottom: 6px;
+    margin-bottom: 0px;
 }
 
 [data-theme="dark"] .ats-experience__achievements-label {
@@ -365,7 +365,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 }
 
 .ats-education__item {
-    margin-bottom: 16px;
+    margin-bottom: 0px;
 }
 
 .ats-education__item:last-child {
@@ -378,7 +378,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 4px;
+    margin-bottom: 0px;
 }
 
 .ats-education__row:last-child {
