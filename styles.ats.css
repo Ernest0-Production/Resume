@@ -627,3 +627,8 @@ body[data-view-mode="ats-friendly"] .ats-layout {
         border-bottom-color: #cccccc !important;
     }
 }
+
+@page {
+    size: A4 portrait;
+    margin: 14mm;
+}

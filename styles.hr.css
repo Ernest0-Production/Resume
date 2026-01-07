@@ -78,7 +78,7 @@
 
 @page {
     size: A4 portrait;
-    margin: 14mm;
+    margin: 10mm 10mm 8mm 10mm;
 }
 
 /* ==================== Base Styles ==================== */

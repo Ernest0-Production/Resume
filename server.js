@@ -68,19 +68,90 @@ async function handlePdfRequest(req, res, parsed) {
         await page.emulateMediaType('print');
         await page.waitForSelector('.container', { timeout: 15000 }).catch(() => { });
 
+        // Ensure lazy images (favicons/previews) are requested before printing.
+        // In headless PDF generation there is no user scroll, so native lazy-loading might never trigger.
+        await page.evaluate(() => {
+            try {
+                const imgs = Array.from(document.images || []);
+                imgs.forEach(img => {
+                    const loadingAttr = (img.getAttribute('loading') || '').toLowerCase();
+                    if (img.loading === 'lazy' || loadingAttr === 'lazy') {
+                        img.loading = 'eager';
+                        img.setAttribute('loading', 'eager');
+                        // Nudge the browser to (re)consider the request.
+                        const src = img.currentSrc || img.src;
+                        if (src) img.src = src;
+                    }
+                });
+            } catch (e) {
+                // Ignore
+            }
+        });
+
+        // Trigger potential viewport-bound loading by scrolling once.
+        await page.evaluate(async () => {
+            const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+            const total = Math.max(
+                document.body?.scrollHeight || 0,
+                document.documentElement?.scrollHeight || 0
+            );
+            const step = Math.max(window.innerHeight || 800, 400);
+            for (let y = 0; y <= total; y += step) {
+                window.scrollTo(0, y);
+                await sleep(40);
+            }
+            window.scrollTo(0, 0);
+        });
+
+        // Wait for fonts and images to settle (do not fail the PDF if some remote icons error out).
+        await page.evaluate(async () => {
+            try {
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
+            } catch (e) {
+                // Ignore
+            }
+        });
+        await page.waitForFunction(() => {
+            try {
+                return Array.from(document.images || []).every(img => img.complete);
+            } catch (e) {
+                return true;
+            }
+        }, { timeout: 15000 }).catch(() => { });
+
         const pdfBuffer = await page.pdf({
             format: 'A4',
             printBackground: true,
             preferCSSPageSize: true,
-            margin: {
-                top: '14mm',
-                right: '14mm',
-                bottom: '14mm',
-                left: '14mm',
-            },
         });
 
-        const filename = `resume-${lang}-${view === 'ats-friendly' ? 'ats' : 'hr'}.pdf`;
+        // Generate filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
+        const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
+        let filename = `resume.${viewSuffix}.pdf`;
+        try {
+            const tomlPath = path.join(__dirname, 'resume.toml');
+            const tomlText = fs.readFileSync(tomlPath, 'utf8');
+            const parsedToml = TOML.parse(tomlText);
+            const localized = localizeResumeData(parsedToml, lang);
+
+            const firstName = localized.firstName || '';
+            const lastName = localized.lastName || '';
+            const jobTitle = localized.jobTitle || '';
+
+            const nameParts = [firstName, lastName].filter(Boolean);
+            const name = nameParts.join(' ');
+
+            if (name && jobTitle) {
+                filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
+            } else if (name) {
+                filename = `${name}.${viewSuffix}.pdf`;
+            }
+        } catch (error) {
+            console.warn(`[API] Failed to generate custom filename, using default: ${error && error.message ? error.message : error}`);
+        }
+
         res.writeHead(200, {
             'Content-Type': 'application/pdf',
             'Content-Disposition': `attachment; filename="${filename}"`,

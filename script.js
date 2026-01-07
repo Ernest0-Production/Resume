@@ -22,7 +22,7 @@ function parseMarkdownLinks(text) {
         }
 
         return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="link-tag">
-            <img src="${faviconUrl}" alt="${safeTitle} favicon" class="link-tag__favicon" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="10" height="10" style="width:10px;height:10px;max-width:10px;max-height:10px;padding:0;margin:0;object-fit:contain;display:block;box-sizing:border-box;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+            <img src="${faviconUrl}" alt="${safeTitle} favicon" class="link-tag__favicon" loading="eager" decoding="async" referrerpolicy="no-referrer" width="10" height="10" style="width:10px;height:10px;max-width:10px;max-height:10px;padding:0;margin:0;object-fit:contain;display:block;box-sizing:border-box;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
             <span class="iconify link-tag__icon link-tag__icon--fallback" data-icon="${fallbackIcon}" aria-hidden="true" style="display: none;"></span>
             <span class="link-tag__text">${safeTitle}</span>
         </a>`;
@@ -524,10 +524,28 @@ async function downloadResumeAsPDF() {
             throw new Error('Empty PDF response received from API');
         }
 
+        // Generate filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
+        const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
+        let filename = `resume.${viewSuffix}.pdf`;
+        if (currentResumeData) {
+            const firstName = currentResumeData.firstName || '';
+            const lastName = currentResumeData.lastName || '';
+            const jobTitle = currentResumeData.jobTitle || '';
+
+            const nameParts = [firstName, lastName].filter(Boolean);
+            const name = nameParts.join(' ');
+
+            if (name && jobTitle) {
+                filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
+            } else if (name) {
+                filename = `${name}.${viewSuffix}.pdf`;
+            }
+        }
+
         const downloadUrl = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = downloadUrl;
-        anchor.download = `resume-${lang}-${view === 'ats-friendly' ? 'ats' : 'hr'}.pdf`;
+        anchor.download = filename;
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
@@ -568,6 +586,7 @@ function initPDFDownloadButton() {
 const VIEW_MODE_STORAGE_KEY = 'cv-generator-view-mode';
 const DEFAULT_VIEW_MODE = 'user-friendly';
 let currentViewMode = DEFAULT_VIEW_MODE;
+let currentResumeData = null; // Store current resume data for PDF filename generation
 
 /**
  * Read view mode from localStorage
@@ -1301,7 +1320,7 @@ function renderExperience(data) {
                                     src="${getFaviconUrl(link.url)}"
                                     alt="Favicon of ${getDomainFromUrl(link.url)}"
                                     class="experience-link__favicon"
-                                    loading="lazy"
+                                    loading="eager"
                                     decoding="async"
                                     referrerpolicy="no-referrer"
                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
@@ -1414,7 +1433,7 @@ function renderProjects(data) {
                         src="${getFaviconUrl(project.link)}"
                         alt="Favicon of ${getDomainFromUrl(project.link)}"
                         class="experience-link__favicon"
-                        loading="lazy"
+                        loading="eager"
                         decoding="async"
                         referrerpolicy="no-referrer"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
@@ -1533,6 +1552,7 @@ async function loadResumeData(language = currentLanguage) {
         const normalized = normalizeResumeData(data);
 
         currentLanguage = language;
+        currentResumeData = normalized; // Store resume data for PDF filename generation
         persistLanguage(language);
         setDocumentLanguage(config);
         updateLanguageSwitcherUI(language);
