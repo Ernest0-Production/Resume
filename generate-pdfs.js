@@ -11,6 +11,58 @@ const PORT = process.env.PORT || 3000;
 const HOST = 'localhost';
 
 /**
+ * Localize resume data from multilanguage TOML
+ * Extracts values for the specified language from keys like "propertyName.language"
+ */
+function localizeResumeData(data, lang) {
+    const result = {};
+
+    // Helper function to process object recursively
+    function processObject(obj, targetObj) {
+        for (const key in obj) {
+            if (!obj.hasOwnProperty(key)) continue;
+
+            const value = obj[key];
+
+            // Check if this is a multilanguage key (e.g., "firstName.ru")
+            const match = key.match(/^(.+)\.([a-z]{2})$/);
+            if (match) {
+                const [, propName, keyLang] = match;
+                // Only include if this is the requested language
+                if (keyLang === lang) {
+                    targetObj[propName] = typeof value === 'string' ? value.trim() : value;
+                }
+            } else {
+                // Non-multilanguage property
+                if (Array.isArray(value)) {
+                    // Process array of objects (like experience, projects, education)
+                    if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null) {
+                        targetObj[key] = value.map(item => {
+                            const processedItem = {};
+                            processObject(item, processedItem);
+                            return processedItem;
+                        });
+                    } else {
+                        // Simple array, trim strings
+                        targetObj[key] = value.map(v => typeof v === 'string' ? v.trim() : v);
+                    }
+                } else if (typeof value === 'object' && value !== null) {
+                    // Nested object
+                    targetObj[key] = {};
+                    processObject(value, targetObj[key]);
+                } else {
+                    // Simple value, trim if string
+                    targetObj[key] = typeof value === 'string' ? value.trim() : value;
+                }
+            }
+        }
+    }
+
+    processObject(data, result);
+    return result;
+}
+
+/**
  * Wait for server to be ready
  */
 async function waitForServer(url, maxAttempts = 30) {
@@ -33,7 +85,32 @@ async function waitForServer(url, maxAttempts = 30) {
 async function generatePDF(browser, lang, view, outputDir) {
     const url = `http://${HOST}:${PORT}/?lang=${lang}&view=${view}`;
     const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
-    const outputFile = path.join(outputDir, `resume-${lang}-${viewSuffix}.pdf`);
+
+    // Generate filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
+    let filename = `resume.${viewSuffix}.pdf`;
+    try {
+        const tomlPath = path.join(__dirname, 'resume.toml');
+        const tomlText = fs.readFileSync(tomlPath, 'utf8');
+        const parsedToml = TOML.parse(tomlText);
+        const localized = localizeResumeData(parsedToml, lang);
+
+        const firstName = localized.firstName || '';
+        const lastName = localized.lastName || '';
+        const jobTitle = localized.jobTitle || '';
+
+        const nameParts = [firstName, lastName].filter(Boolean);
+        const name = nameParts.join(' ');
+
+        if (name && jobTitle) {
+            filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
+        } else if (name) {
+            filename = `${name}.${viewSuffix}.pdf`;
+        }
+    } catch (error) {
+        console.warn(`⚠️  Failed to generate custom filename, using default: ${error && error.message ? error.message : error}`);
+    }
+
+    const outputFile = path.join(outputDir, filename);
 
     console.log(`📄 Generating PDF: ${lang}-${viewSuffix}`);
     console.log(`   URL: ${url}`);

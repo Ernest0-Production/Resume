@@ -514,8 +514,25 @@ function downloadResumeAsPDF() {
         const view = currentViewMode || DEFAULT_VIEW_MODE;
         const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
 
+        // Generate filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
+        let filename = `resume.${viewSuffix}.pdf`;
+        if (currentResumeData) {
+            const firstName = currentResumeData.firstName || '';
+            const lastName = currentResumeData.lastName || '';
+            const jobTitle = currentResumeData.jobTitle || '';
+
+            const nameParts = [firstName, lastName].filter(Boolean);
+            const name = nameParts.join(' ');
+
+            if (name && jobTitle) {
+                filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
+            } else if (name) {
+                filename = `${name}.${viewSuffix}.pdf`;
+            }
+        }
+
         // Path to pre-generated PDF in data folder
-        const pdfPath = `data/resume-${lang}-${viewSuffix}.pdf`;
+        const pdfPath = `data/${filename}`;
 
         // Open PDF in new tab
         window.open(pdfPath, '_blank');
