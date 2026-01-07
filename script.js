@@ -574,6 +574,10 @@ async function downloadResumeAsPDF() {
             pdfButton.disabled = false;
             pdfButton.removeAttribute('aria-busy');
         }
+        // Restore button text if it's still in loading state (successful download)
+        if (buttonText && buttonText.textContent === loadingText) {
+            buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
+        }
     }
 }
 
