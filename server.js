@@ -652,53 +652,66 @@ async function resolveOpenGraphImage(pageUrl) {
 }
 
 /**
- * Start server
+ * Start server function (can be called programmatically)
  */
-server.listen(PORT, HOST, () => {
-    console.log('='.repeat(60));
-    console.log('📄 CV Generator Server Started');
-    console.log('='.repeat(60));
-    console.log(`🌐 Server running at: http://${HOST}:${PORT}/`);
-    console.log(`📁 Serving files from: ${__dirname}`);
-    console.log('');
-    console.log('📝 To view your resume, open the URL above in your browser');
-    console.log('📥 To export to PDF: Press Ctrl+P (Cmd+P on Mac) and select "Save as PDF"');
-    console.log('');
-    console.log('Press Ctrl+C to stop the server');
-    console.log('='.repeat(60));
+function startServer(port = PORT, host = HOST) {
+    return new Promise((resolve, reject) => {
+        const serverInstance = server.listen(port, host, () => {
+            console.log('='.repeat(60));
+            console.log('📄 CV Generator Server Started');
+            console.log('='.repeat(60));
+            console.log(`🌐 Server running at: http://${host}:${port}/`);
+            console.log(`📁 Serving files from: ${__dirname}`);
+            console.log('');
+            console.log('📝 To view your resume, open the URL above in your browser');
+            console.log('📥 To export to PDF: Press Ctrl+P (Cmd+P on Mac) and select "Save as PDF"');
+            console.log('');
+            console.log('Press Ctrl+C to stop the server');
+            console.log('='.repeat(60));
 
-    // Auto-open browser (optional - works on macOS)
-    if (process.platform === 'darwin') {
-        const { exec } = require('child_process');
-        exec(`open http://${HOST}:${PORT}/`, (error) => {
-            if (error) {
-                console.log('Could not auto-open browser. Please open manually.');
-            }
+            resolve(serverInstance);
         });
-    }
-});
 
-/**
- * Handle server errors
- */
-server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-        console.error(`❌ Error: Port ${PORT} is already in use.`);
-        console.error(`   Try running with a different port: PORT=3001 node server.js`);
-    } else {
-        console.error('❌ Server error:', err);
-    }
-    process.exit(1);
-});
-
-/**
- * Handle graceful shutdown
- */
-process.on('SIGINT', () => {
-    console.log('\n\n👋 Shutting down server...');
-    server.close(() => {
-        console.log('✅ Server stopped successfully');
-        process.exit(0);
+        serverInstance.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.error(`❌ Error: Port ${port} is already in use.`);
+                console.error(`   Try running with a different port: PORT=3001 node server.js`);
+            } else {
+                console.error('❌ Server error:', err);
+            }
+            reject(err);
+        });
     });
-});
+}
+
+// Only start server if this file is run directly (not imported as module)
+if (require.main === module) {
+    startServer(PORT, HOST).then((serverInstance) => {
+        // Auto-open browser (optional - works on macOS)
+        if (process.platform === 'darwin') {
+            const { exec } = require('child_process');
+            exec(`open http://${HOST}:${PORT}/`, (error) => {
+                if (error) {
+                    console.log('Could not auto-open browser. Please open manually.');
+                }
+            });
+        }
+
+        /**
+         * Handle graceful shutdown
+         */
+        process.on('SIGINT', () => {
+            console.log('\n\n👋 Shutting down server...');
+            serverInstance.close(() => {
+                console.log('✅ Server stopped successfully');
+                process.exit(0);
+            });
+        });
+    }).catch((err) => {
+        process.exit(1);
+    });
+}
+
+// Export for use in other scripts
+module.exports = { startServer };
 

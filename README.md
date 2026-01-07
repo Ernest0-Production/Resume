@@ -43,9 +43,11 @@ npm start
 ### Alternative Start Commands
 
 ```bash
-npm run dev    # Same as npm start
-npm run serve  # Same as npm start
-npm run og-image  # Generate only the OpenGraph image
+npm run dev           # Same as npm start
+npm run serve         # Same as npm start
+npm run build         # Build JSON data files and OG image
+npm run generate-pdfs # Generate all PDF variants locally
+npm run og-image      # Generate only the OpenGraph image
 ```
 
 ### OpenGraph Preview Automation

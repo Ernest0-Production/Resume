@@ -492,13 +492,13 @@ function focusLanguageTrigger(trigger) {
 }
 
 /**
- * Download resume as PDF (uses server-side print-like rendering)
+ * Download resume as PDF (downloads pre-generated PDF from data folder)
  */
 async function downloadResumeAsPDF() {
     const pdfButton = document.getElementById('pdfDownloadBtn');
     const buttonText = pdfButton ? pdfButton.querySelector('.pdf-download-btn__text') : null;
     const originalText = buttonText ? buttonText.textContent : '';
-    const loadingText = currentLanguage === 'ru' ? 'Готовим PDF...' : 'Preparing PDF...';
+    const loadingText = currentLanguage === 'ru' ? 'Загрузка PDF...' : 'Downloading PDF...';
 
     if (pdfButton) {
         pdfButton.disabled = true;
@@ -512,21 +512,13 @@ async function downloadResumeAsPDF() {
     try {
         const lang = currentLanguage || DEFAULT_LANGUAGE;
         const view = currentViewMode || DEFAULT_VIEW_MODE;
-        const params = new URLSearchParams({ lang, view });
-        const response = await fetch(`/api/pdf?${params.toString()}`, { method: 'GET' });
-
-        if (!response || !response.ok) {
-            throw new Error(`PDF API responded with status ${response ? response.status : 'unknown'}`);
-        }
-
-        const blob = await response.blob();
-        if (!blob || blob.size === 0) {
-            throw new Error('Empty PDF response received from API');
-        }
-
-        // Generate filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
         const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
-        let filename = `resume.${viewSuffix}.pdf`;
+
+        // Path to pre-generated PDF in data folder
+        const pdfPath = `data/resume-${lang}-${viewSuffix}.pdf`;
+
+        // Generate custom filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
+        let filename = `resume-${lang}-${viewSuffix}.pdf`;
         if (currentResumeData) {
             const firstName = currentResumeData.firstName || '';
             const lastName = currentResumeData.lastName || '';
@@ -542,6 +534,18 @@ async function downloadResumeAsPDF() {
             }
         }
 
+        // Download the pre-generated PDF
+        const response = await fetch(pdfPath);
+
+        if (!response || !response.ok) {
+            throw new Error(`PDF file not found at ${pdfPath}. Status: ${response ? response.status : 'unknown'}`);
+        }
+
+        const blob = await response.blob();
+        if (!blob || blob.size === 0) {
+            throw new Error('Empty PDF file');
+        }
+
         const downloadUrl = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = downloadUrl;
@@ -551,15 +555,24 @@ async function downloadResumeAsPDF() {
         anchor.remove();
         URL.revokeObjectURL(downloadUrl);
     } catch (error) {
-        console.error('Failed to generate PDF, falling back to browser print:', error);
-        window.print();
+        console.error('Failed to download PDF:', error);
+        const errorText = currentLanguage === 'ru'
+            ? 'PDF не найден. Используйте Ctrl+P для печати.'
+            : 'PDF not found. Use Ctrl+P to print.';
+        if (buttonText) {
+            buttonText.textContent = errorText;
+            setTimeout(() => {
+                if (buttonText) {
+                    buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
+                }
+            }, 3000);
+        }
+        // Optionally fall back to browser print
+        // window.print();
     } finally {
         if (pdfButton) {
             pdfButton.disabled = false;
             pdfButton.removeAttribute('aria-busy');
-        }
-        if (buttonText) {
-            buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
         }
     }
 }
