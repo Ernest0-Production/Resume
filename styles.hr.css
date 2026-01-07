@@ -295,6 +295,16 @@ body {
         color: #10B981 !important;
     }
 
+    [data-theme="dark"] #educationLanguagesSection .section-title {
+        color: #10B981 !important;
+        border-bottom-color: #10B981 !important;
+    }
+
+    [data-theme="dark"] #educationLanguages strong,
+    [data-theme="dark"] #educationLanguages b {
+        color: #10B981 !important;
+    }
+
     [data-theme="dark"] .contact-item a {
         color: #000000 !important;
     }
@@ -1603,8 +1613,29 @@ u {
 }
 
 [data-theme="dark"] #interestsSection .section-title {
-    color: #4ADE80;
-    border-bottom-color: #4ADE80;
+    color: #66BB6A;
+    border-bottom-color: #66BB6A;
+}
+
+/* ==================== Education Section - Title Styles ==================== */
+#educationLanguagesSection .section-title {
+    color: #10B981;
+    border-bottom-color: #10B981;
+}
+
+[data-theme="dark"] #educationLanguagesSection .section-title {
+    color: #66BB6A;
+    border-bottom-color: #66BB6A;
+}
+
+#educationLanguages strong,
+#educationLanguages b {
+    color: #10B981;
+}
+
+[data-theme="dark"] #educationLanguages strong,
+[data-theme="dark"] #educationLanguages b {
+    color: #66BB6A;
 }
 
 #interests p {
@@ -1628,7 +1659,7 @@ u {
 
 [data-theme="dark"] #interests strong,
 [data-theme="dark"] #interests b {
-    color: #4ADE80;
+    color: #66BB6A;
 }
 
 /* ==================== Projects Section ==================== */
