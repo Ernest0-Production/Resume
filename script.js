@@ -1,14 +1,46 @@
 // ==================== Utility Functions ====================
 
 /**
+ * Parse markdown links to styled tags with icons
+ * Supports: [title](url) -> <a class="link-tag" href="url">...</a>
+ */
+function parseMarkdownLinks(text) {
+    if (!text) return '';
+
+    // Parse markdown links: [title](url)
+    return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, title, url) => {
+        // Escape HTML in title and url to prevent XSS
+        const safeTitle = title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const safeUrl = url.replace(/"/g, '&quot;');
+
+        // Get favicon URL and fallback icon
+        const faviconUrl = getFaviconUrl(safeUrl);
+        let fallbackIcon = getIconForLink(safeUrl);
+        // Use mdi:link-variant as fallback for markdown links if no specific icon found
+        if (fallbackIcon === 'mdi:link') {
+            fallbackIcon = 'mdi:link-variant';
+        }
+
+        return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="link-tag">
+            <img src="${faviconUrl}" alt="${safeTitle} favicon" class="link-tag__favicon" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="10" height="10" style="width:10px;height:10px;max-width:10px;max-height:10px;padding:0;margin:0;object-fit:contain;display:block;box-sizing:border-box;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+            <span class="iconify link-tag__icon link-tag__icon--fallback" data-icon="${fallbackIcon}" aria-hidden="true" style="display: none;"></span>
+            <span class="link-tag__text">${safeTitle}</span>
+        </a>`;
+    });
+}
+
+/**
  * Parse text formatting (bold, italic, underline)
  * Supports: **bold**, *italic*, __underline__
  */
 function parseFormatting(text) {
     if (!text) return '';
 
+    // First parse markdown links (before other formatting)
+    let formatted = parseMarkdownLinks(text);
+
     // Convert markdown-like syntax to HTML
-    let formatted = text
+    formatted = formatted
         // Bold: **text** -> <strong>text</strong>
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         // Italic: *text* -> <em>text</em>
