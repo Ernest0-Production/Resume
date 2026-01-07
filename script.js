@@ -492,11 +492,58 @@ function focusLanguageTrigger(trigger) {
 }
 
 /**
- * Download resume as PDF
+ * Download resume as PDF (uses server-side print-like rendering)
  */
-function downloadResumeAsPDF() {
-    // Use browser's print dialog to save as PDF
-    window.print();
+async function downloadResumeAsPDF() {
+    const pdfButton = document.getElementById('pdfDownloadBtn');
+    const buttonText = pdfButton ? pdfButton.querySelector('.pdf-download-btn__text') : null;
+    const originalText = buttonText ? buttonText.textContent : '';
+    const loadingText = currentLanguage === 'ru' ? 'Готовим PDF...' : 'Preparing PDF...';
+
+    if (pdfButton) {
+        pdfButton.disabled = true;
+        pdfButton.setAttribute('aria-busy', 'true');
+    }
+
+    if (buttonText) {
+        buttonText.textContent = loadingText;
+    }
+
+    try {
+        const lang = currentLanguage || DEFAULT_LANGUAGE;
+        const view = currentViewMode || DEFAULT_VIEW_MODE;
+        const params = new URLSearchParams({ lang, view });
+        const response = await fetch(`/api/pdf?${params.toString()}`, { method: 'GET' });
+
+        if (!response || !response.ok) {
+            throw new Error(`PDF API responded with status ${response ? response.status : 'unknown'}`);
+        }
+
+        const blob = await response.blob();
+        if (!blob || blob.size === 0) {
+            throw new Error('Empty PDF response received from API');
+        }
+
+        const downloadUrl = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = downloadUrl;
+        anchor.download = `resume-${lang}-${view === 'ats-friendly' ? 'ats' : 'hr'}.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+        console.error('Failed to generate PDF, falling back to browser print:', error);
+        window.print();
+    } finally {
+        if (pdfButton) {
+            pdfButton.disabled = false;
+            pdfButton.removeAttribute('aria-busy');
+        }
+        if (buttonText) {
+            buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
+        }
+    }
 }
 
 /**
@@ -509,10 +556,10 @@ function initPDFDownloadButton() {
         return;
     }
 
-    pdfButton.addEventListener('click', (event) => {
+    pdfButton.addEventListener('click', async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        downloadResumeAsPDF();
+        await downloadResumeAsPDF();
     });
 }
 
@@ -552,6 +599,12 @@ function persistViewMode(mode) {
  * Get initial view mode based on storage
  */
 function getInitialViewMode() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlView = urlParams.get('view') || urlParams.get('mode');
+    if (urlView === 'user-friendly' || urlView === 'ats-friendly') {
+        return urlView;
+    }
+
     const stored = readStoredViewMode();
     return stored || DEFAULT_VIEW_MODE;
 }
@@ -945,18 +998,18 @@ function updateSectionTitles(language) {
 }
 
 /**
- * Update print button text based on current language
+ * Update PDF button text based on current language
  */
-function updatePrintButtonText(language) {
+function updatePdfButtonText(language) {
     const pdfButton = document.getElementById('pdfDownloadBtn');
     if (!pdfButton) return;
 
     const buttonText = pdfButton.querySelector('.pdf-download-btn__text');
     if (buttonText) {
-        buttonText.textContent = language === 'ru' ? 'Распечатать' : 'Print';
+        buttonText.textContent = language === 'ru' ? 'Скачать PDF' : 'Download PDF';
     }
 
-    const ariaLabel = language === 'ru' ? 'Печатать резюме' : 'Print resume';
+    const ariaLabel = language === 'ru' ? 'Скачать резюме в PDF' : 'Download resume as PDF';
     pdfButton.setAttribute('aria-label', ariaLabel);
 }
 
@@ -1483,7 +1536,7 @@ async function loadResumeData(language = currentLanguage) {
         persistLanguage(language);
         setDocumentLanguage(config);
         updateLanguageSwitcherUI(language);
-        updatePrintButtonText(language);
+        updatePdfButtonText(language);
         updateSectionTitles(language);
 
         // Render all sections
@@ -1536,7 +1589,7 @@ function initializeResume() {
     const initialConfig = getLanguageConfig(initialLanguage);
     setDocumentLanguage(initialConfig);
     updateLanguageSwitcherUI(initialLanguage);
-    updatePrintButtonText(initialLanguage);
+    updatePdfButtonText(initialLanguage);
     updateSectionTitles(initialLanguage);
     initThemeToggle();
     initLanguageSwitcher();

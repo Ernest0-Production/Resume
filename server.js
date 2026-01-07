@@ -4,6 +4,7 @@ const path = require('path');
 const https = require('https');
 const { URL } = require('url');
 const zlib = require('zlib');
+const puppeteer = require('puppeteer');
 const TOML = require('@iarna/toml');
 
 // Configuration
@@ -30,6 +31,75 @@ const MIME_TYPES = {
 function getMimeType(filePath) {
     const ext = path.extname(filePath).toLowerCase();
     return MIME_TYPES[ext] || 'application/octet-stream';
+}
+
+/**
+ * Generate PDF using headless Chromium to mimic browser print
+ */
+async function handlePdfRequest(req, res, parsed) {
+    const lang = (parsed.searchParams.get('lang') || 'ru').toLowerCase();
+    const allowedLangs = new Set(['ru', 'en']);
+    if (!allowedLangs.has(lang)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Unsupported language. Use "ru" or "en".' }));
+        return;
+    }
+
+    const view = parsed.searchParams.get('view') === 'ats-friendly' ? 'ats-friendly' : 'user-friendly';
+    const hostHeader = req.headers.host || `${HOST}:${PORT}`;
+    const proto = req.headers['x-forwarded-proto'] || 'http';
+    const targetUrl = `${proto}://${hostHeader}/?lang=${lang}&view=${view}`;
+
+    console.log(`[API] Generating PDF for ${targetUrl}`);
+
+    let browser;
+    try {
+        browser = await puppeteer.launch({
+            headless: 'new',
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--font-render-hinting=medium',
+            ],
+        });
+
+        const page = await browser.newPage();
+        await page.goto(targetUrl, { waitUntil: 'networkidle0', timeout: 45000 });
+        await page.emulateMediaType('print');
+        await page.waitForSelector('.container', { timeout: 15000 }).catch(() => { });
+
+        const pdfBuffer = await page.pdf({
+            format: 'A4',
+            printBackground: true,
+            preferCSSPageSize: true,
+            margin: {
+                top: '14mm',
+                right: '14mm',
+                bottom: '14mm',
+                left: '14mm',
+            },
+        });
+
+        const filename = `resume-${lang}-${view === 'ats-friendly' ? 'ats' : 'hr'}.pdf`;
+        res.writeHead(200, {
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="${filename}"`,
+            'Cache-Control': 'no-store, no-cache, must-revalidate',
+        });
+        res.end(pdfBuffer);
+    } catch (error) {
+        console.error(`[API] Failed to generate PDF: ${error && error.message ? error.message : error}`);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to generate PDF' }));
+    } finally {
+        if (browser) {
+            try {
+                await browser.close();
+            } catch (closeError) {
+                console.warn(`[API] Failed to close browser instance: ${closeError && closeError.message ? closeError.message : closeError}`);
+            }
+        }
+    }
 }
 
 /**
@@ -118,6 +188,10 @@ const server = http.createServer((req, res) => {
                     res.end(JSON.stringify({ error: 'Invalid TOML format in resume.toml' }));
                 }
             });
+            return;
+        }
+        if (parsed.pathname === '/api/pdf') {
+            handlePdfRequest(req, res, parsed);
             return;
         }
     } catch (e) {
