@@ -207,8 +207,13 @@ body {
     }
 
     [data-theme="dark"] .section-title.accent-yellow {
-        color: #FFC107 !important;
-        border-bottom-color: #FFC107 !important;
+        color: #FFB74D !important;
+        border-bottom-color: #FFB74D !important;
+    }
+
+    [data-theme="dark"] .section-title.accent-green {
+        color: #66BB6A !important;
+        border-bottom-color: #66BB6A !important;
     }
 
     [data-theme="dark"] .name {
@@ -959,13 +964,23 @@ u {
 }
 
 .section-title.accent-yellow {
-    color: #FFC107;
-    border-bottom-color: #FFC107;
+    color: #F57C00;
+    border-bottom-color: #F57C00;
 }
 
 [data-theme="dark"] .section-title.accent-yellow {
-    color: #FFD54F;
-    border-bottom-color: #FFD54F;
+    color: #FFB74D;
+    border-bottom-color: #FFB74D;
+}
+
+.section-title.accent-green {
+    color: #4CAF50;
+    border-bottom-color: #4CAF50;
+}
+
+[data-theme="dark"] .section-title.accent-green {
+    color: #66BB6A;
+    border-bottom-color: #66BB6A;
 }
 
 .section-content {

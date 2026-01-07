@@ -136,10 +136,12 @@ keywords = [
     "Sourcery",
     "Periphery",
     "Danger",
+    "Jenkins",
+    "GitLab CI",
 ]
 
 [[skills]]
-category = "SDKs"
+category = "Frameworks"
 keywords = [
     "URLSession",
     "Alamofire / Moya",
@@ -157,8 +159,10 @@ keywords = [
     "Mindbox",
     "MapBox",
     "MapKit",
-    "swift-snapshot-testing",
 ]
+[[skills]]
+category = "Testing"
+keywords = ["XCTest", "swift-snapshot-testing", "TDD"]
 
 [[skills]]
 category = "Architecture"
@@ -361,7 +365,6 @@ period = "May 2019 — Sep 2021"
 Разрабатывал с нуля и поддерживал существующие приложения в команде из **3-х разработчиков**.
 Со временем, по мере увеличения навыков и вклада в проекты, **дорос до тимлида**.
 • Полный цикл разработки приложения от создания репозитория до **публикации в App Store**
-• Решение проблем и **согласование с заказчиком**
 • **Менторство** разработчиков, парное программирование и проведение **performance reviews**
 """
 
@@ -369,7 +372,6 @@ period = "May 2019 — Sep 2021"
 Developed from scratch and maintained existing applications in a team of **3 developers**.
 Over time, as skills and contribution to projects increased, **grew to team lead**.
 • Full application development cycle from repository creation to **App Store publishing**
-• Problem solving and **coordination with the client**
 • **Mentoring** developers, pair programming and conducting **performance reviews**
 """
 

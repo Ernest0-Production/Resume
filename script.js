@@ -900,13 +900,13 @@ function updateSectionTitles(language) {
         const titleRu = educationLanguagesTitleElement.getAttribute('data-title-ru');
         const titleEn = educationLanguagesTitleElement.getAttribute('data-title-en');
         const iconElement = educationLanguagesTitleElement.querySelector('.icon');
-        const hasAccentClass = educationLanguagesTitleElement.classList.contains('accent-yellow');
+        const hasAccentClass = educationLanguagesTitleElement.classList.contains('accent-green');
 
         if (iconElement) {
             const title = language === 'ru' ? titleRu : titleEn;
             educationLanguagesTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
             if (hasAccentClass) {
-                educationLanguagesTitleElement.classList.add('accent-yellow');
+                educationLanguagesTitleElement.classList.add('accent-green');
             }
         }
     }
