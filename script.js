@@ -492,13 +492,13 @@ function focusLanguageTrigger(trigger) {
 }
 
 /**
- * Download resume as PDF (downloads pre-generated PDF from data folder)
+ * Open resume PDF link (opens pre-generated PDF from data folder in new tab)
  */
-async function downloadResumeAsPDF() {
+function downloadResumeAsPDF() {
     const pdfButton = document.getElementById('pdfDownloadBtn');
     const buttonText = pdfButton ? pdfButton.querySelector('.pdf-download-btn__text') : null;
     const originalText = buttonText ? buttonText.textContent : '';
-    const loadingText = currentLanguage === 'ru' ? 'Загрузка PDF...' : 'Downloading PDF...';
+    const loadingText = currentLanguage === 'ru' ? 'Открытие PDF...' : 'Opening PDF...';
 
     if (pdfButton) {
         pdfButton.disabled = true;
@@ -517,45 +517,21 @@ async function downloadResumeAsPDF() {
         // Path to pre-generated PDF in data folder
         const pdfPath = `data/resume-${lang}-${viewSuffix}.pdf`;
 
-        // Generate custom filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
-        let filename = `resume-${lang}-${viewSuffix}.pdf`;
-        if (currentResumeData) {
-            const firstName = currentResumeData.firstName || '';
-            const lastName = currentResumeData.lastName || '';
-            const jobTitle = currentResumeData.jobTitle || '';
+        // Open PDF in new tab
+        window.open(pdfPath, '_blank');
 
-            const nameParts = [firstName, lastName].filter(Boolean);
-            const name = nameParts.join(' ');
-
-            if (name && jobTitle) {
-                filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
-            } else if (name) {
-                filename = `${name}.${viewSuffix}.pdf`;
+        // Restore button state after a short delay
+        setTimeout(() => {
+            if (pdfButton) {
+                pdfButton.disabled = false;
+                pdfButton.removeAttribute('aria-busy');
             }
-        }
-
-        // Download the pre-generated PDF
-        const response = await fetch(pdfPath);
-
-        if (!response || !response.ok) {
-            throw new Error(`PDF file not found at ${pdfPath}. Status: ${response ? response.status : 'unknown'}`);
-        }
-
-        const blob = await response.blob();
-        if (!blob || blob.size === 0) {
-            throw new Error('Empty PDF file');
-        }
-
-        const downloadUrl = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = downloadUrl;
-        anchor.download = filename;
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        URL.revokeObjectURL(downloadUrl);
+            if (buttonText) {
+                buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
+            }
+        }, 500);
     } catch (error) {
-        console.error('Failed to download PDF:', error);
+        console.error('Failed to open PDF:', error);
         const errorText = currentLanguage === 'ru'
             ? 'PDF не найден. Используйте Ctrl+P для печати.'
             : 'PDF not found. Use Ctrl+P to print.';
@@ -567,16 +543,9 @@ async function downloadResumeAsPDF() {
                 }
             }, 3000);
         }
-        // Optionally fall back to browser print
-        // window.print();
-    } finally {
         if (pdfButton) {
             pdfButton.disabled = false;
             pdfButton.removeAttribute('aria-busy');
-        }
-        // Restore button text if it's still in loading state (successful download)
-        if (buttonText && buttonText.textContent === loadingText) {
-            buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
         }
     }
 }
@@ -591,10 +560,10 @@ function initPDFDownloadButton() {
         return;
     }
 
-    pdfButton.addEventListener('click', async (event) => {
+    pdfButton.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
-        await downloadResumeAsPDF();
+        downloadResumeAsPDF();
     });
 }
 
