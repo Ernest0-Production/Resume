@@ -78,7 +78,7 @@
 
 @page {
     size: A4 portrait;
-    margin: 10mm 10mm 8mm 10mm;
+    margin: 12mm 14mm 12mm 14mm;
 }
 
 /* ==================== Base Styles ==================== */
@@ -889,9 +889,10 @@ u {
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
         "about expectation"
-        "skills right-stack"
+        "extra-skills right-stack"
         "experience experience"
-        "projects projects";
+        "projects projects"
+        "skills skills";
     column-gap: 16px;
     row-gap: 12px;
     align-items: start;
@@ -916,6 +917,10 @@ u {
 
 #expectationSection {
     grid-area: expectation;
+}
+
+#extraSkillsSection {
+    grid-area: extra-skills;
 }
 
 #skillsSection {
