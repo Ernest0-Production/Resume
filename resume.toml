@@ -40,7 +40,7 @@ subtitle = "7 years of experience • founding engineer"
 • Готов **лидить** команду, но продолжать **писать код**
 • **Неформальной коммуникации**
 • Не боюсь плохо настроенных процессов, если на них реально **можно влиять**
-• Не привязан к конкретной отрасли – интересна сама роль и возможность рости как **T-shaped** специалист
+• Не привязан к конкретной отрасли – интересна сама роль и возможность роста, как **T-shaped** специалист
 """
 
 "expectation.en" = """
@@ -455,16 +455,22 @@ url = "https://apps.apple.com/ru/app/id1549274265"
 ############################################
 
 [[projects]]
+title = "Git Client for Raycast"
+link = "https://www.raycast.com/ernest0n/git"
+"description.ru" = "Полноценный Git GUI клиент"
+"description.en" = "Full-featured Git GUI client"
+
+[[projects]]
 title = "DeclarativeLayoutKit"
 link = "https://github.com/Ernest0-Production/DeclarativeLayoutKit"
 "description.ru" = "Декларативная верстка на UIKit"
 "description.en" = "Declarative layout on UIKit"
 
 [[projects]]
-title = "Git Client for Raycast"
-link = "https://www.raycast.com/ernest0n/git"
-"description.ru" = "Полноценный Git GUI клиент"
-"description.en" = "Full-featured Git GUI client"
+title = "LLM Stats for Raycast"
+link = "https://www.raycast.com/ernest0n/llm-stats"
+"description.ru" = "Benchmark leaderboard LLMs-моделей"
+"description.en" = "Benchmark leaderboard of LLMs"
 
 [[projects]]
 title = "FunctionalNavigationFlowKit"
