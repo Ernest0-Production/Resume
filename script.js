@@ -578,19 +578,15 @@ async function downloadResumeAsPDF() {
             }
         }
 
-        // Fetch PDF file
-        const response = await fetch(pdfPath);
+        // Check if PDF exists
+        const response = await fetch(pdfPath, { method: 'HEAD' });
         if (!response.ok) {
             throw new Error(`Failed to fetch PDF: ${response.status}`);
         }
 
-        // Create blob from response
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-
-        // Create temporary download link with personalized filename
+        // Create download link with direct path (no blob URL - keeps link static)
         const downloadLink = document.createElement('a');
-        downloadLink.href = blobUrl;
+        downloadLink.href = pdfPath;
         downloadLink.download = filename;
         downloadLink.style.display = 'none';
         document.body.appendChild(downloadLink);
@@ -601,7 +597,6 @@ async function downloadResumeAsPDF() {
         // Cleanup
         setTimeout(() => {
             document.body.removeChild(downloadLink);
-            URL.revokeObjectURL(blobUrl);
         }, 100);
 
         // Restore button state
