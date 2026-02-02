@@ -1043,51 +1043,6 @@ function updatePdfButtonText(language) {
 }
 
 /**
- * Update Telegram button text based on current language
- */
-function updateTelegramButtonText(language) {
-    const telegramButtonText = document.getElementById('telegramButtonText');
-    if (!telegramButtonText) return;
-
-    telegramButtonText.textContent = language === 'ru' ? 'Написать' : 'Message me';
-}
-
-/**
- * Initialize Telegram floating button
- * Shows button only if Telegram contact exists in references
- */
-function initTelegramButton(data) {
-    const telegramButton = document.getElementById('telegramButton');
-    if (!telegramButton) {
-        console.warn('Telegram button not found.');
-        return;
-    }
-
-    // Find Telegram reference in data
-    const references = Array.isArray(data.references) ? data.references : [];
-    const telegramRef = references.find(ref => 
-        ref.type === 'telegram' || 
-        ref.url.includes('t.me') || 
-        ref.url.includes('telegram.me')
-    );
-
-    if (telegramRef && telegramRef.url) {
-        // Show button and set URL
-        telegramButton.href = telegramRef.url;
-        telegramButton.style.display = 'inline-flex';
-        
-        // Update button text based on current language
-        updateTelegramButtonText(currentLanguage);
-        
-        console.log(`Telegram button initialized with URL: ${telegramRef.url}`);
-    } else {
-        // Hide button if no Telegram contact
-        telegramButton.style.display = 'none';
-        console.log('No Telegram contact found, button hidden.');
-    }
-}
-
-/**
  * Render header section
  */
 function renderHeader(data) {
@@ -1704,7 +1659,6 @@ async function loadResumeData(language = currentLanguage) {
         updatePdfButtonText(language);
         updateSectionTitles(language);
         updatePdfButtonLink(); // Update PDF link when language changes
-        updateTelegramButtonText(language); // Update Telegram button text when language changes
 
         // Apply accent colors from TOML
         applyAccentColors();
@@ -1720,9 +1674,6 @@ async function loadResumeData(language = currentLanguage) {
         renderExperience(normalized);
         renderProjects(normalized);
         renderEducationLanguages(normalized);
-
-        // Initialize Telegram button
-        initTelegramButton(normalized);
 
         if (window.AtsLayout && typeof window.AtsLayout.render === 'function') {
             window.AtsLayout.render(normalized, { language: currentLanguage });
