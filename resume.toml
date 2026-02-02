@@ -474,10 +474,10 @@ link = "https://www.raycast.com/ernest0n/llm-stats"
 "description.en" = "Benchmark leaderboard of LLMs"
 
 [[projects]]
-title = "FunctionalNavigationFlowKit"
-link = "https://github.com/Ernest0-Production/FunctionalNavigationFlowKit"
-"description.ru" = "Декларативная навигация через ФП"
-"description.en" = "Declarative navigation through FP"
+title = "ScreenNavigatorKit"
+link = "https://github.com/Ernest0-Production/ScreenNavigatorKit"
+"description.ru" = "Императивный стиль навигации в SwiftUI"
+"description.en" = "Imperative navigation style in SwiftUI"
 
 [[projects]]
 title = "Mattermost for Raycast"
