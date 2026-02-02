@@ -539,7 +539,7 @@ u {
     font-size: 12px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    text-decoration: none;
+    text-decoration: none !important;
     cursor: pointer;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
@@ -549,6 +549,7 @@ u {
     border-color: var(--color-accent);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     background-color: #f0f7ff;
+    text-decoration: none !important;
 }
 
 [data-theme="dark"] .pdf-download-btn {
@@ -560,6 +561,7 @@ u {
 [data-theme="dark"] .pdf-download-btn:focus-visible {
     background-color: #353535;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    text-decoration: none !important;
 }
 
 .pdf-download-btn__icon {

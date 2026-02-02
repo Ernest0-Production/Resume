@@ -569,9 +569,9 @@ function updatePdfButtonLink() {
             filename = `${name}.${viewSuffix}.pdf`;
         }
     }
-    
+
     pdfButton.setAttribute('download', filename);
-    
+
     console.log(`PDF button updated: href="${pdfPath}", download="${filename}"`);
 }
 
