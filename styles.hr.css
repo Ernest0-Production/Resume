@@ -305,12 +305,16 @@ body {
         color: #10B981 !important;
     }
 
-    [data-theme="dark"] .contact-item a {
+    [data-theme="dark"] .contact-item a,
+    [data-theme="dark"] .contact-info>a.contact-item {
         color: #000000 !important;
+        text-decoration: none !important;
     }
 
-    [data-theme="dark"] .references a {
+    [data-theme="dark"] .contact-item a:hover,
+    [data-theme="dark"] .contact-info>a.contact-item:hover {
         color: #000000 !important;
+        text-decoration: none !important;
     }
 
     [data-theme="dark"] .avatar {
@@ -775,22 +779,16 @@ u {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    gap: 6px;
+    column-gap: 6px;
     row-gap: 4px;
     width: 100%;
 }
 
-.contact-info>.contact-item {
-    flex-shrink: 0;
+.contact-info>.contact-item,
+.contact-info>a.contact-item {
     display: inline-flex;
     align-items: center;
 }
-
-.contact-info>.references {
-    grid-column: 1 / -1;
-    margin-top: 0;
-}
-
 
 .contact-item {
     display: inline-flex;
@@ -800,13 +798,27 @@ u {
     margin: 0;
 }
 
-.contact-item a {
-    color: var(--color-black);
+.contact-item a,
+.contact-info>a.contact-item {
+    color: var(--color-black) !important;
+    text-decoration: none !important;
 }
 
-.contact-item a:hover {
-    color: var(--color-black);
-    text-decoration: none;
+.contact-item a:hover,
+.contact-info>a.contact-item:hover {
+    color: var(--color-black) !important;
+    text-decoration: none !important;
+}
+
+.contact-item a .icon,
+.contact-info>a.contact-item .icon {
+    color: inherit;
+}
+
+.contact-item a .icon .favicon,
+.contact-info>a.contact-item .icon .favicon {
+    opacity: 1;
+    filter: none;
 }
 
 .contact-item .icon {
@@ -816,7 +828,11 @@ u {
     vertical-align: middle;
 }
 
-#location .icon {
+.contact-item[data-contact-type="location"] .icon {
+    color: var(--color-red);
+}
+
+.contact-item[data-contact-type="location"] .icon .iconify {
     color: var(--color-red);
 }
 
@@ -826,48 +842,13 @@ u {
     vertical-align: middle;
 }
 
-.references {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    gap: 6px;
-    row-gap: 4px;
-    width: 100%;
-    margin: 0;
-}
-
-.references a {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 13px;
-    color: var(--color-black);
-    margin: 0;
-}
-
-.references a:hover {
-    color: var(--color-black);
-    text-decoration: none;
-}
-
-.references a .icon {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 2px;
-}
-
-.references a .icon .favicon {
+.contact-item .icon .favicon {
     width: 16px;
     height: 16px;
     display: block;
     border-radius: 4px;
     object-fit: contain;
-}
-
-.references a .icon .iconify {
-    width: 16px;
-    height: 16px;
-    color: inherit !important;
+    vertical-align: middle;
 }
 
 .header-avatar {

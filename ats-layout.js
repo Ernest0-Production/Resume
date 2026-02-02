@@ -161,6 +161,7 @@
         const fullNameElement = document.getElementById('atsFullName');
         const jobTitleElement = document.getElementById('atsJobTitle');
         const emailElement = document.getElementById('atsEmail');
+        const phoneElement = document.getElementById('atsPhone');
         const locationElement = document.getElementById('atsLocation');
         const linkedInElement = document.getElementById('atsLinkedIn');
         const aboutElement = document.getElementById('atsAbout');
@@ -196,6 +197,21 @@
             } else {
                 emailElement.textContent = '';
                 emailElement.style.display = 'none';
+            }
+        }
+
+        if (phoneElement) {
+            if (data.phone) {
+                phoneElement.innerHTML = `
+                    <span class="ats-header__icon">
+                        <span class="iconify" data-icon="mdi:phone-dial" aria-hidden="true"></span>
+                    </span>
+                    <a href="tel:${data.phone.replace(/\s/g, '')}">${data.phone}</a>
+                `;
+                phoneElement.style.display = '';
+            } else {
+                phoneElement.textContent = '';
+                phoneElement.style.display = 'none';
             }
         }
 

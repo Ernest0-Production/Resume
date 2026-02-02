@@ -1061,39 +1061,59 @@ function renderHeader(data) {
         jobTitle.innerHTML = parseFormatting(data.jobTitle || '');
     }
 
-    // Email
-    const emailElement = document.getElementById('email');
-    if (emailElement && data.email) {
-        emailElement.innerHTML = `
-        <span class="icon">
-            <span class="iconify" data-icon="mdi:email"></span>
-        </span>
-        <a href="mailto:${data.email}" class="text">${data.email}</a>
-    `;
-    }
+    // Contact info - render all items in one flow layout
+    const contactInfoElement = document.getElementById('contactInfo');
+    if (contactInfoElement) {
+        contactInfoElement.innerHTML = '';
 
-    // Location
-    const locationElement = document.getElementById('location');
-    if (locationElement && data.location) {
-        locationElement.innerHTML = `
-        <span class="icon">
-            <span class="iconify" data-icon="mdi:map-marker"></span>
-        </span>
-        <span class="text">${data.location}</span>
-    `;
-    }
+        // Email
+        if (data.email) {
+            const emailItem = document.createElement('span');
+            emailItem.className = 'contact-item';
+            emailItem.innerHTML = `
+                <span class="icon">
+                    <span class="iconify" data-icon="mdi:email"></span>
+                </span>
+                <a href="mailto:${data.email}" class="text">${data.email}</a>
+            `;
+            contactInfoElement.appendChild(emailItem);
+        }
 
-    // References (links)
-    const referencesElement = document.getElementById('references');
-    if (referencesElement) {
-        referencesElement.innerHTML = '';
+        // Location
+        if (data.location) {
+            const locationItem = document.createElement('span');
+            locationItem.className = 'contact-item';
+            locationItem.setAttribute('data-contact-type', 'location');
+            locationItem.innerHTML = `
+                <span class="icon">
+                    <span class="iconify" data-icon="mdi:map-marker"></span>
+                </span>
+                <span class="text">${data.location}</span>
+            `;
+            contactInfoElement.appendChild(locationItem);
+        }
+
+        // Phone
+        if (data.phone) {
+            const phoneItem = document.createElement('span');
+            phoneItem.className = 'contact-item';
+            phoneItem.innerHTML = `
+                <span class="icon">
+                    <span class="iconify" data-icon="mdi:phone-dial"></span>
+                </span>
+                <a href="tel:${data.phone.replace(/\s/g, '')}" class="text">${data.phone}</a>
+            `;
+            contactInfoElement.appendChild(phoneItem);
+        }
+
+        // References (links)
         const references = Array.isArray(data.references) ? data.references : [];
-
         references.forEach(ref => {
             const link = document.createElement('a');
             link.href = ref.url;
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
+            link.className = 'contact-item';
 
             const iconContainer = document.createElement('span');
             iconContainer.className = 'icon';
@@ -1139,7 +1159,7 @@ function renderHeader(data) {
             link.appendChild(iconContainer);
             link.appendChild(textElement);
 
-            referencesElement.appendChild(link);
+            contactInfoElement.appendChild(link);
         });
     }
 
@@ -1695,6 +1715,7 @@ function normalizeResumeData(data) {
         pageTitle: data && data.pageTitle ? String(data.pageTitle).trim() : data && data.pageTitle,
         jobTitle: safeString(data && data.jobTitle),
         email: data && data.email ? String(data.email).trim() : data && data.email,
+        phone: data && data.phone ? String(data.phone).trim() : data && data.phone,
         location: safeString(data && data.location),
         references: safeArray(data && data.references).map(ref => trimStringFields(ref)),
         // Content
