@@ -793,7 +793,7 @@ u {
 .contact-item {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     font-size: 13px;
     margin: 0;
 }

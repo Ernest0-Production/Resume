@@ -6,14 +6,10 @@ Static HTML resume site with PDF export capability. This project allows you to m
 
 - ✅ **TOML-based data structure** - Easy to update and maintain
 - ✅ **Multilanguage support** - Single file with language-specific properties (Russian and English)
-- ✅ **Modern, professional design** - Two-column layout with clean typography
-- ✅ **SF Pro Rounded font** - Clean and professional Apple typography
-- ✅ **Iconify integration** - Beautiful icons for links and sections (from https://iconify.design)
-- ✅ **PDF export ready** - Print directly from browser (Ctrl+P / Cmd+P)
-- ✅ **Responsive design** - Looks great on all devices
+- ✅ **Two view modes** - Switch between HR-friendly and ATS-friendly resume formats
+- ✅ **PDF export** - Export your resume as PDF
 - ✅ **Text formatting support** - Bold, italic, and underline in content
-- ✅ **Automatic icon detection** - LinkedIn, GitHub, Telegram icons automatically detected from URLs
-- ✅ **Local development server** - Easy to preview changes
+- ✅ **OpenGraph support** - Automatically generated OpenGraph image for social media
 
 ## 🚀 Quick Start
 
@@ -45,34 +41,30 @@ npm start
 ```bash
 npm run dev           # Same as npm start
 npm run serve         # Same as npm start
-npm run build         # Build JSON data files and OG image
-npm run generate-pdfs # Generate all PDF variants locally
-npm run og-image      # Generate only the OpenGraph image
+npm run build         # Build JSON data files and OG image for github pages
+npm run generate-pdfs # Generate all PDF variants for github pages
+npm run og-image      # Generate only the OpenGraph image for github pages
 ```
-
-### OpenGraph Preview Automation
-
-- `npm run build` now renders `og-preview.html` headlessly with Puppeteer and saves the output as `og-image.png`
-- `og-image.png` is deployed together with the site, so OpenGraph/Twitter cards always have a fresh preview
-- You can regenerate just the preview without rebuilding data via `npm run og-image`
 
 ## 📝 Editing Your Resume
 
-### Step 1: Add Your Avatar
-
-1. Place your avatar image in the project folder (e.g., `avatar.jpg`)
-2. Or use an absolute path to your image (e.g., `/Users/username/Pictures/avatar.jpg`)
-3. Update the `avatar` field in `resume.toml` with the path
-
-### Step 2: Edit the TOML file
+### Step 1: Edit the TOML file
 
 Open `resume.toml` in the project root and update it with your information. The file uses a multilanguage format where language-specific properties use the format `"propertyName.language"`:
 
 ```toml
+# Configuration
+# Accent color (single color for all themes)
+accentColor = "#0FB981"
+# Or different colors for light and dark themes
+accentColor.light = "#64B5F6"
+accentColor.dark = "#2196F3"
+
 # Common properties (same for all languages)
-avatar = "avatar.jpg"
+avatar = "avatar.jpg" # or remote URL (e.g., "https://example.com/avatar.jpg")
 lastName = "Your last name"
 email = "your.email@example.com"
+phone = "+7 (926) 188-11-22"
 
 # Multilanguage properties
 "firstName.ru" = "Ваше имя"
@@ -125,9 +117,9 @@ period   = "MM/YYYY - MM/YYYY"
 "achievements.ru" = "Ваши достижения"
 "achievements.en" = "Your achievements"
 
-  [[experience.links]]
-  title = "Link title"
-  url   = "https://..."
+[[experience.links]]
+title = "Link title"
+url   = "https://..."
 
 # Projects with multilanguage description
 [[projects]]
@@ -160,7 +152,9 @@ The following properties support multiple languages using the `"propertyName.lan
 
 Properties without a language suffix (like `avatar`, `lastName`, `email`, `references`, `languages`, `skills`) are shared across all languages.
 
-### Step 3: Text Formatting
+## 💡 Tips
+
+### Text Formatting
 
 You can use the following formatting in any text field:
 
@@ -173,7 +167,7 @@ Example:
 about = "I have **10 years** of experience in *web development*."
 ```
 
-### Step 3: Switch Languages
+### Switch Languages
 
 The resume supports Russian and English. Switch languages using:
 - `http://localhost:3000?lang=ru` - Russian version
@@ -181,104 +175,41 @@ The resume supports Russian and English. Switch languages using:
 
 The language preference is saved in your browser and will persist across sessions.
 
-### Step 4: Preview Changes
 
-1. Save your changes to `resume.toml`
-2. Refresh your browser (F5 or Cmd+R)
-3. Your updated resume will appear immediately
+## 🎛️ Interface
 
-## 📥 Exporting to PDF
+The interface includes several controls:
 
-1. Open your resume in the browser (`http://localhost:3000`)
-2. Press **Ctrl+P** (Windows/Linux) or **Cmd+P** (Mac)
-3. In the print dialog:
-   - **Destination**: Select "Save as PDF"
-   - **Layout**: Portrait
-   - **Paper size**: A4 or Letter
-   - **Margins**: Default or Custom
-   - **Options**: Enable "Background graphics" for best results
-4. Click "Save" and choose where to save your PDF
+- **View mode switcher** - Switch between HR-friendly and ATS-friendly resume formats
+- **PDF download button** - Download your resume as PDF
+- **Theme toggle** - Switch between light and dark themes
+- **Language switcher** - Quick switch between Russian and English
 
-### Tips for Best PDF Output
-
-- ✅ Enable "Background graphics" in print settings
-- ✅ Use A4 paper size for international standard
-- ✅ Check "Print headers and footers" is disabled for cleaner output
-- ✅ Preview before saving to ensure everything looks correct
+All settings (language, theme, view mode) are saved in your browser and restored on your next visit.
 
 ## 📁 Project Structure
 
-```
+```bash
 cv-generator/
 ├── index.html          # Main HTML structure
-├── styles.css          # All styling and print styles
+├── styles.hr.css       # HR-friendly mode styles
+├── styles.ats.css      # ATS-friendly mode styles
 ├── script.js           # Data loading and rendering logic
-├── resume.toml         # Multilanguage resume data (Russian & English)
+├── ats-layout.js       # ATS-friendly layout renderer
+├── resume.toml         # Resume data
 ├── server.js           # Local development server
+├── build.js            # Build script for JSON data generation
+├── generate-og-image.js # OpenGraph image generator
+├── generate-pdfs.js     # PDF generation script
+├── og-preview.html     # OpenGraph preview template
 ├── package.json        # Project configuration
 └── README.md          # This file
 ```
 
-## 🎨 Customizing the Design
-
-### Icons
-
-This project uses [Iconify](https://iconify.design) for icons. Icons are automatically detected for:
-- LinkedIn (`mdi:linkedin`)
-- GitHub (`mdi:github`)
-- Telegram (`mdi:telegram`)
-- Twitter/X (`mdi:twitter`)
-- And many more...
-
-You can browse and find more icons at https://iconify.design and use them in your HTML:
-
-```html
-<span class="iconify" data-icon="mdi:icon-name"></span>
-```
-
-### Colors
-
-#### Accent Colors (HR Friendly Page)
-
-You can customize the accent color for the HR Friendly page by adding `accentColor` to the top of your `resume.toml` file. Two formats are supported:
-
-**Single color format** (applies to both light and dark themes):
-```toml
-# Single accent color for both themes (HEX format)
-accentColor = "#0FB981"
-```
-
-**Light/dark format** (different colors for each theme):
-```toml
-# Accent colors for HR Friendly page (HEX format)
-accentColor.light = "#64B5F6"
-accentColor.dark = "#2196F3"
-```
-
-- Single format: One color used for both light and dark themes
-- Light/dark format:
-  - `light`: Color used in light theme mode
-  - `dark`: Color used in dark theme mode
-- All values should be in HEX format (e.g., `#2196F3`)
-
-The accent color will automatically update the `--color-accent` CSS variable based on the current theme.
-
-#### Other Colors
-
-Edit the CSS variables in `styles.css`:
-
-```css
-:root {
-    --color-black: #000000;
-    --color-accent: #2196F3;     /* Links and accents */
-    --color-red: #E53935;      /* Section highlights */
-    --color-gray: #666666;     /* Secondary text */
-}
-```
 
 ## 🌐 Browser Support
 
-- ✅ Chrome/Edge (Recommended for PDF export)
+- ✅ Chrome/Edge
 - ✅ Firefox
 - ✅ Safari
 - ✅ Opera
