@@ -346,11 +346,20 @@
         }
 
         if (educationElement) {
-            if (Array.isArray(data.education) && data.education.length > 0) {
+            const educationSection = document.getElementById('atsEducationSection');
+            const hasEducation = Array.isArray(data.education) && data.education.length > 0;
+
+            if (hasEducation) {
                 const educationHTML = data.education.map(edu => renderAtsEducationItem(edu)).join('');
                 educationElement.innerHTML = educationHTML || '';
+                if (educationSection) {
+                    educationSection.style.display = '';
+                }
             } else {
                 educationElement.innerHTML = '';
+                if (educationSection) {
+                    educationSection.style.display = 'none';
+                }
             }
         }
 

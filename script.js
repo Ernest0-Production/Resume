@@ -1057,8 +1057,13 @@ function updateSectionTitles(language) {
     // Update "Education & Languages" section title
     const educationLanguagesTitleElement = document.querySelector('#educationLanguagesSection .section-title');
     if (educationLanguagesTitleElement) {
-        const titleRu = educationLanguagesTitleElement.getAttribute('data-title-ru');
-        const titleEn = educationLanguagesTitleElement.getAttribute('data-title-en');
+        const hasEducation = currentResumeData && currentResumeData.education && currentResumeData.education.length > 0;
+        const titleRu = hasEducation
+            ? educationLanguagesTitleElement.getAttribute('data-title-ru')
+            : educationLanguagesTitleElement.getAttribute('data-title-no-edu-ru');
+        const titleEn = hasEducation
+            ? educationLanguagesTitleElement.getAttribute('data-title-en')
+            : educationLanguagesTitleElement.getAttribute('data-title-no-edu-en');
         const iconElement = educationLanguagesTitleElement.querySelector('.icon');
         const hasAccentClass = educationLanguagesTitleElement.classList.contains('accent-green');
 
@@ -1574,18 +1579,33 @@ function renderEducationLanguages(data) {
     const educationLanguagesElement = document.getElementById('educationLanguages');
     const educationLanguagesSection = document.getElementById('educationLanguagesSection');
 
-    // Hide section if no education
+    // Check if education exists
     const hasEducation = data.education && data.education.length > 0;
-    if (!hasEducation) {
-        if (educationLanguagesSection) {
-            educationLanguagesSection.style.display = 'none';
-        }
-        return;
-    }
 
-    // Show section if education exists
+    // Always show section (even if no education, we show languages)
     if (educationLanguagesSection) {
         educationLanguagesSection.style.display = '';
+    }
+
+    // Update section title based on education presence
+    const educationLanguagesTitleElement = educationLanguagesSection?.querySelector('.section-title');
+    if (educationLanguagesTitleElement) {
+        const titleRu = hasEducation
+            ? educationLanguagesTitleElement.getAttribute('data-title-ru')
+            : educationLanguagesTitleElement.getAttribute('data-title-no-edu-ru');
+        const titleEn = hasEducation
+            ? educationLanguagesTitleElement.getAttribute('data-title-en')
+            : educationLanguagesTitleElement.getAttribute('data-title-no-edu-en');
+        const iconElement = educationLanguagesTitleElement.querySelector('.icon');
+        const hasAccentClass = educationLanguagesTitleElement.classList.contains('accent-green');
+
+        if (iconElement && titleRu && titleEn) {
+            const title = currentLanguage === 'ru' ? titleRu : titleEn;
+            educationLanguagesTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
+            if (hasAccentClass) {
+                educationLanguagesTitleElement.classList.add('accent-green');
+            }
+        }
     }
 
     // Extract level from parentheses if exists, otherwise use full level
