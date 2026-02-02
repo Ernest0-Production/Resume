@@ -5,6 +5,9 @@
 pageTitle = "Resume Page"
 avatar = "avatar.jpg"
 
+accentColor.light = "#2196F3"
+accentColor.dark = "#64B5F6"
+
 # Multilanguage properties
 "firstName.ru" = "Эрнест"
 "firstName.en" = "Ernest"

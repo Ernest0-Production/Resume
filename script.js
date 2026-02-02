@@ -279,6 +279,49 @@ function setTheme(theme) {
     if (theme === 'dark' || theme === 'light') {
         document.documentElement.setAttribute(THEME_ATTRIBUTE, theme);
         updateThemeIcon(theme);
+        applyAccentColors(); // Reapply accent colors when theme changes
+    }
+}
+
+/**
+ * Apply accent colors from resume data to CSS variables
+ * Updates --color-accent based on current theme
+ * Supports both formats:
+ * - Single color: accentColor = "#0FB981" (applies to both themes)
+ * - Light/dark: accentColor.light = "#64B5F6", accentColor.dark = "#2196F3"
+ */
+function applyAccentColors() {
+    if (!currentResumeData) {
+        console.warn('applyAccentColors: currentResumeData is not available yet');
+        return;
+    }
+
+    if (!currentResumeData.accentColor) {
+        console.log('applyAccentColors: No accentColor defined, using default CSS values');
+        return; // No accent color defined, use default CSS values
+    }
+
+    const accentColor = currentResumeData.accentColor;
+    const currentTheme = getCurrentTheme();
+
+    let colorToApply;
+
+    // Check if accentColor is a string (single color format)
+    if (typeof accentColor === 'string') {
+        colorToApply = accentColor.trim();
+    }
+    // Otherwise it's an object with light/dark properties
+    else if (typeof accentColor === 'object' && accentColor !== null) {
+        colorToApply = currentTheme === 'dark'
+            ? (accentColor.dark || accentColor.light)
+            : (accentColor.light || accentColor.dark);
+    }
+
+    if (colorToApply) {
+        console.log(`applyAccentColors: Applying ${colorToApply} for ${currentTheme} theme`);
+        document.documentElement.style.setProperty('--color-accent', colorToApply);
+    } else {
+        console.warn('applyAccentColors: No color to apply', accentColor);
     }
 }
 
@@ -1607,11 +1650,22 @@ async function loadResumeData(language = currentLanguage) {
 
         currentLanguage = language;
         currentResumeData = normalized; // Store resume data for PDF filename generation
+
+        // Debug: log accentColor if present
+        if (currentResumeData.accentColor) {
+            console.log('loadResumeData: accentColor found:', currentResumeData.accentColor);
+        } else {
+            console.log('loadResumeData: accentColor not found in data. Available keys:', Object.keys(currentResumeData).slice(0, 10));
+        }
+
         persistLanguage(language);
         setDocumentLanguage(config);
         updateLanguageSwitcherUI(language);
         updatePdfButtonText(language);
         updateSectionTitles(language);
+
+        // Apply accent colors from TOML
+        applyAccentColors();
 
         // Render all sections
         renderHeader(normalized);
@@ -1745,6 +1799,13 @@ function normalizeResumeData(data) {
         experience: safeArray(data && data.experience).map(exp => trimStringFields(exp)),
         projects: safeArray(data && data.projects).map(proj => trimStringFields(proj)),
         education: safeArray(data && data.education).map(edu => trimStringFields(edu)),
+        // Accent colors for HR Friendly page
+        // Supports both string (single color) and object (light/dark) formats
+        accentColor: data && data.accentColor
+            ? (typeof data.accentColor === 'string'
+                ? String(data.accentColor).trim()
+                : trimStringFields(data.accentColor))
+            : undefined,
     };
 
     return normalized;

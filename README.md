@@ -238,12 +238,39 @@ You can browse and find more icons at https://iconify.design and use them in you
 
 ### Colors
 
+#### Accent Colors (HR Friendly Page)
+
+You can customize the accent color for the HR Friendly page by adding `accentColor` to the top of your `resume.toml` file. Two formats are supported:
+
+**Single color format** (applies to both light and dark themes):
+```toml
+# Single accent color for both themes (HEX format)
+accentColor = "#0FB981"
+```
+
+**Light/dark format** (different colors for each theme):
+```toml
+# Accent colors for HR Friendly page (HEX format)
+accentColor.light = "#64B5F6"
+accentColor.dark = "#2196F3"
+```
+
+- Single format: One color used for both light and dark themes
+- Light/dark format:
+  - `light`: Color used in light theme mode
+  - `dark`: Color used in dark theme mode
+- All values should be in HEX format (e.g., `#2196F3`)
+
+The accent color will automatically update the `--color-accent` CSS variable based on the current theme.
+
+#### Other Colors
+
 Edit the CSS variables in `styles.css`:
 
 ```css
 :root {
     --color-black: #000000;
-    --color-blue: #2196F3;     /* Links and accents */
+    --color-accent: #2196F3;     /* Links and accents */
     --color-red: #E53935;      /* Section highlights */
     --color-gray: #666666;     /* Secondary text */
 }

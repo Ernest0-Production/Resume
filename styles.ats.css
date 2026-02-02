@@ -367,7 +367,7 @@ body[data-view-mode="ats-friendly"] .ats-layout {
 
 .ats-project__link {
     font-size: 11pt;
-    color: var(--color-blue);
+    color: var(--color-accent);
     word-break: break-all;
 }
 

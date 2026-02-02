@@ -56,7 +56,7 @@
 /* ==================== CSS Variables ==================== */
 :root {
     --color-black: #000000;
-    --color-blue: #2196F3;
+    --color-accent: #2196F3;
     --color-red: #E53935;
     --color-gray: #666666;
     --color-light-gray: #F5F5F5;
@@ -69,7 +69,7 @@
 /* Dark mode variables */
 [data-theme="dark"] {
     --color-black: #AAA599;
-    --color-blue: #64B5F6;
+    --color-accent: #64B5F6;
     --color-red: #EF5350;
     --color-gray: #B0B0B0;
     --color-light-gray: #2A2A2A;
@@ -150,7 +150,7 @@ body {
     html[data-theme="dark"] {
         background: #ffffff !important;
         --color-black: #000000 !important;
-        --color-blue: #2196F3 !important;
+        --color-accent: #2196F3 !important;
         --color-red: #E53935 !important;
         --color-gray: #666666 !important;
         --color-light-gray: #F5F5F5 !important;
@@ -374,7 +374,7 @@ p:last-child {
 }
 
 a {
-    color: var(--color-blue);
+    color: var(--color-accent);
     text-decoration: none;
 }
 
@@ -396,7 +396,7 @@ a .iconify {
 strong,
 b {
     font-weight: 700;
-    color: var(--color-blue);
+    color: var(--color-accent);
 }
 
 em,
@@ -480,12 +480,12 @@ u {
 }
 
 .view-mode-switcher__option--active {
-    background-color: var(--color-blue);
+    background-color: var(--color-accent);
     color: #ffffff;
 }
 
 .view-mode-switcher__option--active:hover {
-    background-color: var(--color-blue);
+    background-color: var(--color-accent);
 }
 
 .view-mode-switcher__option--active .view-mode-switcher__icon {
@@ -501,7 +501,7 @@ u {
 }
 
 [data-theme="dark"] .view-mode-switcher__option--active {
-    background-color: var(--color-blue);
+    background-color: var(--color-accent);
     color: #ffffff;
 }
 
@@ -542,7 +542,7 @@ u {
 
 .pdf-download-btn:hover,
 .pdf-download-btn:focus-visible {
-    border-color: var(--color-blue);
+    border-color: var(--color-accent);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     background-color: #f0f7ff;
 }
@@ -560,7 +560,7 @@ u {
 
 .pdf-download-btn__icon {
     font-size: 16px;
-    color: var(--color-blue);
+    color: var(--color-accent);
 }
 
 .pdf-download-btn__text {
@@ -591,14 +591,14 @@ u {
 
 .theme-toggle-btn:hover,
 .theme-toggle-btn:focus-visible {
-    border-color: var(--color-blue);
+    border-color: var(--color-accent);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     background-color: #f0f7ff;
 }
 
 .theme-toggle-btn__icon {
     font-size: 20px;
-    color: var(--color-blue);
+    color: var(--color-accent);
     transition: transform 0.3s ease;
 }
 
@@ -633,7 +633,7 @@ u {
 
 .language-switcher__trigger:hover,
 .language-switcher__trigger:focus-visible {
-    border-color: var(--color-blue);
+    border-color: var(--color-accent);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -702,12 +702,12 @@ u {
 .language-switcher__option:hover,
 .language-switcher__option:focus-visible {
     background-color: var(--color-light-gray);
-    color: var(--color-blue);
+    color: var(--color-accent);
 }
 
 .language-switcher__option--active,
 .language-switcher__option[aria-selected="true"] {
-    color: var(--color-blue);
+    color: var(--color-accent);
 }
 
 @media (max-width: 1024px) {
@@ -770,7 +770,7 @@ u {
 
 .job-title {
     font-size: 17px;
-    color: var(--color-blue);
+    color: var(--color-accent);
     margin-bottom: 10px;
     font-weight: 700;
 }
@@ -1148,7 +1148,7 @@ u {
 .experience-company {
     font-size: 18px;
     font-weight: 600;
-    color: var(--color-blue);
+    color: var(--color-accent);
     page-break-after: avoid;
     break-after: avoid;
 }
@@ -1479,7 +1479,7 @@ u {
 .experience-link__fallback {
     width: 20px;
     height: 20px;
-    color: var(--color-blue);
+    color: var(--color-accent);
 }
 
 .experience-link--no-description .experience-link__fallback {
@@ -1693,7 +1693,7 @@ u {
     width: 10px;
     height: 10px;
     flex-shrink: 0;
-    color: var(--color-blue);
+    color: var(--color-accent);
 }
 
 .link-tag__icon--fallback {
