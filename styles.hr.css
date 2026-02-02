@@ -564,9 +564,10 @@ u {
     text-decoration: none !important;
 }
 
-.pdf-download-btn__icon {
+.pdf-download-btn__icon,
+.pdf-download-btn .iconify {
     font-size: 16px;
-    color: var(--color-accent);
+    color: var(--color-accent) !important;
 }
 
 .pdf-download-btn__text {
