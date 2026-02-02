@@ -535,13 +535,14 @@ function focusLanguageTrigger(trigger) {
 }
 
 /**
- * Open resume PDF link (opens pre-generated PDF from data folder in new tab)
+ * Download resume PDF with personalized filename
+ * Uses short link but sets personalized filename via download attribute
  */
-function downloadResumeAsPDF() {
+async function downloadResumeAsPDF() {
     const pdfButton = document.getElementById('pdfDownloadBtn');
     const buttonText = pdfButton ? pdfButton.querySelector('.pdf-download-btn__text') : null;
     const originalText = buttonText ? buttonText.textContent : '';
-    const loadingText = currentLanguage === 'ru' ? 'Открытие PDF...' : 'Opening PDF...';
+    const loadingText = currentLanguage === 'ru' ? 'Скачивание PDF...' : 'Downloading PDF...';
 
     if (pdfButton) {
         pdfButton.disabled = true;
@@ -557,7 +558,10 @@ function downloadResumeAsPDF() {
         const view = currentViewMode || DEFAULT_VIEW_MODE;
         const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
 
-        // Generate filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
+        // Use short link format: resume-{lang}.{viewSuffix}.pdf
+        const pdfPath = `data/resume-${lang}.${viewSuffix}.pdf`;
+
+        // Generate personalized filename from resume data
         let filename = `resume.${viewSuffix}.pdf`;
         if (currentResumeData) {
             const firstName = currentResumeData.firstName || '';
@@ -574,24 +578,42 @@ function downloadResumeAsPDF() {
             }
         }
 
-        // Path to pre-generated PDF in data folder
-        const pdfPath = `data/${filename}`;
+        // Fetch PDF file
+        const response = await fetch(pdfPath);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch PDF: ${response.status}`);
+        }
 
-        // Open PDF in new tab
-        window.open(pdfPath, '_blank');
+        // Create blob from response
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
 
-        // Restore button state after a short delay
+        // Create temporary download link with personalized filename
+        const downloadLink = document.createElement('a');
+        downloadLink.href = blobUrl;
+        downloadLink.download = filename;
+        downloadLink.style.display = 'none';
+        document.body.appendChild(downloadLink);
+
+        // Trigger download
+        downloadLink.click();
+
+        // Cleanup
         setTimeout(() => {
-            if (pdfButton) {
-                pdfButton.disabled = false;
-                pdfButton.removeAttribute('aria-busy');
-            }
-            if (buttonText) {
-                buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
-            }
-        }, 500);
+            document.body.removeChild(downloadLink);
+            URL.revokeObjectURL(blobUrl);
+        }, 100);
+
+        // Restore button state
+        if (pdfButton) {
+            pdfButton.disabled = false;
+            pdfButton.removeAttribute('aria-busy');
+        }
+        if (buttonText) {
+            buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
+        }
     } catch (error) {
-        console.error('Failed to open PDF:', error);
+        console.error('Failed to download PDF:', error);
         const errorText = currentLanguage === 'ru'
             ? 'PDF не найден. Используйте Ctrl+P для печати.'
             : 'PDF not found. Use Ctrl+P to print.';

@@ -17,6 +17,7 @@ const MIME_TYPES = {
     '.css': 'text/css',
     '.js': 'text/javascript',
     '.json': 'application/json',
+    '.pdf': 'application/pdf',
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
@@ -31,6 +32,120 @@ const MIME_TYPES = {
 function getMimeType(filePath) {
     const ext = path.extname(filePath).toLowerCase();
     return MIME_TYPES[ext] || 'application/octet-stream';
+}
+
+/**
+ * Encode filename for Content-Disposition header (RFC 5987)
+ * Handles non-ASCII characters properly
+ */
+function encodeContentDispositionFilename(filename) {
+    // Check if filename contains non-ASCII characters
+    const hasNonAscii = /[^\x00-\x7F]/.test(filename);
+
+    if (!hasNonAscii) {
+        // Simple ASCII filename - use standard format
+        return `attachment; filename="${filename}"`;
+    }
+
+    // For non-ASCII: use RFC 5987 encoding
+    // Create ASCII fallback (replace non-ASCII with safe characters)
+    const asciiFallback = filename.replace(/[^\x00-\x7F]/g, '_');
+
+    // URL-encode the original filename for filename* parameter
+    const encoded = encodeURIComponent(filename);
+
+    // Return both fallback and encoded version
+    return `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encoded}`;
+}
+
+/**
+ * Handle short PDF links: /data/resume.ats.pdf or /data/resume.hr.pdf
+ * Finds the correct file based on language and serves it with personalized filename
+ */
+async function handleShortPdfLink(req, res, parsed) {
+    try {
+        // Determine view suffix from path
+        const viewSuffix = parsed.pathname.includes('.ats.pdf') ? 'ats' : 'hr';
+
+        // Get language from query parameter (default to 'ru')
+        const lang = (parsed.searchParams.get('lang') || 'ru').toLowerCase();
+        const allowedLangs = new Set(['ru', 'en']);
+        if (!allowedLangs.has(lang)) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Unsupported language. Use "ru" or "en".' }));
+            return;
+        }
+
+        // Find the actual PDF file: resume-{lang}.{viewSuffix}.pdf
+        const actualFilename = `resume-${lang}.${viewSuffix}.pdf`;
+        const actualFilePath = path.join(__dirname, 'data', actualFilename);
+
+        // Check if file exists
+        if (!fs.existsSync(actualFilePath)) {
+            res.writeHead(404, { 'Content-Type': 'text/html' });
+            res.end(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>404 - PDF Not Found</title>
+                    <style>
+                        body {
+                            font-family: sans-serif;
+                            text-align: center;
+                            padding: 50px;
+                        }
+                        h1 { color: #E53935; }
+                    </style>
+                </head>
+                <body>
+                    <h1>404 - PDF Not Found</h1>
+                    <p>The requested PDF file was not found: ${actualFilename}</p>
+                    <a href="/">Go to Home</a>
+                </body>
+                </html>
+            `);
+            return;
+        }
+
+        // Read the PDF file
+        const pdfBuffer = fs.readFileSync(actualFilePath);
+
+        // Generate personalized filename from resume data
+        let filename = `resume.${viewSuffix}.pdf`;
+        try {
+            const tomlPath = path.join(__dirname, 'resume.toml');
+            const tomlText = fs.readFileSync(tomlPath, 'utf8');
+            const parsedToml = TOML.parse(tomlText);
+            const localized = localizeResumeData(parsedToml, lang);
+
+            const firstName = localized.firstName || '';
+            const lastName = localized.lastName || '';
+            const jobTitle = localized.jobTitle || '';
+
+            const nameParts = [firstName, lastName].filter(Boolean);
+            const name = nameParts.join(' ');
+
+            if (name && jobTitle) {
+                filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
+            } else if (name) {
+                filename = `${name}.${viewSuffix}.pdf`;
+            }
+        } catch (error) {
+            console.warn(`[API] Failed to generate custom filename, using default: ${error && error.message ? error.message : error}`);
+        }
+
+        // Serve PDF with personalized filename in Content-Disposition
+        res.writeHead(200, {
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': encodeContentDispositionFilename(filename),
+            'Cache-Control': 'public, max-age=3600',
+        });
+        res.end(pdfBuffer);
+    } catch (error) {
+        console.error(`[API] Failed to serve PDF: ${error && error.message ? error.message : error}`);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to serve PDF' }));
+    }
 }
 
 /**
@@ -154,7 +269,7 @@ async function handlePdfRequest(req, res, parsed) {
 
         res.writeHead(200, {
             'Content-Type': 'application/pdf',
-            'Content-Disposition': `attachment; filename="${filename}"`,
+            'Content-Disposition': encodeContentDispositionFilename(filename),
             'Cache-Control': 'no-store, no-cache, must-revalidate',
         });
         res.end(pdfBuffer);
@@ -265,6 +380,11 @@ const server = http.createServer((req, res) => {
         }
         if (parsed.pathname === '/api/pdf') {
             handlePdfRequest(req, res, parsed);
+            return;
+        }
+        // Handle short PDF links: /data/resume.ats.pdf or /data/resume.hr.pdf
+        if (parsed.pathname === '/data/resume.ats.pdf' || parsed.pathname === '/data/resume.hr.pdf') {
+            handleShortPdfLink(req, res, parsed);
             return;
         }
     } catch (e) {

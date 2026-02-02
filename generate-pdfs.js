@@ -108,30 +108,9 @@ async function generatePDF(browser, lang, view, outputDir) {
     const url = `http://${HOST}:${PORT}/?lang=${lang}&view=${view}`;
     const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
 
-    // Generate filename from resume data: firstName lastName – jobTitle.<ats/hr>.pdf
-    let filename = `resume.${viewSuffix}.pdf`;
-    try {
-        const tomlPath = path.join(__dirname, 'resume.toml');
-        const tomlText = fs.readFileSync(tomlPath, 'utf8');
-        const parsedToml = TOML.parse(tomlText);
-        const localized = localizeResumeData(parsedToml, lang);
-
-        const firstName = localized.firstName || '';
-        const lastName = localized.lastName || '';
-        const jobTitle = localized.jobTitle || '';
-
-        const nameParts = [firstName, lastName].filter(Boolean);
-        const name = nameParts.join(' ');
-
-        if (name && jobTitle) {
-            filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
-        } else if (name) {
-            filename = `${name}.${viewSuffix}.pdf`;
-        }
-    } catch (error) {
-        console.warn(`⚠️  Failed to generate custom filename, using default: ${error && error.message ? error.message : error}`);
-    }
-
+    // Use short filename format: resume-{lang}.{viewSuffix}.pdf
+    // Personalized filename will be set via download attribute in browser
+    const filename = `resume-${lang}.${viewSuffix}.pdf`;
     const outputFile = path.join(outputDir, filename);
 
     console.log(`📄 Generating PDF: ${lang}-${viewSuffix}`);
