@@ -185,10 +185,10 @@ async function generatePDF(browser, lang, view, outputDir) {
             format: 'A4',
             printBackground: true,
             margin: {
-                top: '0.5cm',
-                right: '0.5cm',
-                bottom: '0.5cm',
-                left: '0.5cm'
+                top: '0mm',
+                right: '0mm',
+                bottom: '0mm',
+                left: '0mm'
             },
             preferCSSPageSize: true,
         });

@@ -78,7 +78,7 @@
 
 @page {
     size: A4 portrait;
-    margin: 12mm 12mm 12mm 12mm;
+    margin: 12mm 0 12mm 0;
 }
 
 /* ==================== Base Styles ==================== */
@@ -186,7 +186,10 @@ body {
         max-width: 100% !important;
         min-width: auto !important;
         min-height: auto !important;
-        padding: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        padding-left: 12mm !important;
+        padding-right: 12mm !important;
         margin: 0 !important;
         box-shadow: none !important;
         overflow: visible;
