@@ -481,7 +481,6 @@ title = "ScreenNavigatorKit"
 link = "https://github.com/Ernest0-Production/ScreenNavigatorKit"
 "description.ru" = "Императивный стиль навигации в SwiftUI"
 "description.en" = "Imperative navigation style in SwiftUI"
-accessory = { icon = "twemoji:star", value = "8" }
 
 [[projects]]
 title = "Mattermost for Raycast"
@@ -489,6 +488,12 @@ link = "https://www.raycast.com/ernest0n/mattermost"
 "description.ru" = "Набор быстрых команд для Mattermost"
 "description.en" = "Quick commands/shortcuts for Mattermost"
 accessory = { icon = "hugeicons:download-circle-01", value = "658" }
+
+[[projects]]
+title = "Resume Generator"
+link = "https://github.com/Ernest0-Production/Resume"
+"description.ru" = "Генератор резюме на основе TOML"
+"description.en" = "Resume generator based on TOML"
 
 
 ############################################
