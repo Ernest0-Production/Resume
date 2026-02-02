@@ -1483,6 +1483,21 @@ function renderEducation(data) {
  */
 function renderEducationLanguages(data) {
     const educationLanguagesElement = document.getElementById('educationLanguages');
+    const educationLanguagesSection = document.getElementById('educationLanguagesSection');
+
+    // Hide section if no education
+    const hasEducation = data.education && data.education.length > 0;
+    if (!hasEducation) {
+        if (educationLanguagesSection) {
+            educationLanguagesSection.style.display = 'none';
+        }
+        return;
+    }
+
+    // Show section if education exists
+    if (educationLanguagesSection) {
+        educationLanguagesSection.style.display = '';
+    }
 
     // Extract level from parentheses if exists, otherwise use full level
     const formatLanguageTag = (lang) => {
