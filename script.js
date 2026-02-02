@@ -1442,8 +1442,24 @@ function renderExperience(data) {
  * Render projects section
  */
 function renderProjects(data) {
-    console.log(`[renderProjects] Начинаем рендеринг ${data.projects.length} проектов`);
     const projectsElement = document.getElementById('projects');
+    const projectsSection = document.getElementById('projectsSection');
+
+    // Hide section if no projects
+    const hasProjects = data.projects && data.projects.length > 0;
+    if (!hasProjects) {
+        if (projectsSection) {
+            projectsSection.style.display = 'none';
+        }
+        return;
+    }
+
+    // Show section if projects exist
+    if (projectsSection) {
+        projectsSection.style.display = '';
+    }
+
+    console.log(`[renderProjects] Начинаем рендеринг ${data.projects.length} проектов`);
 
     const linksHTML = data.projects.map((project, index) => {
         console.log(`[renderProjects] Проект ${index + 1}: "${project.title}"`);

@@ -236,7 +236,7 @@
                         </span>
                         <span class="og-contact-text"></span>
                     </div>
-                    <div class="og-contact-item og-location">
+                    <div class="og-contact-item og-location" style="display: none;">
                         <span class="og-contact-icon">
                             <img id="telegramFavicon" src="" alt="Telegram favicon" class="og-favicon"
                                 style="display: none;">
@@ -337,8 +337,12 @@
                 // Update telegram from references
                 if (data.references && Array.isArray(data.references)) {
                     const telegramRef = data.references.find(ref => ref.type === 'telegram');
-                    if (telegramRef) {
-                        const telegramText = document.querySelector('.og-location .og-contact-text');
+                    const telegramItem = document.querySelector('.og-location');
+                    if (telegramRef && telegramItem) {
+                        // Show telegram contact item
+                        telegramItem.style.display = 'flex';
+
+                        const telegramText = telegramItem.querySelector('.og-contact-text');
                         if (telegramText && telegramRef.text) {
                             telegramText.textContent = telegramRef.text;
                         }
@@ -346,7 +350,7 @@
                         // Load favicon for Telegram
                         if (telegramRef.url) {
                             const faviconElement = document.getElementById('telegramFavicon');
-                            const fallbackIcon = document.querySelector('.og-location .fallback-icon');
+                            const fallbackIcon = telegramItem.querySelector('.fallback-icon');
                             if (faviconElement) {
                                 faviconElement.src = getFaviconUrl(telegramRef.url);
                                 faviconElement.alt = 'Telegram favicon';
