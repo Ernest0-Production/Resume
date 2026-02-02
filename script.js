@@ -1545,6 +1545,13 @@ function renderProjects(data) {
         console.log(`[renderProjects] Проект ${index + 1}: "${project.title}"`);
         console.log(`[renderProjects] Ссылка проекта: ${project.link}`);
 
+        const accessoryHTML = project.accessory && (project.accessory.icon || project.accessory.value) ? `
+            <div class="experience-link__accessory">
+                ${project.accessory.icon ? `<span class="iconify experience-link__accessory-icon" data-icon="${project.accessory.icon}" aria-hidden="true"></span>` : ''}
+                ${project.accessory.value ? `<div class="experience-link__accessory-value">${project.accessory.value}</div>` : ''}
+            </div>
+        ` : '';
+
         return `
             <a href="${project.link}" target="_blank" rel="noopener noreferrer" class="experience-link ${!project.description ? 'experience-link--no-description' : ''}">
                 <div class="experience-link__preview">
@@ -1563,6 +1570,7 @@ function renderProjects(data) {
                     <div class="experience-link__title">${project.title}</div>
                     ${project.description ? `<div class="experience-link__description">${parseFormatting(project.description)}</div>` : ''}
                 </div>
+                ${accessoryHTML}
             </a>
         `;
     }).join('');

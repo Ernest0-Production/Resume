@@ -460,30 +460,35 @@ title = "Git Client for Raycast"
 link = "https://www.raycast.com/ernest0n/git"
 "description.ru" = "Полноценный Git GUI клиент"
 "description.en" = "Full-featured Git GUI client"
+accessory = { icon = "hugeicons:download-circle-01", value = "459" }
 
 [[projects]]
 title = "DeclarativeLayoutKit"
 link = "https://github.com/Ernest0-Production/DeclarativeLayoutKit"
 "description.ru" = "Декларативная верстка на UIKit"
 "description.en" = "Declarative layout on UIKit"
+accessory = { icon = "twemoji:star", value = "52" }
 
 [[projects]]
 title = "LLM Stats for Raycast"
 link = "https://www.raycast.com/ernest0n/llm-stats"
 "description.ru" = "Benchmark leaderboard LLMs-моделей"
 "description.en" = "Benchmark leaderboard of LLMs"
+accessory = { icon = "hugeicons:download-circle-01", value = "242" }
 
 [[projects]]
 title = "ScreenNavigatorKit"
 link = "https://github.com/Ernest0-Production/ScreenNavigatorKit"
 "description.ru" = "Императивный стиль навигации в SwiftUI"
 "description.en" = "Imperative navigation style in SwiftUI"
+accessory = { icon = "twemoji:star", value = "8" }
 
 [[projects]]
 title = "Mattermost for Raycast"
 link = "https://www.raycast.com/ernest0n/mattermost"
 "description.ru" = "Набор быстрых команд для Mattermost"
 "description.en" = "Quick commands/shortcuts for Mattermost"
+accessory = { icon = "hugeicons:download-circle-01", value = "658" }
 
 
 ############################################

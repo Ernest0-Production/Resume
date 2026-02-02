@@ -129,6 +129,9 @@ link  = "https://..."
 "description.ru" = "Описание проекта"
 "description.en" = "Project description"
 
+# Optional: accessory (e.g. downloads count, popularity) – iconify name like "mdi:star"
+accessory = { icon = "mdi:download", value = "455" }
+
 # Education with multilanguage fields
 [[education]]
 period = "YYYY - YYYY"

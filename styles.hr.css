@@ -1441,6 +1441,7 @@ u {
     overflow: hidden;
     border-radius: 0;
     transition: background-color 0.3s ease;
+    text-decoration: none;
 }
 
 [data-theme="dark"] .experience-link__preview {
@@ -1496,6 +1497,7 @@ u {
     justify-content: center;
     gap: 2px;
     min-width: 0;
+    text-decoration: none;
 }
 
 .experience-link__title {
@@ -1514,6 +1516,11 @@ u {
     line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-decoration: none;
+}
+
+.experience-link:hover .experience-link__title {
+    text-decoration: underline;
 }
 
 .experience-link__description {
@@ -1525,6 +1532,59 @@ u {
     line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-decoration: none;
+}
+
+.experience-link:hover .experience-link__description {
+    text-decoration: underline;
+}
+
+.experience-link__accessory {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    gap: 4px;
+    min-width: 0;
+    text-decoration: none;
+}
+
+.experience-link .experience-link__accessory-icon.iconify {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--color-gray) !important;
+}
+
+.experience-link .experience-link__accessory-icon.iconify svg {
+    fill: var(--color-gray) !important;
+}
+
+[data-theme="dark"] .experience-link .experience-link__accessory-icon.iconify {
+    color: var(--color-gray) !important;
+}
+
+[data-theme="dark"] .experience-link .experience-link__accessory-icon.iconify svg {
+    fill: var(--color-gray) !important;
+}
+
+.experience-link__accessory-value {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-gray);
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none !important;
+}
+
+.experience-link:hover .experience-link__accessory-value {
+    text-decoration: none !important;
+}
+
+[data-theme="dark"] .experience-link__accessory-value {
+    color: var(--color-gray);
 }
 
 /* ==================== Skills Section ==================== */
