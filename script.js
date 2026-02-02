@@ -535,113 +535,44 @@ function focusLanguageTrigger(trigger) {
 }
 
 /**
- * Download resume PDF with personalized filename
- * Uses short link but sets personalized filename via download attribute
+ * Update PDF download button link based on current language and view mode
+ * Updates href to point to the correct static PDF file
  */
-async function downloadResumeAsPDF() {
-    const pdfButton = document.getElementById('pdfDownloadBtn');
-    const buttonText = pdfButton ? pdfButton.querySelector('.pdf-download-btn__text') : null;
-    const originalText = buttonText ? buttonText.textContent : '';
-    const loadingText = currentLanguage === 'ru' ? 'Скачивание PDF...' : 'Downloading PDF...';
-
-    if (pdfButton) {
-        pdfButton.disabled = true;
-        pdfButton.setAttribute('aria-busy', 'true');
-    }
-
-    if (buttonText) {
-        buttonText.textContent = loadingText;
-    }
-
-    try {
-        const lang = currentLanguage || DEFAULT_LANGUAGE;
-        const view = currentViewMode || DEFAULT_VIEW_MODE;
-        const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
-
-        // Use short link format: resume-{lang}.{viewSuffix}.pdf
-        const pdfPath = `data/resume-${lang}.${viewSuffix}.pdf`;
-
-        // Generate personalized filename from resume data
-        let filename = `resume.${viewSuffix}.pdf`;
-        if (currentResumeData) {
-            const firstName = currentResumeData.firstName || '';
-            const lastName = currentResumeData.lastName || '';
-            const jobTitle = currentResumeData.jobTitle || '';
-
-            const nameParts = [firstName, lastName].filter(Boolean);
-            const name = nameParts.join(' ');
-
-            if (name && jobTitle) {
-                filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
-            } else if (name) {
-                filename = `${name}.${viewSuffix}.pdf`;
-            }
-        }
-
-        // Check if PDF exists
-        const response = await fetch(pdfPath, { method: 'HEAD' });
-        if (!response.ok) {
-            throw new Error(`Failed to fetch PDF: ${response.status}`);
-        }
-
-        // Create download link with direct path (no blob URL - keeps link static)
-        const downloadLink = document.createElement('a');
-        downloadLink.href = pdfPath;
-        downloadLink.download = filename;
-        downloadLink.style.display = 'none';
-        document.body.appendChild(downloadLink);
-
-        // Trigger download
-        downloadLink.click();
-
-        // Cleanup
-        setTimeout(() => {
-            document.body.removeChild(downloadLink);
-        }, 100);
-
-        // Restore button state
-        if (pdfButton) {
-            pdfButton.disabled = false;
-            pdfButton.removeAttribute('aria-busy');
-        }
-        if (buttonText) {
-            buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
-        }
-    } catch (error) {
-        console.error('Failed to download PDF:', error);
-        const errorText = currentLanguage === 'ru'
-            ? 'PDF не найден. Используйте Ctrl+P для печати.'
-            : 'PDF not found. Use Ctrl+P to print.';
-        if (buttonText) {
-            buttonText.textContent = errorText;
-            setTimeout(() => {
-                if (buttonText) {
-                    buttonText.textContent = originalText || (currentLanguage === 'ru' ? 'Скачать PDF' : 'Download PDF');
-                }
-            }, 3000);
-        }
-        if (pdfButton) {
-            pdfButton.disabled = false;
-            pdfButton.removeAttribute('aria-busy');
-        }
-    }
-}
-
-/**
- * Initialize PDF download button
- */
-function initPDFDownloadButton() {
+function updatePdfButtonLink() {
     const pdfButton = document.getElementById('pdfDownloadBtn');
     if (!pdfButton) {
         console.warn('PDF download button not found.');
         return;
     }
 
-    pdfButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        downloadResumeAsPDF();
-    });
+    const lang = currentLanguage || DEFAULT_LANGUAGE;
+    const view = currentViewMode || DEFAULT_VIEW_MODE;
+    const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
+
+    // Set static PDF link
+    const pdfPath = `data/resume-${lang}.${viewSuffix}.pdf`;
+    pdfButton.href = pdfPath;
+
+    // Generate personalized filename for download attribute
+    let filename = `resume.${viewSuffix}.pdf`;
+    if (currentResumeData) {
+        const firstName = currentResumeData.firstName || '';
+        const lastName = currentResumeData.lastName || '';
+        const jobTitle = currentResumeData.jobTitle || '';
+
+        const nameParts = [firstName, lastName].filter(Boolean);
+        const name = nameParts.join(' ');
+
+        if (name && jobTitle) {
+            filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
+        } else if (name) {
+            filename = `${name}.${viewSuffix}.pdf`;
+        }
+    }
+    
+    pdfButton.setAttribute('download', filename);
+    
+    console.log(`PDF button updated: href="${pdfPath}", download="${filename}"`);
 }
 
 // ==================== View Mode Switcher Config ====================
@@ -739,6 +670,7 @@ function handleViewModeChange(mode) {
     persistViewMode(mode);
     updateViewModeSwitcherUI(mode);
     applyViewMode(mode);
+    updatePdfButtonLink(); // Update PDF link when view mode changes
     console.log(`View mode changed to: ${mode}`);
 }
 
@@ -1726,6 +1658,7 @@ async function loadResumeData(language = currentLanguage) {
 
         updatePdfButtonText(language);
         updateSectionTitles(language);
+        updatePdfButtonLink(); // Update PDF link when language changes
 
         // Apply accent colors from TOML
         applyAccentColors();
@@ -1781,9 +1714,9 @@ function initializeResume() {
     setDocumentLanguage(initialConfig);
     updatePdfButtonText(initialLanguage);
     updateSectionTitles(initialLanguage);
+    updatePdfButtonLink(); // Initialize PDF button link
     initThemeToggle();
     initLanguageSwitcher();
-    initPDFDownloadButton();
     initViewModeSwitcher();
     // Language switcher visibility will be set after data is loaded
     loadResumeData(initialLanguage);

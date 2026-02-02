@@ -539,6 +539,7 @@ u {
     font-size: 12px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    text-decoration: none;
     cursor: pointer;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
