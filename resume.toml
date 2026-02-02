@@ -467,7 +467,7 @@ title = "DeclarativeLayoutKit"
 link = "https://github.com/Ernest0-Production/DeclarativeLayoutKit"
 "description.ru" = "Декларативная верстка на UIKit"
 "description.en" = "Declarative layout on UIKit"
-accessory = { icon = "twemoji:star", value = "52" }
+accessory = { icon = "mdi:star-outline", value = "52" }
 
 [[projects]]
 title = "LLM Stats for Raycast"
