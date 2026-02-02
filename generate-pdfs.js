@@ -13,12 +13,27 @@ const HOST = 'localhost';
 /**
  * Localize resume data from multilanguage TOML
  * Extracts values for the specified language from keys like "propertyName.language"
+ * Fields without language suffix are used for all languages
  */
 function localizeResumeData(data, lang) {
     const result = {};
 
     // Helper function to process object recursively
     function processObject(obj, targetObj) {
+        // First pass: collect all language-specific keys for this language
+        const langSpecificKeys = new Set();
+        for (const key in obj) {
+            if (!obj.hasOwnProperty(key)) continue;
+            const match = key.match(/^(.+)\.([a-z]{2})$/);
+            if (match) {
+                const [, propName, keyLang] = match;
+                if (keyLang === lang) {
+                    langSpecificKeys.add(propName);
+                }
+            }
+        }
+
+        // Second pass: process all keys
         for (const key in obj) {
             if (!obj.hasOwnProperty(key)) continue;
 
@@ -33,7 +48,14 @@ function localizeResumeData(data, lang) {
                     targetObj[propName] = typeof value === 'string' ? value.trim() : value;
                 }
             } else {
-                // Non-multilanguage property
+                // Non-multilanguage property - use for all languages
+                // But skip if there's a language-specific version for this language
+                if (langSpecificKeys.has(key)) {
+                    // Skip this key because we already have a language-specific version
+                    continue;
+                }
+
+                // Process non-multilanguage property
                 if (Array.isArray(value)) {
                     // Process array of objects (like experience, projects, education)
                     if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null) {

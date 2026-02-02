@@ -970,6 +970,16 @@ function getLanguageConfig(language) {
 }
 
 /**
+ * Show or hide language switcher based on multilanguage support
+ */
+function toggleLanguageSwitcherVisibility(show) {
+    const switcher = document.getElementById('languageSwitcher');
+    if (switcher) {
+        switcher.style.display = show ? '' : 'none';
+    }
+}
+
+/**
  * Update language switcher UI state
  */
 function updateLanguageSwitcherUI(language) {
@@ -1660,7 +1670,15 @@ async function loadResumeData(language = currentLanguage) {
 
         persistLanguage(language);
         setDocumentLanguage(config);
-        updateLanguageSwitcherUI(language);
+
+        // Show/hide language switcher based on multilanguage support
+        const hasMultilang = normalized.hasMultilanguageFields !== false; // Default to true for backward compatibility
+        toggleLanguageSwitcherVisibility(hasMultilang);
+
+        if (hasMultilang) {
+            updateLanguageSwitcherUI(language);
+        }
+
         updatePdfButtonText(language);
         updateSectionTitles(language);
 
@@ -1716,13 +1734,13 @@ function initializeResume() {
 
     const initialConfig = getLanguageConfig(initialLanguage);
     setDocumentLanguage(initialConfig);
-    updateLanguageSwitcherUI(initialLanguage);
     updatePdfButtonText(initialLanguage);
     updateSectionTitles(initialLanguage);
     initThemeToggle();
     initLanguageSwitcher();
     initPDFDownloadButton();
     initViewModeSwitcher();
+    // Language switcher visibility will be set after data is loaded
     loadResumeData(initialLanguage);
 
     // Adjust experience links position on window resize
@@ -1806,6 +1824,10 @@ function normalizeResumeData(data) {
                 ? String(data.accentColor).trim()
                 : trimStringFields(data.accentColor))
             : undefined,
+        // Multilanguage support flag
+        hasMultilanguageFields: data && typeof data.hasMultilanguageFields === 'boolean'
+            ? data.hasMultilanguageFields
+            : true, // Default to true for backward compatibility
     };
 
     return normalized;
