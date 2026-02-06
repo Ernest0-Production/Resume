@@ -2,7 +2,6 @@
 # Language-specific properties use format: "propertyName.language"
 
 # Common properties (no language suffix)
-pageTitle = "Resume Page"
 avatar = "avatar.jpg"
 
 accentColor.light = "#2196F3"

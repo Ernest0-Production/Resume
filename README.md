@@ -146,14 +146,14 @@ period = "YYYY - YYYY"
 ### Multilanguage Properties
 
 The following properties support multiple languages using the `"propertyName.language"` format:
-- `firstName`, `pageTitle`, `jobTitle`, `location`
+- `firstName`, `lastName`, `jobTitle`, `location`
 - `about`, `expectation`, `skillsIntro`
 - `extraSkills` (array)
 - `experience.about`, `experience.responsibilities`, `experience.achievements`
 - `projects.description`
 - `education.degree`, `education.university`
 
-Properties without a language suffix (like `avatar`, `lastName`, `email`, `references`, `languages`, `skills`) are shared across all languages.
+Properties without a language suffix (like `avatar`, `email`, `references`, `languages`, `skills`) are shared across all languages.
 
 ## 💡 Tips
 

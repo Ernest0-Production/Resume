@@ -1778,7 +1778,6 @@ function normalizeResumeData(data) {
         avatar: data && data.avatar,
         firstName: data && data.firstName ? String(data.firstName).trim() : data && data.firstName,
         lastName: data && data.lastName ? String(data.lastName).trim() : data && data.lastName,
-        pageTitle: data && data.pageTitle ? String(data.pageTitle).trim() : data && data.pageTitle,
         jobTitle: safeString(data && data.jobTitle),
         email: data && data.email ? String(data.email).trim() : data && data.email,
         phone: data && data.phone ? String(data.phone).trim() : data && data.phone,
