@@ -205,19 +205,19 @@ period = "Apr 2023 – Nov 2025"
 "responsibilities.ru" = """
 Курировал всю инфраструктуру iOS-отдела из **30-ти разработчиков**:
 • **CI/CD и автоматизация** – улучшение DX/QX, quality gate
-• Проектирование архитектуры – **модуляризация** проекта и арх.ревью на этапе проработки решений
-• Создание и рефакторинг **core-модулей** приложения
-• Направление тех.вектора – стэк, архитектура, инструменты итп.
-• Член тех.коммитета – **квартальное планирование**, руководство командой дежурных
+• **Модуляризация** проекта
+• Разработка **core-модулей** приложения
+• Формирование тех.вектора – стэк, архитектура, инструменты итп.
+• **Квартальное планирование**, руководство командой дежурных
 • **Knowledge-sharing** – техническая документация, демо, анонсы, Q&A сессии
 """
 "responsibilities.en" = """
 Oversaw the entire iOS department's infrastructure of **30 developers**:
 • **CI/CD and automation** – improving DX/QX, quality gate
-• Architecture design – project **modularization** and architecture review at the solution design stage
-• Creation and refactoring of **core modules** of the application
+• Project **modularization**
+• Development of **core modules** of the application
 • Technical direction – stack, architecture, tools, etc.
-• Member of technical committee – **quarterly planning**, leading the on-call team
+• **Quarterly planning**, leading the on-call team
 • **Knowledge-sharing** – technical documentation, demos, announcements, Q&A sessions
 """
 
