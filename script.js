@@ -505,6 +505,18 @@ function setDocumentLanguage(config) {
 }
 
 /**
+ * Update browser URL to reflect current language and view mode.
+ * Uses replaceState to avoid polluting history. Preserves other query params.
+ */
+function updateBrowserUrl() {
+    const params = new URLSearchParams(window.location.search);
+    params.set('lang', currentLanguage || DEFAULT_LANGUAGE);
+    params.set('tab', currentViewMode === 'ats-friendly' ? 'ats' : 'hr');
+    const newRelativeUrl = window.location.pathname + '?' + params.toString();
+    history.replaceState(null, '', newRelativeUrl);
+}
+
+/**
  * Control language switcher open state
  */
 function setLanguageSwitcherOpen(isOpen) {
@@ -609,14 +621,20 @@ function persistViewMode(mode) {
 }
 
 /**
- * Get initial view mode based on storage
+ * Get initial view mode based on URL parameter or storage.
+ * Supports: view, mode, tab params.
+ * - view/mode: 'user-friendly' | 'ats-friendly'
+ * - tab: 'hr' | 'ats' (short form)
  */
 function getInitialViewMode() {
     const urlParams = new URLSearchParams(window.location.search);
-    const urlView = urlParams.get('view') || urlParams.get('mode');
+    const urlView = urlParams.get('view') || urlParams.get('mode') || urlParams.get('tab');
     if (urlView === 'user-friendly' || urlView === 'ats-friendly') {
         return urlView;
     }
+    // Short form: tab=ats | tab=hr
+    if (urlView === 'ats') return 'ats-friendly';
+    if (urlView === 'hr') return 'user-friendly';
 
     const stored = readStoredViewMode();
     return stored || DEFAULT_VIEW_MODE;
@@ -671,6 +689,7 @@ function handleViewModeChange(mode) {
     updateViewModeSwitcherUI(mode);
     applyViewMode(mode);
     updatePdfButtonLink(); // Update PDF link when view mode changes
+    updateBrowserUrl(); // Sync URL with current tab
     console.log(`View mode changed to: ${mode}`);
 }
 
@@ -1659,6 +1678,7 @@ async function loadResumeData(language = currentLanguage) {
         updatePdfButtonText(language);
         updateSectionTitles(language);
         updatePdfButtonLink(); // Update PDF link when language changes
+        updateBrowserUrl(); // Sync URL with current language
 
         // Apply accent colors from TOML
         applyAccentColors();

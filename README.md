@@ -170,14 +170,18 @@ Example:
 about = "I have **10 years** of experience in *web development*."
 ```
 
-### Switch Languages
+### Query Parameters
 
-The resume supports Russian and English. Switch languages using:
-- `http://localhost:3000?lang=ru` - Russian version
-- `http://localhost:3000?lang=en` - English version
+Open with specific language:
+- `https://username.github.io/Resume/?lang=ru` - Russian version
+- `https://username.github.io/Resume/?lang=en` - English version
 
-The language preference is saved in your browser and will persist across sessions.
+Open with specific view mode:
+- `https://username.github.io/Resume/?tab=ats` - Russian version, ATS-friendly view
+- `https://username.github.io/Resume/?tab=hr` - English version, HR-friendly view
 
+Combine with language and view mode:
+- `https://username.github.io/Resume/?lang=ru&tab=ats` - Russian version, ATS-friendly view
 
 ## 🎛️ Interface
 
