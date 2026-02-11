@@ -459,7 +459,7 @@ title = "Git Client for Raycast"
 link = "https://www.raycast.com/ernest0n/git"
 "description.ru" = "Полноценный Git GUI клиент"
 "description.en" = "Full-featured Git GUI client"
-accessory = { icon = "hugeicons:download-circle-01", value = "459" }
+accessory = { icon = "hugeicons:download-circle-01", value = "492" }
 
 [[projects]]
 title = "DeclarativeLayoutKit"
@@ -473,7 +473,7 @@ title = "LLM Stats for Raycast"
 link = "https://www.raycast.com/ernest0n/llm-stats"
 "description.ru" = "Benchmark leaderboard LLMs-моделей"
 "description.en" = "Benchmark leaderboard of LLMs"
-accessory = { icon = "hugeicons:download-circle-01", value = "242" }
+accessory = { icon = "hugeicons:download-circle-01", value = "322" }
 
 [[projects]]
 title = "ScreenNavigatorKit"
@@ -486,7 +486,7 @@ title = "Mattermost for Raycast"
 link = "https://www.raycast.com/ernest0n/mattermost"
 "description.ru" = "Набор быстрых команд для Mattermost"
 "description.en" = "Quick commands/shortcuts for Mattermost"
-accessory = { icon = "hugeicons:download-circle-01", value = "658" }
+accessory = { icon = "hugeicons:download-circle-01", value = "665" }
 
 [[projects]]
 title = "Resume Generator"
