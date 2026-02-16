@@ -1814,7 +1814,7 @@ function normalizeResumeData(data) {
         experience: safeArray(data && data.experience).map(exp => trimStringFields(exp)),
         projects: safeArray(data && data.projects).map(proj => trimStringFields(proj)),
         education: safeArray(data && data.education).map(edu => trimStringFields(edu)),
-        // Accent colors for HR Friendly page
+        // Accent colors for Human Friendly page
         // Supports both string (single color) and object (light/dark) formats
         accentColor: data && data.accentColor
             ? (typeof data.accentColor === 'string'

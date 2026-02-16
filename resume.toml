@@ -22,7 +22,7 @@ subtitle = "7 years of experience • founding engineer"
 "about.ru" = """
 7 лет опыта – **A-player**, неформальный лидер, **founding engineer**
 • Побывал в аутсорсе, **стартапе**, mid-tech, **big-tech**
-• С нуля писал множество приложений и библиотек в отраслях **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
+• С нуля писал приложения и библиотеки в сфере **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
 • Специализируюсь на **проектировании архитектуры** систем (приложения, библиотеки, инфрастуктуры)
 • **Горизонт планирования** целей ~6-12 месяцев
 """
@@ -30,7 +30,7 @@ subtitle = "7 years of experience • founding engineer"
 "about.en" = """
 7 years of experience – **A-player**, informal leader, **founding engineer**
 • Worked in outsourcing, **startup**, mid-tech, **big-tech**
-• Built many apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
+• Built apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
 • Specialized in **architecture design** of systems (apps, libraries, infrastructure)
 • **Planning horizon** of goals ~6-12 months
 """
@@ -40,7 +40,7 @@ subtitle = "7 years of experience • founding engineer"
 • Готов **лидить** команду, но продолжать **писать код**
 • **Неформальной коммуникации**
 • Работать в **условиях неопределённости процессов**, если на них можно влиять
-• Не привязан к конкретной отрасли – интересна сама роль и возможность роста, как **T-shaped** специалист
+• Расширять зону ответственности в смежных областях, как **T-shaped** специалист
 """
 
 "expectation.en" = """
@@ -48,7 +48,7 @@ subtitle = "7 years of experience • founding engineer"
 • Ready to **lead** a team, but continue **writing code**
 • **Informal communication**
 • Work in **conditions of uncertainty of processes**, if i can influence them
-• Not tied to a specific industry – interested in the role itself and the opportunity to grow as a **T-shaped** specialist
+• Expand the scope of responsibility in adjacent areas, as a **T-shaped** specialist
 """
 
 "skillsIntro.ru" = "Перечислены только практические навыки"
@@ -202,12 +202,12 @@ period = "Apr 2023 – Nov 2025"
 "about.en" = "Online cinema • streaming platform (top-3 in Russia) • MAU > 35M"
 
 "responsibilities.ru" = """
-Курировал всю инфраструктуру iOS-отдела из **30-ти разработчиков**:
+Разрабатывал всю инфраструктуру iOS-отдела из **30-ти разработчиков**:
 • **CI/CD и автоматизация** – улучшение DX/QX, quality gate
 • **Модуляризация** проекта
 • Разработка **core-модулей** приложения
 • Формирование тех.вектора – стэк, архитектура, инструменты итп.
-• **Квартальное планирование**, руководство командой дежурных
+• **Квартальное планирование**, организация дежурства
 • **Knowledge-sharing** – техническая документация, демо, анонсы, Q&A сессии
 """
 "responsibilities.en" = """
@@ -216,7 +216,7 @@ Oversaw the entire iOS department's infrastructure of **30 developers**:
 • Project **modularization**
 • Development of **core modules** of the application
 • Technical direction – stack, architecture, tools, etc.
-• **Quarterly planning**, leading the on-call team
+• **Quarterly planning**, organizing on-call shifts
 • **Knowledge-sharing** – technical documentation, demos, announcements, Q&A sessions
 """
 
@@ -459,7 +459,7 @@ title = "Git Client for Raycast"
 link = "https://www.raycast.com/ernest0n/git"
 "description.ru" = "Полноценный Git GUI клиент"
 "description.en" = "Full-featured Git GUI client"
-accessory = { icon = "hugeicons:download-circle-01", value = "492" }
+accessory = { icon = "hugeicons:download-circle-01", value = "507" }
 
 [[projects]]
 title = "DeclarativeLayoutKit"
@@ -473,7 +473,7 @@ title = "LLM Stats for Raycast"
 link = "https://www.raycast.com/ernest0n/llm-stats"
 "description.ru" = "Benchmark leaderboard LLMs-моделей"
 "description.en" = "Benchmark leaderboard of LLMs"
-accessory = { icon = "hugeicons:download-circle-01", value = "322" }
+accessory = { icon = "hugeicons:download-circle-01", value = "352" }
 
 [[projects]]
 title = "ScreenNavigatorKit"

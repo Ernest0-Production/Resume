@@ -241,7 +241,7 @@
                 const iconContainer = document.createElement('span');
                 iconContainer.className = 'ats-header__icon';
 
-                // Get favicon URL using the same mechanism as HR Friendly
+                // Get favicon URL using the same mechanism as Human Friendly
                 const getFaviconUrl = typeof window !== 'undefined' && typeof window.getFaviconUrl === 'function'
                     ? window.getFaviconUrl
                     : function (url) {
@@ -272,7 +272,7 @@
                         return 'mdi:link';
                     };
 
-                // Try favicon first, fallback to iconify (same mechanism as HR Friendly)
+                // Try favicon first, fallback to iconify (same mechanism as Human Friendly)
                 const favicon = document.createElement('img');
                 favicon.className = 'ats-header__favicon';
                 favicon.src = getFaviconUrl(linkedInRef.url);
