@@ -188,10 +188,12 @@
         if (emailElement) {
             if (data.email) {
                 emailElement.innerHTML = `
-                    <span class="ats-header__icon">
-                        <span class="iconify" data-icon="mdi:email" aria-hidden="true"></span>
-                    </span>
-                    <a href="mailto:${data.email}">${data.email}</a>
+                    <a href="mailto:${data.email}">
+                        <span class="ats-header__icon">
+                            <span class="iconify" data-icon="mdi:email" aria-hidden="true"></span>
+                        </span>
+                        ${data.email}
+                    </a>
                 `;
                 emailElement.style.display = '';
             } else {
@@ -203,10 +205,12 @@
         if (phoneElement) {
             if (data.phone) {
                 phoneElement.innerHTML = `
-                    <span class="ats-header__icon">
-                        <span class="iconify" data-icon="mdi:phone-dial" aria-hidden="true"></span>
-                    </span>
-                    <a href="tel:${data.phone.replace(/\s/g, '')}">${data.phone}</a>
+                    <a href="tel:${data.phone.replace(/\s/g, '')}">
+                        <span class="ats-header__icon">
+                            <span class="iconify" data-icon="mdi:phone-dial" aria-hidden="true"></span>
+                        </span>
+                        ${data.phone}
+                    </a>
                 `;
                 phoneElement.style.display = '';
             } else {

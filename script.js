@@ -1094,13 +1094,14 @@ function renderHeader(data) {
 
         // Email
         if (data.email) {
-            const emailItem = document.createElement('span');
+            const emailItem = document.createElement('a');
+            emailItem.href = `mailto:${data.email}`;
             emailItem.className = 'contact-item';
             emailItem.innerHTML = `
                 <span class="icon">
                     <span class="iconify" data-icon="mdi:email"></span>
                 </span>
-                <a href="mailto:${data.email}" class="text">${data.email}</a>
+                <span class="text">${data.email}</span>
             `;
             contactInfoElement.appendChild(emailItem);
         }
@@ -1121,13 +1122,14 @@ function renderHeader(data) {
 
         // Phone
         if (data.phone) {
-            const phoneItem = document.createElement('span');
+            const phoneItem = document.createElement('a');
+            phoneItem.href = `tel:${data.phone.replace(/\s/g, '')}`;
             phoneItem.className = 'contact-item';
             phoneItem.innerHTML = `
                 <span class="icon">
                     <span class="iconify" data-icon="mdi:phone-dial"></span>
                 </span>
-                <a href="tel:${data.phone.replace(/\s/g, '')}" class="text">${data.phone}</a>
+                <span class="text">${data.phone}</span>
             `;
             contactInfoElement.appendChild(phoneItem);
         }

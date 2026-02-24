@@ -794,7 +794,12 @@ u {
 .contact-info>.contact-item,
 .contact-info>a.contact-item {
     display: inline-flex;
+    justify-content: flex-start;
     align-items: center;
+}
+
+.contact-info>a.contact-item {
+    align-items: flex-end;
 }
 
 .contact-item {
