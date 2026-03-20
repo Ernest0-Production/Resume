@@ -196,7 +196,7 @@ keywords = ["Xcode", "Instruments", "Cursor", "Proxyman", "Charles", "Git"]
 [[experience]]
 position = "iOS Infra Architect"
 company = "OKKO"
-period = "Apr 2023 – Nov 2025"
+period = "Apr 2023 – Present"
 
 "about.ru" = "Онлайн-кинотеатр • стриминговый сервис • MAU > 35млн"
 "about.en" = "Online cinema • streaming platform (top-3 in Russia) • MAU > 35M"
@@ -459,7 +459,7 @@ title = "Git Client for Raycast"
 link = "https://www.raycast.com/ernest0n/git"
 "description.ru" = "Полноценный Git GUI клиент"
 "description.en" = "Full-featured Git GUI client"
-accessory = { icon = "hugeicons:download-circle-01", value = "529" }
+accessory = { icon = "hugeicons:download-circle-01", value = "598" }
 
 [[projects]]
 title = "DeclarativeLayoutKit"
@@ -473,7 +473,7 @@ title = "LLM Stats for Raycast"
 link = "https://www.raycast.com/ernest0n/llm-stats"
 "description.ru" = "Benchmark leaderboard LLMs-моделей"
 "description.en" = "Benchmark leaderboard of LLMs"
-accessory = { icon = "hugeicons:download-circle-01", value = "410" }
+accessory = { icon = "hugeicons:download-circle-01", value = "552" }
 
 [[projects]]
 title = "ScreenNavigatorKit"
@@ -486,7 +486,7 @@ title = "Mattermost for Raycast"
 link = "https://www.raycast.com/ernest0n/mattermost"
 "description.ru" = "Набор быстрых команд для Mattermost"
 "description.en" = "Quick commands/shortcuts for Mattermost"
-accessory = { icon = "hugeicons:download-circle-01", value = "669" }
+accessory = { icon = "hugeicons:download-circle-01", value = "694" }
 
 [[projects]]
 title = "Resume Generator"
