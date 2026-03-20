@@ -153,6 +153,85 @@
         `;
     }
 
+    /**
+     * LinkedIn / Telegram / etc.: иконка (favicon или mdi) + текстовая ссылка для ATS-шапки.
+     */
+    function renderAtsHeaderReferenceLink(containerElement, ref) {
+        if (!containerElement) return;
+
+        if (!ref || !ref.url) {
+            containerElement.textContent = '';
+            containerElement.style.display = 'none';
+            return;
+        }
+
+        containerElement.innerHTML = '';
+
+        const iconContainer = document.createElement('span');
+        iconContainer.className = 'ats-header__icon';
+
+        const getFaviconUrl = typeof window !== 'undefined' && typeof window.getFaviconUrl === 'function'
+            ? window.getFaviconUrl
+            : function (url) {
+                try {
+                    const parsed = new URL(url);
+                    const target = `${parsed.protocol}//${parsed.hostname}`;
+                    const encoded = encodeURIComponent(target);
+                    return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
+                } catch (error) {
+                    const sanitized = url.replace(/^[^a-zA-Z0-9]+/, '');
+                    const target = `https://${sanitized}`;
+                    const encoded = encodeURIComponent(target);
+                    return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
+                }
+            };
+
+        const getIconForLink = typeof window !== 'undefined' && typeof window.getIconForLink === 'function'
+            ? window.getIconForLink
+            : function (url, type) {
+                if (url.includes('linkedin.com')) return 'mdi:linkedin';
+                if (url.includes('github.com')) return 'mdi:github';
+                if (url.includes('t.me') || type === 'telegram') return 'mdi:telegram';
+                if (url.includes('twitter.com') || url.includes('x.com')) return 'mdi:twitter';
+                if (url.includes('facebook.com')) return 'mdi:facebook';
+                if (url.includes('instagram.com')) return 'mdi:instagram';
+                if (type === 'website') return 'mdi:web';
+                return 'mdi:link';
+            };
+
+        const favicon = document.createElement('img');
+        favicon.className = 'ats-header__favicon';
+        favicon.src = getFaviconUrl(ref.url);
+        favicon.alt = `${ref.text || ref.url} favicon`;
+        favicon.loading = 'lazy';
+        favicon.decoding = 'async';
+        favicon.referrerPolicy = 'no-referrer';
+
+        const fallbackIcon = document.createElement('span');
+        fallbackIcon.className = 'iconify';
+        fallbackIcon.dataset.icon = getIconForLink(ref.url, ref.type);
+        fallbackIcon.setAttribute('aria-hidden', 'true');
+        fallbackIcon.style.display = 'none';
+
+        favicon.addEventListener('error', () => {
+            favicon.style.display = 'none';
+            fallbackIcon.style.display = 'inline-flex';
+        });
+
+        iconContainer.appendChild(favicon);
+        iconContainer.appendChild(fallbackIcon);
+
+        const link = document.createElement('a');
+        link.href = ref.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = ref.text || ref.url;
+
+        containerElement.appendChild(iconContainer);
+        containerElement.appendChild(link);
+        containerElement.style.display = '';
+    }
+
     function renderAtsLayout(data, options = {}) {
         if (!data) return;
 
@@ -164,6 +243,7 @@
         const phoneElement = document.getElementById('atsPhone');
         const locationElement = document.getElementById('atsLocation');
         const linkedInElement = document.getElementById('atsLinkedIn');
+        const telegramElement = document.getElementById("atsTelegram");
         const aboutElement = document.getElementById('atsAbout');
         const skillsElement = document.getElementById('atsSkills');
         const experienceElement = document.getElementById('atsExperience');
@@ -235,83 +315,23 @@
         }
 
         if (linkedInElement) {
-            const linkedInRef = Array.isArray(data.references)
-                ? data.references.find(ref => ref.url && ref.url.includes('linkedin.com'))
-                : null;
+          const linkedInRef = Array.isArray(data.references)
+            ? data.references.find(
+                (ref) => ref.url && ref.url.includes("linkedin.com"),
+              )
+            : null;
+          renderAtsHeaderReferenceLink(linkedInElement, linkedInRef);
+        }
 
-            if (linkedInRef && linkedInRef.url) {
-                linkedInElement.innerHTML = '';
-
-                const iconContainer = document.createElement('span');
-                iconContainer.className = 'ats-header__icon';
-
-                // Get favicon URL using the same mechanism as Human Friendly
-                const getFaviconUrl = typeof window !== 'undefined' && typeof window.getFaviconUrl === 'function'
-                    ? window.getFaviconUrl
-                    : function (url) {
-                        try {
-                            const parsed = new URL(url);
-                            const target = `${parsed.protocol}//${parsed.hostname}`;
-                            const encoded = encodeURIComponent(target);
-                            return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
-                        } catch (error) {
-                            const sanitized = url.replace(/^[^a-zA-Z0-9]+/, '');
-                            const target = `https://${sanitized}`;
-                            const encoded = encodeURIComponent(target);
-                            return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
-                        }
-                    };
-
-                // Get icon name for fallback
-                const getIconForLink = typeof window !== 'undefined' && typeof window.getIconForLink === 'function'
-                    ? window.getIconForLink
-                    : function (url, type) {
-                        if (url.includes('linkedin.com')) return 'mdi:linkedin';
-                        if (url.includes('github.com')) return 'mdi:github';
-                        if (url.includes('t.me') || type === 'telegram') return 'mdi:telegram';
-                        if (url.includes('twitter.com') || url.includes('x.com')) return 'mdi:twitter';
-                        if (url.includes('facebook.com')) return 'mdi:facebook';
-                        if (url.includes('instagram.com')) return 'mdi:instagram';
-                        if (type === 'website') return 'mdi:web';
-                        return 'mdi:link';
-                    };
-
-                // Try favicon first, fallback to iconify (same mechanism as Human Friendly)
-                const favicon = document.createElement('img');
-                favicon.className = 'ats-header__favicon';
-                favicon.src = getFaviconUrl(linkedInRef.url);
-                favicon.alt = `${linkedInRef.text || linkedInRef.url} favicon`;
-                favicon.loading = 'lazy';
-                favicon.decoding = 'async';
-                favicon.referrerPolicy = 'no-referrer';
-
-                const fallbackIcon = document.createElement('span');
-                fallbackIcon.className = 'iconify';
-                fallbackIcon.dataset.icon = getIconForLink(linkedInRef.url, linkedInRef.type);
-                fallbackIcon.setAttribute('aria-hidden', 'true');
-                fallbackIcon.style.display = 'none';
-
-                favicon.addEventListener('error', () => {
-                    favicon.style.display = 'none';
-                    fallbackIcon.style.display = 'inline-flex';
-                });
-
-                iconContainer.appendChild(favicon);
-                iconContainer.appendChild(fallbackIcon);
-
-                const link = document.createElement('a');
-                link.href = linkedInRef.url;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                link.textContent = linkedInRef.text || linkedInRef.url;
-
-                linkedInElement.appendChild(iconContainer);
-                linkedInElement.appendChild(link);
-                linkedInElement.style.display = '';
-            } else {
-                linkedInElement.textContent = '';
-                linkedInElement.style.display = 'none';
-            }
+        if (telegramElement) {
+          const telegramRef = Array.isArray(data.references)
+            ? data.references.find(
+                (ref) =>
+                  ref.type === "telegram" ||
+                  (ref.url && ref.url.includes("t.me")),
+              )
+            : null;
+          renderAtsHeaderReferenceLink(telegramElement, telegramRef);
         }
 
         if (aboutElement) {
@@ -382,7 +402,7 @@
     }
 
     window.AtsLayout = {
-        render: renderAtsLayout,
+      render: renderAtsLayout,
     };
 })(window);
 
