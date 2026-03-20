@@ -22,7 +22,8 @@ subtitle = "7 years of experience • founding engineer"
 "about.ru" = """
 7 лет опыта – **A-player**, неформальный лидер, **founding engineer**
 • Побывал в аутсорсе, **стартапе**, mid-tech, **big-tech**
-• С нуля писал приложения и библиотеки в сфере **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
+• С нуля писал приложения и библиотеки в сфере **EdTech, MedTech, Streaming, HealthTech, E-commerce**
+• Решаю проблему **end-to-end**, а не закрываю тикетиты в джире
 • Специализируюсь на **проектировании архитектуры** систем (приложения, библиотеки, инфрастуктуры)
 • **Горизонт планирования** целей ~6-12 месяцев
 """
@@ -30,7 +31,8 @@ subtitle = "7 years of experience • founding engineer"
 "about.en" = """
 7 years of experience – **A-player**, informal leader, **founding engineer**
 • Worked in outsourcing, **startup**, mid-tech, **big-tech**
-• Built apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, TravelTech, HealthTech, E-commerce**
+• Built apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, HealthTech, E-commerce**
+• Solve problems **end-to-end**, not just close tickets in Jira
 • Specialized in **architecture design** of systems (apps, libraries, infrastructure)
 • **Planning horizon** of goals ~6-12 months
 """
