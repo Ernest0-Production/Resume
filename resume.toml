@@ -23,8 +23,8 @@ subtitle = "7 years of experience • founding engineer"
 7 лет опыта – **A-player**, неформальный лидер, **founding engineer**
 • Побывал в аутсорсе, **стартапе**, mid-tech, **big-tech**
 • С нуля писал приложения и библиотеки в сфере **EdTech, MedTech, Streaming, HealthTech, E-commerce**
-• Решаю проблему **end-to-end**, а не закрываю тикетиты в джире
-• Специализируюсь на **проектировании архитектуры** систем (приложения, библиотеки, инфрастуктуры)
+• Решаю проблему **end-to-end**, а не тикеты в джире
+• Специализируюсь на **проектировании архитектуры** систем (приложения, библиотеки, инфрастуктуры), как с **продуктовой**, так и с **технической** точки зрения
 • **Горизонт планирования** целей ~6-12 месяцев
 """
 
@@ -32,8 +32,8 @@ subtitle = "7 years of experience • founding engineer"
 7 years of experience – **A-player**, informal leader, **founding engineer**
 • Worked in outsourcing, **startup**, mid-tech, **big-tech**
 • Built apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, HealthTech, E-commerce**
-• Solve problems **end-to-end**, not just close tickets in Jira
-• Specialized in **architecture design** of systems (apps, libraries, infrastructure)
+• Solve problems **end-to-end**, not just tickets in Jira
+• Specialized in **architecture design** of systems (apps, libraries, infrastructure) from **product** and **technical** points of view
 • **Planning horizon** of goals ~6-12 months
 """
 
@@ -223,27 +223,27 @@ Oversaw the entire iOS department's infrastructure of **30 developers**:
 """
 
 "achievements.ru" = """
-• Новый модуль __сетевого слоя__, ускоривший время выполнения запросов в 2 раза
-• Модуль in-house __аналитики__ (батчинг, сжатие, кэширование, итп)
+• Ускорил TTFB и Response Time __сетевого слоя__ с 500-800ms до 100-200ms
+• Высоконагруженный модуль in-house __аналитики__ (чанкинг, backoff ретраи, буфферизация, оффлайн,итп)
 • Миграция с __CocoaPods__ на __Tuist + SPM__
 • Самописный анализатор __Objective-C__ Dead Code, удаливший ~40% objc кода
 • Сокращение времени сборки __CI/CD__ с 40 до 10 минут
 • Уменьшение бандла приложения на 25% (~45 МБ)
-• In-house система дистрибуции Ad-Hoc сборок
+• In-house система дистрибуции Ad-Hoc сборок для QA-тестирования
 • Полная автоматизация релизов/меты/скриншотов/сертификатов через __Jenkins CI__
-• __Кодогенератор__ моков для юнит-тестов
+• __Кодогенератор__ моков/ассетов/локализации
 • RnD интеграция __Kotlin Multiplatform__
 """
 "achievements.en" = """
-• Completely rewritten __network layer__ module, doubling the request execution time
-• New in-house __analytics__ module (batching, compression, caching, etc.)
+• Accelerated TTFB and Response Time of __network layer__ from 500-800ms to 100-200ms
+• High-load in-house __analytics__ module (batching, backoff retries, caching, offline, etc.)
 • Migration from __CocoaPods__ to __Tuist + SPM__
 • Custom __Objective-C__ Dead Code analyzer, removing ~40% of objc code
 • Reduced __CI/CD__ build time from 40 to 10 minutes
 • Reduced application bundle size by 25% (~45 MB)
-• In-house Ad-Hoc build distribution system
+• In-house Ad-Hoc build distribution system for QA testing
 • Automation of releases/meta/screenshots/certificates through __Jenkins CI__
-• __Code generator__ for unit test mocks
+• __Code generator__ for unit test mocks/assets/localization
 • RnD integration of __Kotlin Multiplatform__
 """
 
@@ -324,20 +324,20 @@ period = "Sep 2021 – Feb 2022"
 
 "responsibilities.ru" = """
 Участвовал в развитии мобильного приложения в команде из **6-ти разработчиков**
-• Разработывал ключевые фичи в рамках **OKR**.
+• Разработывал ключевые фичи в рамках **OKR** (чат с врачом, профиль пациента и его мед.книжка).
 • Проводил **демо** сделанных фич для фаундеров и менеджеров.
 """
 
 "responsibilities.en" = """
 Participated in mobile application development in a team of **6 developers**:
-• Developed new features within **OKR**.
+• Developed new features within **OKR** (chat with a doctor, patient profile and medical history).
 • Conducted **demos** of made features for founders and managers.
 """
 
 "achievements.ru" = """
 • Интерактивные __виджеты в чате__ с терапевтом
 • Раздел управления мед.__документами__ (диагнозы, анализы, назначения, итп)
-• Механизм обработки __DeepLinks__
+• Механизм навигации по __DeepLinks__ из почтовых рассылок и промо-ссылок
 • Рефакторинг __навигации__ по ключевому пользовательскому сценарию записи на прием к врачу
 • Внедрение нового стека технологий (__SwiftUI__ 1.0, __Combine__) в проект
 """
@@ -345,7 +345,7 @@ Participated in mobile application development in a team of **6 developers**:
 "achievements.en" = """
 • Interactive __chat widgets__ with therapist
 • Medical __documents__ management section/tab (diagnoses, tests, prescriptions, etc.)
-• __DeepLinks__ handling mechanism
+• __DeepLinks__ handling mechanism from email newsletters and promo links
 • Refactoring __navigation__ for doctor appointment booking key user scenario
 • Introducing new technology stack (__SwiftUI__ 1.0, __Combine__) into the project
 """
@@ -384,20 +384,20 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 "achievements.ru" = """
 • __Backend Driven UI__ движок для горнолыжного курорта
 • Сквозная навигация экранов и состояния __карты__ через __диплинки__
-• Форма для прохождения __онлайн-тестирования__ на время (олимпиада, закрепление материала, итп)
-• __Плеер__ для прослушивания подкастов с плавающей панелью управления
-• Поддержка __оффлайн__ режима с кэшированием в __Realm__
+• Форма для прохождения __real-time онлайн-тестирования__ (олимпиада, учебные курсы, итп)
+• __Аудио-плеер__ для прослушивания подкастов, как в Spotify
+• __Offline-first__ режим приложения с помощью __Realm__
 • Кастомные __анимации__ переходов между экранами
-• Оптимизация метрики __Hitch Rate__ при скролле списков
+• Оптимизация метрики __Hitch Rate__ и __CPU usage__ в in-house движке ArticleReader
 """
 "achievements.en" = """
 • __Backend Driven UI__ engine for ski resort
 • End-to-end navigation of screens and __map__ state through __deeplinks__
-• Form for __online testing__ with time limit (olympiad, material reinforcement, etc.)
-• __Player__ for listening to podcasts with floating control panel
-• __Offline__ mode support with caching in __Realm__
+• Form for __real-time online testing__ (olympiad, educational courses, etc.)
+• __Audio-player__ for listening to podcasts, like in Spotify
+• __Offline-first__ mode of the application with __Realm__
 • Custom __animations__ for transitions between screens
-• Optimization of __Hitch Rate__ metric when scrolling lists
+• Optimization of __Hitch Rate__ and __CPU usage__ of in-house ArticleReader engine
 """
 
 [[experience.links]]
@@ -426,33 +426,6 @@ url = "https://apps.apple.com/ru/app/id1549274265"
 
 
 ############################################
-################# LifeIT ###################
-############################################
-
-# [[experience]]
-# position = ".NET Junior Developer"
-# company = "LifeIT"
-# period = "Jan 2018 – May 2019"
-
-# "about.ru" = "Аутсорс • Разработка под ключ"
-# "about.en" = "Outsourcing • Turn-key development"
-
-# "responsibilities.ru" = """
-# Занимался мелкими доработками приложения для грузоперевозок
-# • Верстка простых экранов на WPF с использованием MVVM и Bindings
-# • Написание автотестов с использованием C# Script и Selenium
-# """
-# "responsibilities.en" = """
-# Worked on minor improvements to a freight transportation application
-# • Layout of simple screens on WPF using MVVM and Bindings
-# • Writing automated tests using C# Script and Selenium
-# """
-
-"achievements.ru" = ""
-"achievements.en" = ""
-
-
-############################################
 ################# Projects #################
 ############################################
 
@@ -461,7 +434,7 @@ title = "Git Client for Raycast"
 link = "https://www.raycast.com/ernest0n/git"
 "description.ru" = "Полноценный Git GUI клиент"
 "description.en" = "Full-featured Git GUI client"
-accessory = { icon = "hugeicons:download-circle-01", value = "598" }
+accessory = { icon = "hugeicons:download-circle-01", value = "604" }
 
 [[projects]]
 title = "DeclarativeLayoutKit"
@@ -475,7 +448,7 @@ title = "LLM Stats for Raycast"
 link = "https://www.raycast.com/ernest0n/llm-stats"
 "description.ru" = "Benchmark leaderboard LLMs-моделей"
 "description.en" = "Benchmark leaderboard of LLMs"
-accessory = { icon = "hugeicons:download-circle-01", value = "552" }
+accessory = { icon = "hugeicons:download-circle-01", value = "566" }
 
 [[projects]]
 title = "ScreenNavigatorKit"
