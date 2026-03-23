@@ -21,19 +21,19 @@ subtitle = "7 years of experience • founding engineer"
 
 "about.ru" = """
 7 лет опыта – **A-player**, неформальный лидер, **founding engineer**
-• Побывал в аутсорсе, **стартапе**, mid-tech, **big-tech**
-• С нуля писал приложения и библиотеки в сфере **EdTech, MedTech, Streaming, HealthTech, E-commerce**
-• Решаю проблему **end-to-end**, а не тикеты в джире
-• Специализируюсь на **проектировании архитектуры** систем (приложения, библиотеки, инфрастуктуры), как с **продуктовой**, так и с **технической** точки зрения
+• Набрался разносторонних практик из аутсорс, **стартап** и **big-tech** компаний
+• С нуля писал приложения и библиотеки в сфере **E-commerce, EdTech, MedTech, Streaming, HealthTech**
+• Умею решать проблемы **end-to-end** и выступить фича-овнером
+• Формирую архитектуру, с учетом **потребностей продукта** и команды разработки
 • **Горизонт планирования** целей ~6-12 месяцев
 """
 
 "about.en" = """
 7 years of experience – **A-player**, informal leader, **founding engineer**
-• Worked in outsourcing, **startup**, mid-tech, **big-tech**
-• Built apps and libraries from scratch in industries: **EdTech, MedTech, Streaming, HealthTech, E-commerce**
-• Solve problems **end-to-end**, not just tickets in Jira
-• Specialized in **architecture design** of systems (apps, libraries, infrastructure) from **product** and **technical** points of view
+• Gained a wide range of practices from outsourcing, **startup** and **big-tech** companies
+• Built apps and libraries from scratch in industries: **E-commerce, EdTech, MedTech, Streaming, HealthTech**
+• Can solve problems **end-to-end** and be a feature-owner
+• Form architecture, taking into account **needs of the product** and the development team
 • **Planning horizon** of goals ~6-12 months
 """
 
@@ -196,7 +196,7 @@ keywords = ["Xcode", "Instruments", "Cursor", "Proxyman", "Charles", "Git"]
 ############################################
 
 [[experience]]
-position = "iOS Infra Architect"
+position = "Senior iOS Developer • Infra Architect"
 company = "OKKO"
 period = "Apr 2023 – Present"
 
@@ -223,11 +223,11 @@ Oversaw the entire iOS department's infrastructure of **30 developers**:
 """
 
 "achievements.ru" = """
-• Ускорил TTFB и Response Time __сетевого слоя__ с 500-800ms до 100-200ms
-• Высоконагруженный модуль in-house __аналитики__ (чанкинг, backoff ретраи, буфферизация, оффлайн,итп)
+• Ускорение TTFB и Response Time __сетевого слоя__ с 500-800ms до 100-200ms
+• Высоконагруженный сервис in-house __аналитики__ (чанкинг, backoff ретраи, буфферизация, оффлайн, итп)
 • Миграция с __CocoaPods__ на __Tuist + SPM__
 • Самописный анализатор __Objective-C__ Dead Code, удаливший ~40% objc кода
-• Сокращение времени сборки __CI/CD__ с 40 до 10 минут
+• Внедрение спектра анализаторов (linters, deadcodes, ownership, security checks итп) в CI/CD pipeline
 • Уменьшение бандла приложения на 25% (~45 МБ)
 • In-house система дистрибуции Ad-Hoc сборок для QA-тестирования
 • Полная автоматизация релизов/меты/скриншотов/сертификатов через __Jenkins CI__
@@ -236,10 +236,10 @@ Oversaw the entire iOS department's infrastructure of **30 developers**:
 """
 "achievements.en" = """
 • Accelerated TTFB and Response Time of __network layer__ from 500-800ms to 100-200ms
-• High-load in-house __analytics__ module (batching, backoff retries, caching, offline, etc.)
+• High-load in-house __analytics__ service (batching, backoff retries, caching, offline, etc.)
 • Migration from __CocoaPods__ to __Tuist + SPM__
 • Custom __Objective-C__ Dead Code analyzer, removing ~40% of objc code
-• Reduced __CI/CD__ build time from 40 to 10 minutes
+• Integrated a spectrum of analyzers (linters, deadcodes, conventions, code ownership, security checks and etc) in PR __quality gate pipeline__
 • Reduced application bundle size by 25% (~45 MB)
 • In-house Ad-Hoc build distribution system for QA testing
 • Automation of releases/meta/screenshots/certificates through __Jenkins CI__
@@ -256,7 +256,7 @@ url = "https://apps.apple.com/ru/app/id448868000"
 ############################################
 
 [[experience]]
-position = "iOS Tech Lead"
+position = "Senior iOS Developer • Founding Engineer"
 company = "OZON"
 period = "Feb 2022 – Apr 2023"
 
@@ -265,13 +265,13 @@ period = "Feb 2022 – Apr 2023"
 
 "responsibilities.ru" = """
 Создал два проекта:
-1. MVP-версия приложения для **доставки посылок**
-2. In-house **картографический SDK** для замены внешних вендоров (Google, Yandex), что позволило снизить будущие лицензионные расходы
+1. MVP-версия приложения для **доставки посылок** с использованием **GraphQL API**
+2. In-house **картографический SDK** для замены внешних вендоров, что позволило снизить будущие лицензионные расходы
 """
 
 "responsibilities.en" = """
 Participated in creating two projects:
-1. MVP version of the **package delivery application**
+1. MVP version of the **package delivery application** with **GraphQL API**
 2. In-house **cartographic SDK** for replacing external vendors (Google, Yandex), allowing to reduce future licensing costs
 """
 
@@ -382,7 +382,7 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 """
 
 "achievements.ru" = """
-• __Backend Driven UI__ движок для горнолыжного курорта
+• __Backend Driven UI__ движок для горнолыжного курорта для летнего/зимнего сезона
 • Сквозная навигация экранов и состояния __карты__ через __диплинки__
 • Форма для прохождения __real-time онлайн-тестирования__ (олимпиада, учебные курсы, итп)
 • __Аудио-плеер__ для прослушивания подкастов, как в Spotify
@@ -391,7 +391,7 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 • Оптимизация метрики __Hitch Rate__ и __CPU usage__ в in-house движке ArticleReader
 """
 "achievements.en" = """
-• __Backend Driven UI__ engine for ski resort
+• __Backend Driven UI__ engine for ski resort for summer/winter season
 • End-to-end navigation of screens and __map__ state through __deeplinks__
 • Form for __real-time online testing__ (olympiad, educational courses, etc.)
 • __Audio-player__ for listening to podcasts, like in Spotify
