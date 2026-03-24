@@ -44,6 +44,7 @@ npm run serve         # Same as npm start
 npm run build         # Build JSON data files and OG image for github pages
 npm run generate-pdfs # Generate all PDF variants for github pages
 npm run og-image      # Generate only the OpenGraph image for github pages
+npm run copy-resume-text # Build plain-text RU summary and copy to clipboard
 ```
 
 ## 📝 Editing Your Resume

@@ -10,6 +10,7 @@
     "build": "node build.js && node generate-og-image.js",
     "generate-pdfs": "node generate-pdfs.js",
     "og-image": "node generate-og-image.js",
+    "copy-resume-text": "node copy-resume-text.js",
     "postinstall": "npx puppeteer browsers install chrome"
   },
   "keywords": [
