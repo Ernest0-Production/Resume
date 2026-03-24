@@ -53,6 +53,14 @@
     font-display: swap;
 }
 
+/* Tell the UA this page implements light/dark (scrollbars, form controls) */
+html[data-theme="light"] {
+    color-scheme: light;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+}
 /* ==================== CSS Variables ==================== */
 :root {
     --color-black: #000000;
