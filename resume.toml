@@ -21,7 +21,7 @@ subtitle = "7 years of experience • founding engineer"
 
 "about.ru" = """
 7 лет опыта – **A-player**, неформальный лидер, **founding engineer**
-• Набрался разносторонних практик из аутсорс, **стартап** и **big-tech** компаний
+• Обучился лучшим практикам из аутсорс, **стартап** и **big-tech** компаний
 • С нуля писал приложения и библиотеки в сфере **E-commerce, EdTech, MedTech, TravelTech, Streaming, HealthTech**
 • Умею решать проблемы **end-to-end** и выступить фича-овнером
 • **Горизонт планирования** целей ~6-12 месяцев
@@ -262,28 +262,30 @@ period = "Feb 2022 – Apr 2023"
 "about.en" = "Big Tech • Marketplace platform • Logistics (top-2 in Russia) • MAU > 60M"
 
 "responsibilities.ru" = """
-Создал два проекта:
-1. MVP-версия приложения для **доставки посылок** с использованием **GraphQL API**
-2. In-house **картографический SDK** для замены внешних вендоров, что позволило снизить будущие лицензионные расходы
+Был первым разработчиком (основателем) в двух проектах:
+1. MVP-версия приложения для **доставки и трекинга посылок** с использованием **GraphQL**
+2. In-house **картографический SDK** для уменьшения зависимости от внешних вендоров и снижения будущих лицензионных издержек
 """
 
 "responsibilities.en" = """
-Participated in creating two projects:
-1. MVP version of the **package delivery application** with **GraphQL API**
-2. In-house **cartographic SDK** for replacing external vendors (Google, Yandex), allowing to reduce future licensing costs
+Participated in creating two projects as a first developer (founder):
+1. MVP version of the **package delivery and tracking application** with **GraphQL**
+2. In-house **cartographic SDK** for reducing dependencies on external vendors and reducing future licensing costs
 """
 
 "achievements.ru" = """
 • Сокращение __TTM__ MVP-версии приложения с 6 месяцев до 3 месяцев
 • Первопроходец по внедрению __Tuist__ в компании
-• Покрытие __интеграционными тестами__ на 70%
+• Две мажорные версии SDK доведенные до релиза/интеграции в приложения
+• Покрытие библиотеки __интеграционными тестами__ на 70%
 • Полный CI/CD __пайплайн__ сборки, тестирования, деплоя и релиза библиотеки
 """
 
 "achievements.en" = """
 • Reduced __TTM__ of MVP version of the application from 6 months to 3 months
 • Pioneer in implementing __Tuist__ in the company
-• __Integration tests__ coverage of 70%
+• Two major versions of the SDK released and integrated into applications
+• __Integration tests__ coverage of the library on 70%
 • CI/CD __pipeline__ for building, testing, deployment and release of the library
 """
 
@@ -367,7 +369,7 @@ period = "May 2019 – Sep 2021"
 
 "responsibilities.ru" = """
 Разрабатывал с нуля и поддерживал существующие приложения в команде из **3-х разработчиков**.
-Со временем, по мере увеличения навыков и вклада в проекты, **дорос до тимлида**.
+По мере увеличения навыков и вклада в проекты, **дорос до тимлида**.
 • Полный цикл разработки приложения от создания репозитория до **публикации в App Store**
 • **Менторство** и проведение **performance reviews** разработчиков
 """
@@ -381,21 +383,19 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 
 "achievements.ru" = """
 • __Backend Driven UI__ движок для горнолыжного курорта для летнего/зимнего сезона
-• Сквозная навигация экранов и состояния __карты__ через __диплинки__
-• Форма для прохождения __real-time онлайн-тестирования__ (олимпиада, учебные курсы, итп)
+• __Real-time__ онлайн-тестирование (олимпиада, учебные курсы, итп)
 • __Аудио-плеер__ для прослушивания подкастов, как в Spotify
 • __Offline-first__ режим приложения с помощью __Realm__
-• Кастомные __анимации__ переходов между экранами
 • Оптимизация метрики __Hitch Rate__ и __CPU usage__ в in-house движке ArticleReader
+• Кастомные __анимации__ переходов между экранами
 """
 "achievements.en" = """
 • __Backend Driven UI__ engine for ski resort for summer/winter season
-• End-to-end navigation of screens and __map__ state through __deeplinks__
-• Form for __real-time online testing__ (olympiad, educational courses, etc.)
+• __Real-time__ online testing (olympiad, educational courses, etc.)
 • __Audio-player__ for listening to podcasts, like in Spotify
 • __Offline-first__ mode of the application with __Realm__
-• Custom __animations__ for transitions between screens
 • Optimization of __Hitch Rate__ and __CPU usage__ of in-house ArticleReader engine
+• Custom __animations__ for transitions between screens
 """
 
 [[experience.links]]
