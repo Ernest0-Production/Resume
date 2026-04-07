@@ -1180,6 +1180,32 @@ u {
         cursor: pointer;
     }
 
+.experience-company-block--link {
+    cursor: pointer;
+}
+
+.experience-company-block--link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* Unified underline across title+subtitle blocks */
+.experience-header:has(.experience-company-block--link:hover) .experience-company-block--link,
+.experience-header:has(.experience-company-block--link:hover) .experience-company-block--link * {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    text-decoration-color: currentColor;
+}
+
+.experience-header:has(.experience-company-block--link:hover) .experience-company__favicon,
+.experience-header:has(.experience-company-block--link:hover) .experience-company__favicon-fallback,
+.experience-header:has(.experience-company-block--link:hover) .experience-company__favicon-wrap,
+.experience-header:has(.experience-company-block--link:hover) .iconify,
+.experience-header:has(.experience-company-block--link:hover) img {
+    text-decoration: none;
+}
     .experience-company__favicon-wrap {
     display: inline-flex;
     align-items: center;

@@ -1403,10 +1403,9 @@ function renderExperience(data) {
             <div class="experience-item">
                 <div class="experience-header">
                     <div class="experience-title-row">
-                        <div class="experience-title-row__left">
-                            ${
-                              safeCompanyUrl
-                                ? `
+                        ${
+                          safeCompanyUrl
+                            ? `<div class="experience-title-row__left experience-company-block experience-company-block--link" role="link" tabindex="0" data-company-url="${safeCompanyUrl}">
                                   <span class="experience-company__favicon-wrap" aria-hidden="true">
                                     <img
                                       src="${getFaviconUrl(safeCompanyUrl)}"
@@ -1419,12 +1418,14 @@ function renderExperience(data) {
                                     >
                                     <span class="iconify experience-company__favicon-fallback" data-icon="mdi:link-variant" aria-hidden="true" style="display: none;"></span>
                                   </span>
-                                  <a class="experience-company experience-company--link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">${exp.company}</a>
-                                `
-                                : `<div class="experience-company">${exp.company}</div>`
-                            }
-                            <div class="experience-position">${exp.position}</div>
-                        </div>
+                                  <span class="experience-company experience-company--link">${exp.company}</span>
+                                  <div class="experience-position">${exp.position}</div>
+                               </div>`
+                            : `<div class="experience-title-row__left">
+                                  <div class="experience-company">${exp.company}</div>
+                                  <div class="experience-position">${exp.position}</div>
+                               </div>`
+                        }
                         <div class="experience-meta">
                             <span class="icon">
                                 <span class="iconify" data-icon="mdi:calendar"></span>
@@ -1432,7 +1433,13 @@ function renderExperience(data) {
                             <span>${exp.period}</span>
                         </div>
                     </div>
-                    ${exp.about ? `<div class="experience-about">${parseLists(exp.about)}</div>` : ""}
+                    ${
+                      exp.about && safeCompanyUrl
+                        ? `<div class="experience-about experience-company-block experience-company-block--link" role="link" tabindex="0" data-company-url="${safeCompanyUrl}">${parseLists(exp.about)}</div>`
+                        : exp.about
+                          ? `<div class="experience-about">${parseLists(exp.about)}</div>`
+                          : ""
+                    }
                 </div>
                 <div class="experience-content">
                     <div class="experience-responsibilities">
@@ -1460,6 +1467,37 @@ function renderExperience(data) {
             </div>
         `;
     }).join('');
+
+    if (experienceElement && !experienceElement.dataset.companyBlockLinkBound) {
+      experienceElement.dataset.companyBlockLinkBound = "true";
+
+      experienceElement.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (target.closest("a")) return;
+
+        const block = target.closest(".experience-company-block--link");
+        if (!block) return;
+        const url = block.getAttribute("data-company-url");
+        if (!url) return;
+
+        window.open(url, "_blank", "noopener,noreferrer");
+      });
+
+      experienceElement.addEventListener("keydown", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const block = target.closest(".experience-company-block--link");
+        if (!block) return;
+
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+
+        const url = block.getAttribute("data-company-url");
+        if (!url) return;
+        window.open(url, "_blank", "noopener,noreferrer");
+      });
+    }
 
     // Adjust links position after rendering and images load
     // Use setTimeout to ensure DOM is fully rendered
