@@ -1280,29 +1280,24 @@ function renderExperience(data) {
                     <a class="experience-header__stretch-link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">
                       <span class="experience-header__stretch-link-label">${siteLinkStretchLabel}</span>
                     </a>
-                    <div class="experience-header__surface">`
+                    <div class="experience-header__surface">
+                    <div class="experience-header__site-grid">
+                    <span class="experience-company__favicon-wrap" aria-hidden="true">
+                      <img
+                        src="${getFaviconUrl(safeCompanyUrl)}"
+                        alt=""
+                        class="experience-company__favicon"
+                        loading="eager"
+                        decoding="async"
+                        referrerpolicy="no-referrer"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+                      >
+                      <span class="iconify experience-company__favicon-fallback" data-icon="mdi:link-variant" aria-hidden="true" style="display: none;"></span>
+                    </span>`
                     : `<div class="experience-header">`
                 }
                     <div class="experience-title-row">
                         <div class="experience-title-row__left">
-                            ${
-                              safeCompanyUrl
-                                ? `
-                                  <span class="experience-company__favicon-wrap" aria-hidden="true">
-                                    <img
-                                      src="${getFaviconUrl(safeCompanyUrl)}"
-                                      alt=""
-                                      class="experience-company__favicon"
-                                      loading="eager"
-                                      decoding="async"
-                                      referrerpolicy="no-referrer"
-                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
-                                    >
-                                    <span class="iconify experience-company__favicon-fallback" data-icon="mdi:link-variant" aria-hidden="true" style="display: none;"></span>
-                                  </span>
-                                `
-                                : ""
-                            }
                             <div class="experience-company">${experienceEntry.company}</div>
                             <div class="experience-position">${experienceEntry.position}</div>
                         </div>
@@ -1314,7 +1309,7 @@ function renderExperience(data) {
                         </div>
                     </div>
                     ${experienceAboutSection}
-                ${safeCompanyUrl ? `</div></div>` : `</div>`}
+                ${safeCompanyUrl ? `</div></div></div>` : `</div>`}
                 <div class="experience-content">
                     <div class="experience-responsibilities">
                         ${parseLists(experienceEntry.responsibilities)}

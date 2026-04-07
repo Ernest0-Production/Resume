@@ -1193,6 +1193,30 @@ a.experience-header__stretch-link:focus-visible {
     border-radius: 6px;
 }
 
+/* Колонка favicon слева на всю высоту строки «компания + должность» и подзаголовка about. */
+.experience-header__site-grid {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    column-gap: 8px;
+    align-items: start;
+}
+
+.experience-header__site-grid>.experience-company__favicon-wrap {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: stretch;
+    justify-content: flex-start;
+}
+
+.experience-header__site-grid>.experience-title-row {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.experience-header__site-grid>.experience-about {
+    grid-column: 2;
+    grid-row: 2;
+}
 .experience-header__surface {
     position: relative;
     z-index: 1;
@@ -1238,16 +1262,16 @@ a.experience-header__stretch-link:focus-visible {
     text-decoration-color: currentColor;
 }
 
-.experience-header--has-site-link:hover .experience-title-row__left .experience-company__favicon,
-.experience-header--has-site-link:hover .experience-title-row__left .experience-company__favicon-fallback,
-.experience-header--has-site-link:hover .experience-title-row__left .experience-company__favicon-wrap,
-.experience-header--has-site-link:hover .experience-title-row__left .iconify,
-.experience-header--has-site-link:hover .experience-title-row__left img,
-.experience-header--has-site-link:focus-within .experience-title-row__left .experience-company__favicon,
-.experience-header--has-site-link:focus-within .experience-title-row__left .experience-company__favicon-fallback,
-.experience-header--has-site-link:focus-within .experience-title-row__left .experience-company__favicon-wrap,
-.experience-header--has-site-link:focus-within .experience-title-row__left .iconify,
-.experience-header--has-site-link:focus-within .experience-title-row__left img {
+.experience-header--has-site-link:hover .experience-company__favicon,
+.experience-header--has-site-link:hover .experience-company__favicon-fallback,
+.experience-header--has-site-link:hover .experience-company__favicon-wrap,
+.experience-header--has-site-link:hover .experience-company__favicon-wrap .iconify,
+.experience-header--has-site-link:hover .experience-company__favicon-wrap img,
+.experience-header--has-site-link:focus-within .experience-company__favicon,
+.experience-header--has-site-link:focus-within .experience-company__favicon-fallback,
+.experience-header--has-site-link:focus-within .experience-company__favicon-wrap,
+.experience-header--has-site-link:focus-within .experience-company__favicon-wrap .iconify,
+.experience-header--has-site-link:focus-within .experience-company__favicon-wrap img {
     text-decoration: none;
 }
 
@@ -1256,13 +1280,13 @@ a.experience-header__stretch-link:focus-visible {
     opacity: 1;
 }
 .experience-company__favicon-wrap {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+        box-sizing: border-box;
     width: 16px;
-    height: 16px;
-        flex: 0 0 auto;
-        align-self: center;
+    flex: 0 0 16px;
+        min-height: 16px;
         opacity: 0.9;
 }
 
