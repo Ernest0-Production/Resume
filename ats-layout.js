@@ -8,38 +8,63 @@
     function parseFormattingAts(text) {
         if (!text) return '';
 
-        return text
-            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-            .replace(/__([^_]+)__/g, '<strong>$1</strong>')
-            .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-            .replace(/\n/g, '<br>');
+        return (
+          text
+            // **text** -> bold
+            .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+            // __text__ -> bold (ATS treats underscore pairs as bold)
+            .replace(/__([^_]+)__/g, "<strong>$1</strong>")
+            // *text* -> italic
+            .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+            // Single newlines -> <br>
+            .replace(/\n/g, "<br>")
+        );
     }
 
     function stripMarkdownSyntax(text = '') {
         if (!text) return '';
-        return text
-            .replace(/\r\n/g, '\n')
-            .replace(/!\[[^\]]*]\([^)]*\)/g, '')
-            .replace(/\[([^\]]+)]\([^)]*\)/g, '$1')
-            .replace(/`{1,2}([^`]+)`{1,2}/g, '$1')
-            .replace(/~~([^~]+)~~/g, '$1')
-            .replace(/\*\*([^*]+)\*\*/g, '$1')
-            .replace(/__([^_]+)__/g, '$1')
-            .replace(/\*([^*]+)\*/g, '$1')
-            .replace(/_([^_]+)_/g, '$1');
+        return (
+          text
+            // Normalize Windows newlines to LF before other stripping
+            .replace(/\r\n/g, "\n")
+            // Remove markdown images ![alt](url)
+            .replace(/!\[[^\]]*]\([^)]*\)/g, "")
+            // Markdown links [label](url) -> visible label only
+            .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+            // Inline code `code` or ``code`` -> inner text
+            .replace(/`{1,2}([^`]+)`{1,2}/g, "$1")
+            // Strikethrough ~~text~~ -> plain text
+            .replace(/~~([^~]+)~~/g, "$1")
+            // **bold** markers -> inner text
+            .replace(/\*\*([^*]+)\*\*/g, "$1")
+            // __bold__ markers -> inner text
+            .replace(/__([^_]+)__/g, "$1")
+            // *italic* markers -> inner text
+            .replace(/\*([^*]+)\*/g, "$1")
+            // _italic_ markers -> inner text
+            .replace(/_([^_]+)_/g, "$1")
+        );
     }
 
     function stripLineMarkers(line = '') {
-        return line.replace(/^\s*(?:[-•*◦▪▫]\s+|\d+\.\s+)/, '').trim();
+      // Remove leading bullet or numbered-list prefix
+      return line.replace(/^\s*(?:[-•*◦▪▫]\s+|\d+\.\s+)/, "").trim();
     }
 
     function escapeHTML(text = '') {
-        return text
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
+        return (
+          text
+            // Escape & for HTML text nodes
+            .replace(/&/g, "&amp;")
+            // Escape < for HTML text nodes
+            .replace(/</g, "&lt;")
+            // Escape > for HTML text nodes
+            .replace(/>/g, "&gt;")
+            // Escape double quotes inside attributes
+            .replace(/"/g, "&quot;")
+            // Escape apostrophe for HTML text/attributes
+            .replace(/'/g, "&#39;")
+        );
     }
 
     function renderPlainStructuredText(text) {
@@ -59,14 +84,17 @@
         }
 
         function pushListItem(rawLine, type) {
-            const cleaned = stripLineMarkers(rawLine);
-            const formatted = parseFormattingAts(cleaned).replace(/\s+/g, ' ').trim();
-            if (!formatted) return;
-            if (currentListType && currentListType !== type) {
-                flushList();
-            }
-            currentListType = type;
-            currentListItems.push(formatted);
+          const cleaned = stripLineMarkers(rawLine);
+          // Collapse internal whitespace to single spaces after ATS formatting
+          const formatted = parseFormattingAts(cleaned)
+            .replace(/\s+/g, " ")
+            .trim();
+          if (!formatted) return;
+          if (currentListType && currentListType !== type) {
+            flushList();
+          }
+          currentListType = type;
+          currentListItems.push(formatted);
         }
 
         text.split('\n').forEach(line => {
@@ -84,11 +112,14 @@
             } else if (isNumbered) {
                 pushListItem(line, 'ol');
             } else {
-                flushList();
-                const formatted = parseFormattingAts(trimmed).replace(/\s+/g, ' ').trim();
-                if (formatted) {
-                    blocks.push(`<p>${formatted}</p>`);
-                }
+              flushList();
+              // Collapse whitespace in paragraph lines after ATS formatting
+              const formatted = parseFormattingAts(trimmed)
+                .replace(/\s+/g, " ")
+                .trim();
+              if (formatted) {
+                blocks.push(`<p>${formatted}</p>`);
+              }
             }
         });
 
@@ -96,38 +127,40 @@
         return blocks.join('');
     }
 
-    function renderAtsExperienceItem(exp = {}, language) {
-        const company = escapeHTML(exp.company || '');
-        const companyUrlRaw =
-          exp &&
-          (exp.url ||
-            exp["company.url"] ||
-            (exp.company && (exp.company.url || exp.companyUrl)));
-        const companyUrl =
-          typeof companyUrlRaw === "string" ? companyUrlRaw.trim() : "";
-        const safeCompanyUrl = companyUrl ? escapeHTML(companyUrl) : "";
-        const companyHTML = `<span class="ats-experience__company">${company}</span>`;
-        const aboutText = stripMarkdownSyntax((exp.about || '').replace(/\n+/g, ' '))
-            .replace(/\s+/g, ' ')
-            .trim();
-        const position = escapeHTML(exp.position || '');
-        const period = exp.period ? escapeHTML(exp.period) : '';
+    function renderAtsExperienceItem(experienceEntry = {}, language) {
+      const company = escapeHTML(experienceEntry.company || "");
+      const companyUrl = getExperienceCompanyUrl(experienceEntry);
+      const safeCompanyUrl = companyUrl ? escapeHTML(companyUrl) : "";
+      const companyHTML = `<span class="ats-experience__company">${company}</span>`;
+      // Flatten newlines in about, then strip markdown, then normalize spaces
+      const aboutText = stripMarkdownSyntax(
+        (experienceEntry.about || "").replace(/\n+/g, " "),
+      )
+        .replace(/\s+/g, " ")
+        .trim();
+      const position = escapeHTML(experienceEntry.position || "");
+      const period = experienceEntry.period
+        ? escapeHTML(experienceEntry.period)
+        : "";
 
-        const responsibilitiesHTML = exp.responsibilities
-            ? renderPlainStructuredText(exp.responsibilities)
-            : '';
+      const responsibilitiesHTML = experienceEntry.responsibilities
+        ? renderPlainStructuredText(experienceEntry.responsibilities)
+        : "";
 
-        let achievementsHTML = '';
-        if (exp.achievements) {
-            const achievementsContent = renderPlainStructuredText(exp.achievements);
-            const achievementsLabel = language === 'ru' ? 'Основные достижения:' : 'Key Achievements:';
-            achievementsHTML = `<div class="ats-experience__achievements">
+      let achievementsHTML = "";
+      if (experienceEntry.achievements) {
+        const achievementsContent = renderPlainStructuredText(
+          experienceEntry.achievements,
+        );
+        const achievementsLabel =
+          language === "ru" ? "Основные достижения:" : "Key Achievements:";
+        achievementsHTML = `<div class="ats-experience__achievements">
                 <div class="ats-experience__achievements-label">${achievementsLabel}</div>
                 ${achievementsContent}
             </div>`;
-        }
+      }
 
-        const companyRowInner = `
+      const companyRowInner = `
                 <span class="ats-experience__company-wrapper">
                     <span class="iconify ats-experience__company-icon" data-icon="mdi:flag-variant" aria-hidden="true"></span>
                     ${companyHTML}
@@ -135,18 +168,18 @@
                 </span>
                 ${period ? `<span class="ats-experience__period">${period}</span>` : ""}`;
 
-        const aboutRowHTML = aboutText
-          ? `<div class="ats-experience__row"><span class="ats-experience__company-about">${escapeHTML(aboutText)}</span></div>`
-          : "";
+      const aboutRowHTML = aboutText
+        ? `<div class="ats-experience__row"><span class="ats-experience__company-about">${escapeHTML(aboutText)}</span></div>`
+        : "";
 
-        const experienceHeaderHTML = safeCompanyUrl
-          ? `<a class="ats-experience__header-link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">
+      const experienceHeaderHTML = safeCompanyUrl
+        ? `<a class="ats-experience__header-link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">
                 <div class="ats-experience__row ats-experience__row--company">${companyRowInner}</div>
                 ${aboutRowHTML}
             </a>`
-          : `<div class="ats-experience__row ats-experience__row--company">${companyRowInner}</div>${aboutRowHTML}`;
+        : `<div class="ats-experience__row ats-experience__row--company">${companyRowInner}</div>${aboutRowHTML}`;
 
-        return `
+      return `
             <article class="ats-experience__item">
                 ${experienceHeaderHTML}
                 ${responsibilitiesHTML}
@@ -155,20 +188,26 @@
         `;
     }
 
-    function renderAtsEducationItem(edu = {}) {
-        const degree = escapeHTML(edu.degree || '');
-        const university = escapeHTML(edu.university || '');
-        const period = edu.period ? escapeHTML(edu.period) : '';
+    function renderAtsEducationItem(educationEntry = {}) {
+      const degree = escapeHTML(educationEntry.degree || "");
+      const university = escapeHTML(educationEntry.university || "");
+      const period = educationEntry.period
+        ? escapeHTML(educationEntry.period)
+        : "";
 
-        if (!degree && !university && !period) return '';
+      if (!degree && !university && !period) return "";
 
-        return `
+      return `
             <article class="ats-education__item">
-                ${degree ? `<div class="ats-education__row">
+                ${
+                  degree
+                    ? `<div class="ats-education__row">
                     <span class="ats-education__degree">${degree}</span>
-                    ${period ? `<span class="ats-education__period">${period}</span>` : ''}
-                </div>` : ''}
-                ${university ? `<div class="ats-education__row"><span class="ats-education__university">${university}</span></div>` : ''}
+                    ${period ? `<span class="ats-education__period">${period}</span>` : ""}
+                </div>`
+                    : ""
+                }
+                ${university ? `<div class="ats-education__row"><span class="ats-education__university">${university}</span></div>` : ""}
             </article>
         `;
     }
@@ -176,80 +215,54 @@
     /**
      * LinkedIn / Telegram / etc.: иконка (favicon или mdi) + текстовая ссылка для ATS-шапки.
      */
-    function renderAtsHeaderReferenceLink(containerElement, ref) {
-        if (!containerElement) return;
+    function renderAtsHeaderReferenceLink(containerElement, referenceEntry) {
+      if (!containerElement) return;
 
-        if (!ref || !ref.url) {
-            containerElement.textContent = '';
-            containerElement.style.display = 'none';
-            return;
-        }
+      if (!referenceEntry || !referenceEntry.url) {
+        containerElement.textContent = "";
+        containerElement.style.display = "none";
+        return;
+      }
 
-        containerElement.innerHTML = '';
+      containerElement.innerHTML = "";
 
-        const iconContainer = document.createElement('span');
-        iconContainer.className = 'ats-header__icon';
+      const iconContainer = document.createElement("span");
+      iconContainer.className = "ats-header__icon";
 
-        const getFaviconUrl = typeof window !== 'undefined' && typeof window.getFaviconUrl === 'function'
-            ? window.getFaviconUrl
-            : function (url) {
-                try {
-                    const parsed = new URL(url);
-                    const target = `${parsed.protocol}//${parsed.hostname}`;
-                    const encoded = encodeURIComponent(target);
-                    return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
-                } catch (error) {
-                    const sanitized = url.replace(/^[^a-zA-Z0-9]+/, '');
-                    const target = `https://${sanitized}`;
-                    const encoded = encodeURIComponent(target);
-                    return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
-                }
-            };
+      const favicon = document.createElement("img");
+      favicon.className = "ats-header__favicon";
+      favicon.src = getFaviconUrl(referenceEntry.url);
+      favicon.alt = `${referenceEntry.text || referenceEntry.url} favicon`;
+      favicon.loading = "lazy";
+      favicon.decoding = "async";
+      favicon.referrerPolicy = "no-referrer";
 
-        const getIconForLink = typeof window !== 'undefined' && typeof window.getIconForLink === 'function'
-            ? window.getIconForLink
-            : function (url, type) {
-                if (url.includes('linkedin.com')) return 'mdi:linkedin';
-                if (url.includes('github.com')) return 'mdi:github';
-                if (url.includes('t.me') || type === 'telegram') return 'mdi:telegram';
-                if (url.includes('twitter.com') || url.includes('x.com')) return 'mdi:twitter';
-                if (url.includes('facebook.com')) return 'mdi:facebook';
-                if (url.includes('instagram.com')) return 'mdi:instagram';
-                if (type === 'website') return 'mdi:web';
-                return 'mdi:link';
-            };
+      const fallbackIcon = document.createElement("span");
+      fallbackIcon.className = "iconify";
+      fallbackIcon.dataset.icon = getIconForLink(
+        referenceEntry.url,
+        referenceEntry.type,
+      );
+      fallbackIcon.setAttribute("aria-hidden", "true");
+      fallbackIcon.style.display = "none";
 
-        const favicon = document.createElement('img');
-        favicon.className = 'ats-header__favicon';
-        favicon.src = getFaviconUrl(ref.url);
-        favicon.alt = `${ref.text || ref.url} favicon`;
-        favicon.loading = 'lazy';
-        favicon.decoding = 'async';
-        favicon.referrerPolicy = 'no-referrer';
+      favicon.addEventListener("error", () => {
+        favicon.style.display = "none";
+        fallbackIcon.style.display = "inline-flex";
+      });
 
-        const fallbackIcon = document.createElement('span');
-        fallbackIcon.className = 'iconify';
-        fallbackIcon.dataset.icon = getIconForLink(ref.url, ref.type);
-        fallbackIcon.setAttribute('aria-hidden', 'true');
-        fallbackIcon.style.display = 'none';
+      iconContainer.appendChild(favicon);
+      iconContainer.appendChild(fallbackIcon);
 
-        favicon.addEventListener('error', () => {
-            favicon.style.display = 'none';
-            fallbackIcon.style.display = 'inline-flex';
-        });
+      const link = document.createElement("a");
+      link.href = referenceEntry.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = referenceEntry.text || referenceEntry.url;
 
-        iconContainer.appendChild(favicon);
-        iconContainer.appendChild(fallbackIcon);
-
-        const link = document.createElement('a');
-        link.href = ref.url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.textContent = ref.text || ref.url;
-
-        containerElement.appendChild(iconContainer);
-        containerElement.appendChild(link);
-        containerElement.style.display = '';
+      containerElement.appendChild(iconContainer);
+      containerElement.appendChild(link);
+      containerElement.style.display = "";
     }
 
     function renderAtsLayout(data, options = {}) {
@@ -304,15 +317,17 @@
 
         if (phoneElement) {
             if (data.phone) {
-                phoneElement.innerHTML = `
-                    <a href="tel:${data.phone.replace(/\s/g, '')}">
+              // Remove spaces from phone number for a valid tel: URI
+              const phoneForTelHref = data.phone.replace(/\s/g, "");
+              phoneElement.innerHTML = `
+                    <a href="tel:${phoneForTelHref}">
                         <span class="ats-header__icon">
                             <span class="iconify" data-icon="mdi:phone-dial" aria-hidden="true"></span>
                         </span>
                         ${data.phone}
                     </a>
                 `;
-                phoneElement.style.display = '';
+              phoneElement.style.display = "";
             } else {
                 phoneElement.textContent = '';
                 phoneElement.style.display = 'none';
@@ -335,22 +350,19 @@
         }
 
         if (linkedInElement) {
-          const linkedInRef = Array.isArray(data.references)
-            ? data.references.find(
-                (ref) => ref.url && ref.url.includes("linkedin.com"),
-              )
-            : null;
+          const linkedInRef = data.references.find(
+            (referenceEntry) =>
+              referenceEntry.url && referenceEntry.url.includes("linkedin.com"),
+          );
           renderAtsHeaderReferenceLink(linkedInElement, linkedInRef);
         }
 
         if (telegramElement) {
-          const telegramRef = Array.isArray(data.references)
-            ? data.references.find(
-                (ref) =>
-                  ref.type === "telegram" ||
-                  (ref.url && ref.url.includes("t.me")),
-              )
-            : null;
+          const telegramRef = data.references.find(
+            (referenceEntry) =>
+              referenceEntry.type === "telegram" ||
+              (referenceEntry.url && referenceEntry.url.includes("t.me")),
+          );
           renderAtsHeaderReferenceLink(telegramElement, telegramRef);
         }
 
@@ -367,34 +379,39 @@
 
         if (skillsElement) {
             const flattenedSkills = [];
-            if (Array.isArray(data.skills)) {
-                data.skills.forEach(skill => {
-                    const keywords = Array.isArray(skill.keywords) ? skill.keywords : [];
-                    keywords.forEach(keyword => {
-                        const cleaned = stripLineMarkers(stripMarkdownSyntax(keyword || ''));
-                        if (cleaned) {
-                            flattenedSkills.push(cleaned);
-                        }
-                    });
-                });
-            }
+            data.skills.forEach((skill) => {
+              skill.keywords.forEach((keyword) => {
+                const cleaned = stripLineMarkers(
+                  stripMarkdownSyntax(keyword || ""),
+                );
+                if (cleaned) {
+                  flattenedSkills.push(cleaned);
+                }
+              });
+            });
             const uniqueSkills = [...new Set(flattenedSkills)];
             skillsElement.textContent = uniqueSkills.join(' • ');
         }
 
         if (experienceElement) {
-            const experienceHTML = Array.isArray(data.experience)
-                ? data.experience.map(exp => renderAtsExperienceItem(exp, language)).join('')
-                : '';
+            const experienceHTML = data.experience
+              .map((experienceEntry) =>
+                renderAtsExperienceItem(experienceEntry, language),
+              )
+              .join("");
             experienceElement.innerHTML = experienceHTML || '';
         }
 
         if (educationElement) {
             const educationSection = document.getElementById('atsEducationSection');
-            const hasEducation = Array.isArray(data.education) && data.education.length > 0;
+            const hasEducation = data.education.length > 0;
 
             if (hasEducation) {
-                const educationHTML = data.education.map(edu => renderAtsEducationItem(edu)).join('');
+                const educationHTML = data.education
+                  .map((educationEntry) =>
+                    renderAtsEducationItem(educationEntry),
+                  )
+                  .join("");
                 educationElement.innerHTML = educationHTML || '';
                 if (educationSection) {
                     educationSection.style.display = '';
@@ -408,15 +425,20 @@
         }
 
         if (languagesElement) {
-            if (Array.isArray(data.languages) && data.languages.length > 0) {
-                const languagesHTML = data.languages.map(lang => {
-                    const name = escapeHTML(lang.name || '');
-                    const level = escapeHTML(lang.level || '');
-                    return name && level ? `${name} – ${level}` : (name || level || '');
-                }).filter(Boolean).join(', ');
-                languagesElement.textContent = languagesHTML || '';
+            if (data.languages.length > 0) {
+              const languagesHTML = data.languages
+                .map((languageEntry) => {
+                  const name = escapeHTML(languageEntry.name || "");
+                  const level = escapeHTML(languageEntry.level || "");
+                  return name && level
+                    ? `${name} – ${level}`
+                    : name || level || "";
+                })
+                .filter(Boolean)
+                .join(", ");
+              languagesElement.textContent = languagesHTML || "";
             } else {
-                languagesElement.textContent = '';
+              languagesElement.textContent = "";
             }
         }
     }

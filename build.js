@@ -89,7 +89,11 @@ function localizeResumeData(data, lang) {
                         });
                     } else {
                         // Simple array, trim strings
-                        targetObj[key] = value.map(v => typeof v === 'string' ? v.trim() : v);
+                        targetObj[key] = value.map((element) =>
+                          typeof element === "string"
+                            ? element.trim()
+                            : element,
+                        );
                     }
                 } else if (typeof value === 'object' && value !== null) {
                     // Nested object

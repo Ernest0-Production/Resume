@@ -1,333 +1,132 @@
-// ==================== Utility Functions ====================
-
-/**
- * Parse markdown links to styled tags with icons
- * Supports: [title](url) -> <a class="link-tag" href="url">...</a>
- */
-function parseMarkdownLinks(text) {
-    if (!text) return '';
-
-    // Parse markdown links: [title](url)
-    return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, title, url) => {
-        // Escape HTML in title and url to prevent XSS
-        const safeTitle = title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        const safeUrl = url.replace(/"/g, '&quot;');
-
-        // Get favicon URL and fallback icon
-        const faviconUrl = getFaviconUrl(safeUrl);
-        let fallbackIcon = getIconForLink(safeUrl);
-        // Use mdi:link-variant as fallback for markdown links if no specific icon found
-        if (fallbackIcon === 'mdi:link') {
-            fallbackIcon = 'mdi:link-variant';
-        }
-
-        return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="link-tag">
-            <img src="${faviconUrl}" alt="${safeTitle} favicon" class="link-tag__favicon" loading="eager" decoding="async" referrerpolicy="no-referrer" width="10" height="10" style="width:10px;height:10px;max-width:10px;max-height:10px;padding:0;margin:0;object-fit:contain;display:block;box-sizing:border-box;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-            <span class="iconify link-tag__icon link-tag__icon--fallback" data-icon="${fallbackIcon}" aria-hidden="true" style="display: none;"></span>
-            <span class="link-tag__text">${safeTitle}</span>
-        </a>`;
-    });
-}
-
-/**
- * Parse text formatting (bold, italic, underline)
- * Supports: **bold**, *italic*, __underline__
- */
-function parseFormatting(text) {
-    if (!text) return '';
-
-    // First parse markdown links (before other formatting)
-    let formatted = parseMarkdownLinks(text);
-
-    // Convert markdown-like syntax to HTML
-    formatted = formatted
-        // Bold: **text** -> <strong>text</strong>
-        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-        // Italic: *text* -> <em>text</em>
-        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-        // Underline: __text__ -> <u>text</u>
-        .replace(/__([^_]+)__/g, '<u>$1</u>')
-        // Line breaks
-        .replace(/\n/g, '<br>');
-
-    return formatted;
-}
-
-/**
- * Parse text formatting without rendering markdown links as <a>.
- * Keeps link titles as plain text to avoid nested anchors.
- */
-function parseFormattingNoLinks(text) {
-    if (!text) return '';
-
-    // Remove markdown links: [title](url) -> title
-    let formatted = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
-
-    formatted = formatted
-        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-        .replace(/__([^_]+)__/g, '<u>$1</u>')
-        .replace(/\n/g, '<br>');
-
-    return formatted;
-}
-
-/**
- * Convert bullet point markers (-, •, *, etc.) to HTML list tags (<ul><li>)
- * Supports various bullet markers: -, •, *, ◦, ▪, ▫
- * Also supports numbered lists (1., 2., etc.) which are converted to <ol><li>
- */
-function parseLists(text) {
-    if (!text) return '';
-
-    const lines = text.split('\n');
-    const result = [];
-    let currentList = [];
-    let inList = false;
-    let isNumberedList = false;
-
-    function flushList() {
-        if (currentList.length > 0) {
-            const listItems = currentList.map(item => {
-                let cleaned;
-                if (isNumberedList) {
-                    // Remove numbered marker (e.g., "1. ", "2. ") and trim
-                    cleaned = item.replace(/^[\s]*\d+\.\s*/, '').trim();
-                } else {
-                    // Remove bullet marker and trim
-                    cleaned = item.replace(/^[\s]*[-•*◦▪▫]\s*/, '').trim();
-                }
-                return `<li>${parseFormatting(cleaned)}</li>`;
-            }).join('');
-            const listTag = isNumberedList ? 'ol' : 'ul';
-            result.push(`<${listTag}>${listItems}</${listTag}>`);
-            currentList = [];
-        }
-        inList = false;
-        isNumberedList = false;
-    }
-
-    lines.forEach(line => {
-        const trimmed = line.trim();
-        // Check if line starts with a bullet marker
-        const isBulletListItem = /^[-•*◦▪▫]\s+/.test(trimmed);
-        // Check if line starts with a number and dot (numbered list)
-        const isNumberedListItem = /^\d+\.\s+/.test(trimmed);
-
-        if (isBulletListItem || isNumberedListItem) {
-            // If we're switching between bullet and numbered lists, flush current list
-            if (inList && ((isNumberedListItem && !isNumberedList) || (isBulletListItem && isNumberedList))) {
-                flushList();
-            }
-
-            if (!inList) {
-                inList = true;
-                isNumberedList = isNumberedListItem;
-            }
-            currentList.push(trimmed);
-        } else {
-            flushList(); // Flush current list before adding non-list content
-            if (trimmed) {
-                result.push(`<p>${parseFormatting(trimmed)}</p>`);
-            } else {
-                result.push('<br>');
-            }
-        }
-    });
-
-    flushList(); // Flush any remaining list
-
-    return result.join('');
-}
-
-function parseListsNoLinks(text) {
-  if (!text) return "";
-
-  const lines = text.split("\n");
-  const result = [];
-  let currentList = [];
-  let inList = false;
-  let isNumberedList = false;
-
-  function flushList() {
-    if (currentList.length > 0) {
-      const listItems = currentList
-        .map((item) => {
-          let cleaned;
-          if (isNumberedList) {
-            cleaned = item.replace(/^[\s]*\d+\.\s*/, "").trim();
-          } else {
-            cleaned = item.replace(/^[\s]*[-•*◦▪▫]\s*/, "").trim();
-          }
-          return `<li>${parseFormattingNoLinks(cleaned)}</li>`;
-        })
-        .join("");
-      const listTag = isNumberedList ? "ol" : "ul";
-      result.push(`<${listTag}>${listItems}</${listTag}>`);
-      currentList = [];
-    }
-    inList = false;
-    isNumberedList = false;
-  }
-
-  lines.forEach((line) => {
-    const trimmed = line.trim();
-    const isBulletListItem = /^[-•*◦▪▫]\s+/.test(trimmed);
-    const isNumberedListItem = /^\d+\.\s+/.test(trimmed);
-
-    if (isBulletListItem || isNumberedListItem) {
-      if (
-        inList &&
-        ((isNumberedListItem && !isNumberedList) ||
-          (isBulletListItem && isNumberedList))
-      ) {
-        flushList();
-      }
-
-      if (!inList) {
-        inList = true;
-        isNumberedList = isNumberedListItem;
-      }
-      currentList.push(trimmed);
-    } else {
-      flushList();
-      if (trimmed) {
-        result.push(`<p>${parseFormattingNoLinks(trimmed)}</p>`);
-      } else {
-        result.push("<br>");
-      }
-    }
-  });
-
-  flushList();
-  return result.join("");
-}
-
-/**
- * Create an HTML element with text content
- */
-function createElement(tag, content, className = '') {
-    const element = document.createElement(tag);
-    if (className) element.className = className;
-    element.innerHTML = parseFormatting(content);
-    return element;
-}
+// Parsing: resume-text.js; URLs/favicons: resume-links.js (see index.html)
 
 /**
  * Load and optimize avatar image
  * Compresses the image to optimal size for display
  */
 async function loadOptimizedAvatar(imgElement, avatarUrl, firstName, lastName) {
-    const targetSize = 280; // 2x for retina displays (displayed at 140x140)
-    const quality = 0.85; // JPEG quality (0-1)
+  const targetSize = 280; // 2x for retina displays (displayed at 140x140)
+  const quality = 0.85; // JPEG quality (0-1)
 
-    try {
-        // Create a temporary image element to load the original
-        const tempImg = new Image();
-        tempImg.crossOrigin = 'anonymous'; // Enable CORS for same-origin images
+  try {
+    // Create a temporary image element to load the original
+    const tempImg = new Image();
+    tempImg.crossOrigin = "anonymous"; // Enable CORS for same-origin images
 
-        // Wait for image to load
-        const imageLoadPromise = new Promise((resolve, reject) => {
-            tempImg.onload = () => resolve(tempImg);
-            tempImg.onerror = () => reject(new Error('Failed to load image'));
-        });
+    // Wait for image to load
+    const imageLoadPromise = new Promise((resolve, reject) => {
+      tempImg.onload = () => resolve(tempImg);
+      tempImg.onerror = () => reject(new Error("Failed to load image"));
+    });
 
-        tempImg.src = avatarUrl;
-        const loadedImg = await imageLoadPromise;
+    tempImg.src = avatarUrl;
+    const loadedImg = await imageLoadPromise;
 
-        // Get original size (approximate)
-        const originalSize = estimateImageSize(loadedImg.naturalWidth, loadedImg.naturalHeight);
+    // Get original size (approximate)
+    const originalSize = estimateImageSize(
+      loadedImg.naturalWidth,
+      loadedImg.naturalHeight,
+    );
 
-        // Create a canvas for compression
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+    // Create a canvas for compression
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-        // Calculate dimensions maintaining aspect ratio
-        let width = loadedImg.naturalWidth;
-        let height = loadedImg.naturalHeight;
-        const aspectRatio = width / height;
+    // Calculate dimensions maintaining aspect ratio
+    let width = loadedImg.naturalWidth;
+    let height = loadedImg.naturalHeight;
+    const aspectRatio = width / height;
 
-        if (width > height) {
-            width = targetSize;
-            height = targetSize / aspectRatio;
-        } else {
-            height = targetSize;
-            width = targetSize * aspectRatio;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        // Draw and compress the image
-        ctx.drawImage(loadedImg, 0, 0, width, height);
-
-        // Try WebP first (better compression)
-        let compressedBlob;
-        let usedFormat = 'webp';
-
-        if (canvas.toBlob) {
-            // Try WebP first
-            try {
-                compressedBlob = await new Promise((resolve, reject) => {
-                    canvas.toBlob((blob) => {
-                        if (blob && blob.size > 0) {
-                            resolve(blob);
-                        } else {
-                            reject(new Error('WebP conversion failed'));
-                        }
-                    }, 'image/webp', quality);
-                });
-
-                // If WebP is too large or failed, try JPEG
-                if (!compressedBlob || compressedBlob.size > originalSize * 0.8) {
-                    usedFormat = 'jpeg';
-                    compressedBlob = await new Promise((resolve) => {
-                        canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
-                    });
-                }
-            } catch (webpError) {
-                // Fallback to JPEG
-                usedFormat = 'jpeg';
-                compressedBlob = await new Promise((resolve) => {
-                    canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
-                });
-            }
-        } else {
-            // Fallback for older browsers - use data URL
-            usedFormat = 'jpeg';
-            const dataUrl = canvas.toDataURL('image/jpeg', quality);
-            const res = await fetch(dataUrl);
-            compressedBlob = await res.blob();
-        }
-
-        // Create object URL and set as image source
-        const optimizedUrl = URL.createObjectURL(compressedBlob);
-        imgElement.src = optimizedUrl;
-        imgElement.alt = `${firstName || ''} ${lastName || ''}`.trim();
-
-        // Log compression results
-        const compressedSize = compressedBlob.size;
-        const savings = ((1 - compressedSize / originalSize) * 100).toFixed(1);
-        console.log(`Avatar optimized: ${(originalSize / 1024).toFixed(1)}KB → ${(compressedSize / 1024).toFixed(1)}KB (${savings}% reduction, format: ${usedFormat})`);
-
-        // Clean up object URL after image loads
-        imgElement.onload = () => {
-            URL.revokeObjectURL(optimizedUrl);
-        };
-
-    } catch (error) {
-        console.warn('Failed to optimize avatar, loading original:', error);
-        // Fallback to original image
-        imgElement.src = avatarUrl;
-        imgElement.alt = `${firstName || ''} ${lastName || ''}`.trim();
+    if (width > height) {
+      width = targetSize;
+      height = targetSize / aspectRatio;
+    } else {
+      height = targetSize;
+      width = targetSize * aspectRatio;
     }
 
-    // Handle loading errors
-    imgElement.onerror = function () {
-        console.warn('Failed to load avatar from:', avatarUrl);
-        const initials = `${(firstName || '?').charAt(0)}${(lastName || '?').charAt(0)}`.toUpperCase();
-        this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%232196F3" width="200" height="200"/%3E%3Ctext fill="white" font-size="80" font-family="sans-serif" text-anchor="middle" x="100" y="130"%3E' + initials + '%3C/text%3E%3C/svg%3E';
+    canvas.width = width;
+    canvas.height = height;
+
+    // Draw and compress the image
+    ctx.drawImage(loadedImg, 0, 0, width, height);
+
+    // Try WebP first (better compression)
+    let compressedBlob;
+    let usedFormat = "webp";
+
+    if (canvas.toBlob) {
+      // Try WebP first
+      try {
+        compressedBlob = await new Promise((resolve, reject) => {
+          canvas.toBlob(
+            (blob) => {
+              if (blob && blob.size > 0) {
+                resolve(blob);
+              } else {
+                reject(new Error("WebP conversion failed"));
+              }
+            },
+            "image/webp",
+            quality,
+          );
+        });
+
+        // If WebP is too large or failed, try JPEG
+        if (!compressedBlob || compressedBlob.size > originalSize * 0.8) {
+          usedFormat = "jpeg";
+          compressedBlob = await new Promise((resolve) => {
+            canvas.toBlob((blob) => resolve(blob), "image/jpeg", quality);
+          });
+        }
+      } catch (webpError) {
+        // Fallback to JPEG
+        usedFormat = "jpeg";
+        compressedBlob = await new Promise((resolve) => {
+          canvas.toBlob((blob) => resolve(blob), "image/jpeg", quality);
+        });
+      }
+    } else {
+      // Fallback for older browsers - use data URL
+      usedFormat = "jpeg";
+      const dataUrl = canvas.toDataURL("image/jpeg", quality);
+      const res = await fetch(dataUrl);
+      compressedBlob = await res.blob();
+    }
+
+    // Create object URL and set as image source
+    const optimizedUrl = URL.createObjectURL(compressedBlob);
+    imgElement.src = optimizedUrl;
+    imgElement.alt = `${firstName || ""} ${lastName || ""}`.trim();
+
+    // Log compression results
+    const compressedSize = compressedBlob.size;
+    const savings = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+    console.log(
+      `Avatar optimized: ${(originalSize / 1024).toFixed(1)}KB → ${(compressedSize / 1024).toFixed(1)}KB (${savings}% reduction, format: ${usedFormat})`,
+    );
+
+    // Clean up object URL after image loads
+    imgElement.onload = () => {
+      URL.revokeObjectURL(optimizedUrl);
     };
+  } catch (error) {
+    console.warn("Failed to optimize avatar, loading original:", error);
+    // Fallback to original image
+    imgElement.src = avatarUrl;
+    imgElement.alt = `${firstName || ""} ${lastName || ""}`.trim();
+  }
+
+  // Handle loading errors
+  imgElement.onerror = function () {
+    console.warn("Failed to load avatar from:", avatarUrl);
+    const initials =
+      `${(firstName || "?").charAt(0)}${(lastName || "?").charAt(0)}`.toUpperCase();
+    this.src =
+      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%232196F3" width="200" height="200"/%3E%3Ctext fill="white" font-size="80" font-family="sans-serif" text-anchor="middle" x="100" y="130"%3E' +
+      initials +
+      "%3C/text%3E%3C/svg%3E";
+  };
 }
 
 /**
@@ -335,34 +134,34 @@ async function loadOptimizedAvatar(imgElement, avatarUrl, firstName, lastName) {
  * This is an approximation for JPEG images
  */
 function estimateImageSize(width, height) {
-    // Rough estimate: JPEG images are typically 0.5-1 bytes per pixel
-    // We'll use 0.75 as average for estimation
-    const pixelCount = width * height;
-    const estimatedSize = pixelCount * 0.75;
-    return estimatedSize;
+  // Rough estimate: JPEG images are typically 0.5-1 bytes per pixel
+  // We'll use 0.75 as average for estimation
+  const pixelCount = width * height;
+  const estimatedSize = pixelCount * 0.75;
+  return estimatedSize;
 }
 
 // ==================== Theme Toggle Config ====================
 
-const THEME_STORAGE_KEY = 'cv-generator-theme';
-const THEME_ATTRIBUTE = 'data-theme';
+const THEME_STORAGE_KEY = "cv-generator-theme";
+const THEME_ATTRIBUTE = "data-theme";
 
 /**
  * Get current theme from HTML element
  */
 function getCurrentTheme() {
-    return document.documentElement.getAttribute(THEME_ATTRIBUTE) || 'light';
+  return document.documentElement.getAttribute(THEME_ATTRIBUTE) || "light";
 }
 
 /**
  * Set theme on HTML element
  */
 function setTheme(theme) {
-    if (theme === 'dark' || theme === 'light') {
-        document.documentElement.setAttribute(THEME_ATTRIBUTE, theme);
-        updateThemeIcon(theme);
-        applyAccentColors(); // Reapply accent colors when theme changes
-    }
+  if (theme === "dark" || theme === "light") {
+    document.documentElement.setAttribute(THEME_ATTRIBUTE, theme);
+    updateThemeIcon(theme);
+    applyAccentColors(); // Reapply accent colors when theme changes
+  }
 }
 
 /**
@@ -373,228 +172,218 @@ function setTheme(theme) {
  * - Light/dark: accentColor.light = "#64B5F6", accentColor.dark = "#2196F3"
  */
 function applyAccentColors() {
-    if (!currentResumeData) {
-        console.warn('applyAccentColors: currentResumeData is not available yet');
-        return;
-    }
+  if (!currentResumeData?.accentColor) {
+    return;
+  }
 
-    if (!currentResumeData.accentColor) {
-        console.log('applyAccentColors: No accentColor defined, using default CSS values');
-        return; // No accent color defined, use default CSS values
-    }
+  const accentColor = currentResumeData.accentColor;
+  const currentTheme = getCurrentTheme();
+  let colorToApply;
 
-    const accentColor = currentResumeData.accentColor;
-    const currentTheme = getCurrentTheme();
-
-    let colorToApply;
-
-    // Check if accentColor is a string (single color format)
-    if (typeof accentColor === 'string') {
-        colorToApply = accentColor.trim();
+  if (typeof accentColor === "string") {
+    colorToApply = accentColor.trim();
+  } else {
+    switch (currentTheme) {
+      case "dark":
+        colorToApply = accentColor.dark || accentColor.light;
+        break;
+      case "light":
+      default:
+        colorToApply = accentColor.light || accentColor.dark;
+        break;
     }
-    // Otherwise it's an object with light/dark properties
-    else if (typeof accentColor === 'object' && accentColor !== null) {
-        colorToApply = currentTheme === 'dark'
-            ? (accentColor.dark || accentColor.light)
-            : (accentColor.light || accentColor.dark);
-    }
+  }
 
-    if (colorToApply) {
-        console.log(`applyAccentColors: Applying ${colorToApply} for ${currentTheme} theme`);
-        document.documentElement.style.setProperty('--color-accent', colorToApply);
-    } else {
-        console.warn('applyAccentColors: No color to apply', accentColor);
-    }
+  if (colorToApply) {
+    document.documentElement.style.setProperty("--color-accent", colorToApply);
+  }
 }
 
 /**
  * Toggle between light and dark theme
  */
 function toggleTheme() {
-    const current = getCurrentTheme();
-    const newTheme = current === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    persistTheme(newTheme);
+  const current = getCurrentTheme();
+  const newTheme = current === "dark" ? "light" : "dark";
+  setTheme(newTheme);
+  persistTheme(newTheme);
 }
 
 /**
  * Persist theme preference to localStorage
  */
 function persistTheme(theme) {
-    try {
-        localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch (error) {
-        console.warn('Unable to persist theme preference:', error);
-    }
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    console.warn("Unable to persist theme preference:", error);
+  }
 }
 
 /**
  * Read theme from localStorage
  */
 function readStoredTheme() {
-    try {
-        const stored = localStorage.getItem(THEME_STORAGE_KEY);
-        if (stored === 'dark' || stored === 'light') {
-            return stored;
-        }
-    } catch (error) {
-        console.warn('Unable to access localStorage for theme preferences:', error);
+  try {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored === "dark" || stored === "light") {
+      return stored;
     }
-    return null;
+  } catch (error) {
+    console.warn("Unable to access localStorage for theme preferences:", error);
+  }
+  return null;
 }
 
 /**
  * Get initial theme based on storage or system preference
  */
 function getInitialTheme() {
-    const stored = readStoredTheme();
-    if (stored) return stored;
+  const stored = readStoredTheme();
+  if (stored) return stored;
 
-    // Check system preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-    }
+  // Check system preference
+  if (
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  ) {
+    return "dark";
+  }
 
-    return 'light';
+  return "light";
 }
 
 /**
  * Update theme toggle icon based on current theme
  */
 function updateThemeIcon(theme) {
-    const themeButton = document.getElementById('themeToggleBtn');
-    if (!themeButton) return;
+  const themeButton = document.getElementById("themeToggleBtn");
+  if (!themeButton) return;
 
-    const icon = themeButton.querySelector('.theme-toggle-btn__icon');
-    if (!icon) return;
+  const icon = themeButton.querySelector(".theme-toggle-btn__icon");
+  if (!icon) return;
 
-    if (theme === 'dark') {
-        icon.setAttribute('data-icon', 'mdi:weather-sunny');
-    } else {
-        icon.setAttribute('data-icon', 'mdi:weather-night');
-    }
+  if (theme === "dark") {
+    icon.setAttribute("data-icon", "mdi:weather-sunny");
+  } else {
+    icon.setAttribute("data-icon", "mdi:weather-night");
+  }
 }
 
 /**
  * Initialize theme toggle button
  */
 function initThemeToggle() {
-    const themeButton = document.getElementById('themeToggleBtn');
-    if (!themeButton) {
-        console.warn('Theme toggle button not found.');
-        return;
-    }
+  const themeButton = document.getElementById("themeToggleBtn");
+  if (!themeButton) {
+    console.warn("Theme toggle button not found.");
+    return;
+  }
 
-    // Set initial theme
-    const initialTheme = getInitialTheme();
-    setTheme(initialTheme);
-    persistTheme(initialTheme);
+  // Set initial theme
+  const initialTheme = getInitialTheme();
+  setTheme(initialTheme);
+  persistTheme(initialTheme);
 
-    // Add click event listener
-    themeButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        toggleTheme();
+  // Add click event listener
+  themeButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleTheme();
+  });
+
+  // Listen for system theme changes
+  if (window.matchMedia) {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener("change", (event) => {
+      // Only update if user hasn't manually set a preference
+      const stored = readStoredTheme();
+      if (!stored) {
+        const newTheme = event.matches ? "dark" : "light";
+        setTheme(newTheme);
+      }
     });
-
-    // Listen for system theme changes
-    if (window.matchMedia) {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', (e) => {
-            // Only update if user hasn't manually set a preference
-            const stored = readStoredTheme();
-            if (!stored) {
-                const newTheme = e.matches ? 'dark' : 'light';
-                setTheme(newTheme);
-            }
-        });
-    }
+  }
 }
 
 // ==================== Language Switcher Config ====================
 
-/**
- * True when the page is served by the local dev server (server.js) that exposes /api/*.
- * GitHub Pages project sites must not use root-absolute /api (it targets the wrong path).
- */
-function isLocalDevResumeServer() {
-    try {
-        const h = window.location.hostname;
-        return h === 'localhost' || h === '127.0.0.1' || h === '[::1]';
-    } catch (e) {
-        return false;
-    }
-}
-
-const LANGUAGE_STORAGE_KEY = 'cv-generator-language';
+const LANGUAGE_STORAGE_KEY = "cv-generator-language";
 const LANGUAGE_CONFIG = {
-    ru: {
-        label: '🇷🇺 RUS',
-        staticPath: 'data/resume-ru.json',
-        htmlLang: 'ru',
-    },
-    en: {
-        label: '🇬🇧 ENG',
-        staticPath: 'data/resume-en.json',
-        htmlLang: 'en',
-    },
+  ru: {
+    label: "🇷🇺 RUS",
+    staticPath: "data/resume-ru.json",
+    htmlLang: "ru",
+  },
+  en: {
+    label: "🇬🇧 ENG",
+    staticPath: "data/resume-en.json",
+    htmlLang: "en",
+  },
 };
-const DEFAULT_LANGUAGE = 'ru';
+const DEFAULT_LANGUAGE = "ru";
 let currentLanguage = DEFAULT_LANGUAGE;
 
 /**
  * Safely read language value from localStorage
  */
 function readStoredLanguage() {
-    try {
-        const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-        if (stored && LANGUAGE_CONFIG[stored]) {
-            return stored;
-        }
-    } catch (error) {
-        console.warn('Unable to access localStorage for language preferences:', error);
+  try {
+    const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (stored && LANGUAGE_CONFIG[stored]) {
+      return stored;
     }
-    return null;
+  } catch (error) {
+    console.warn(
+      "Unable to access localStorage for language preferences:",
+      error,
+    );
+  }
+  return null;
 }
 
 /**
  * Persist selected language to localStorage
  */
 function persistLanguage(language) {
-    try {
-        localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-    } catch (error) {
-        console.warn('Unable to persist language preference:', error);
-    }
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  } catch (error) {
+    console.warn("Unable to persist language preference:", error);
+  }
 }
 
 /**
  * Determine initial language based on URL parameter, storage or browser settings
  */
 function getInitialLanguage() {
-    // Check URL parameter first (highest priority)
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlLang = urlParams.get('lang');
-    if (urlLang && (urlLang === 'ru' || urlLang === 'en')) {
-        return urlLang;
-    }
+  // Check URL parameter first (highest priority)
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlLang = urlParams.get("lang");
+  if (urlLang && (urlLang === "ru" || urlLang === "en")) {
+    return urlLang;
+  }
 
-    const stored = readStoredLanguage();
-    if (stored) return stored;
+  const stored = readStoredLanguage();
+  if (stored) return stored;
 
-    const navigatorLanguage = (navigator.language || navigator.userLanguage || '').toLowerCase();
-    if (navigatorLanguage.startsWith('ru')) return 'ru';
-    if (navigatorLanguage.startsWith('en')) return 'en';
+  const navigatorLanguage = (
+    navigator.language ||
+    navigator.userLanguage ||
+    ""
+  ).toLowerCase();
+  if (navigatorLanguage.startsWith("ru")) return "ru";
+  if (navigatorLanguage.startsWith("en")) return "en";
 
-    return DEFAULT_LANGUAGE;
+  return DEFAULT_LANGUAGE;
 }
 
 /**
  * Update document HTML lang attribute
  */
 function setDocumentLanguage(config) {
-    if (!config) return;
-    document.documentElement.lang = config.htmlLang || 'en';
+  if (!config) return;
+  document.documentElement.lang = config.htmlLang || "en";
 }
 
 /**
@@ -602,41 +391,41 @@ function setDocumentLanguage(config) {
  * Uses replaceState to avoid polluting history. Preserves other query params.
  */
 function updateBrowserUrl() {
-    const params = new URLSearchParams(window.location.search);
-    params.set('lang', currentLanguage || DEFAULT_LANGUAGE);
-    params.set('tab', currentViewMode === 'ats-friendly' ? 'ats' : 'hr');
-    const newRelativeUrl = window.location.pathname + '?' + params.toString();
-    history.replaceState(null, '', newRelativeUrl);
+  const params = new URLSearchParams(window.location.search);
+  params.set("lang", currentLanguage || DEFAULT_LANGUAGE);
+  params.set("tab", currentViewMode === "ats-friendly" ? "ats" : "hr");
+  const newRelativeUrl = window.location.pathname + "?" + params.toString();
+  history.replaceState(null, "", newRelativeUrl);
 }
 
 /**
  * Control language switcher open state
  */
 function setLanguageSwitcherOpen(isOpen) {
-    const switcher = document.getElementById('languageSwitcher');
-    const trigger = document.getElementById('languageSwitcherTrigger');
+  const switcher = document.getElementById("languageSwitcher");
+  const trigger = document.getElementById("languageSwitcherTrigger");
 
-    if (switcher) {
-        const state = String(isOpen);
-        switcher.dataset.open = state;
-        switcher.setAttribute('data-open', state);
-    }
+  if (switcher) {
+    const state = String(isOpen);
+    switcher.dataset.open = state;
+    switcher.setAttribute("data-open", state);
+  }
 
-    if (trigger) {
-        trigger.setAttribute('aria-expanded', String(isOpen));
-    }
+  if (trigger) {
+    trigger.setAttribute("aria-expanded", String(isOpen));
+  }
 }
 
 /**
  * Safely move focus back to trigger element
  */
 function focusLanguageTrigger(trigger) {
-    if (!trigger || typeof trigger.focus !== 'function') return;
-    try {
-        trigger.focus({ preventScroll: true });
-    } catch (error) {
-        trigger.focus();
-    }
+  if (!trigger || typeof trigger.focus !== "function") return;
+  try {
+    trigger.focus({ preventScroll: true });
+  } catch (error) {
+    trigger.focus();
+  }
 }
 
 /**
@@ -644,46 +433,46 @@ function focusLanguageTrigger(trigger) {
  * Updates href to point to the correct static PDF file
  */
 function updatePdfButtonLink() {
-    const pdfButton = document.getElementById('pdfDownloadBtn');
-    if (!pdfButton) {
-        console.warn('PDF download button not found.');
-        return;
+  const pdfButton = document.getElementById("pdfDownloadBtn");
+  if (!pdfButton) {
+    console.warn("PDF download button not found.");
+    return;
+  }
+
+  const lang = currentLanguage || DEFAULT_LANGUAGE;
+  const view = currentViewMode || DEFAULT_VIEW_MODE;
+  const viewSuffix = view === "ats-friendly" ? "ats" : "hr";
+
+  // Set static PDF link
+  const pdfPath = `data/resume-${lang}.${viewSuffix}.pdf`;
+  pdfButton.href = pdfPath;
+
+  // Generate personalized filename for download attribute
+  let filename = `resume.${viewSuffix}.pdf`;
+  if (currentResumeData) {
+    const firstName = currentResumeData.firstName || "";
+    const lastName = currentResumeData.lastName || "";
+    const jobTitle = currentResumeData.jobTitle || "";
+
+    const nameParts = [firstName, lastName].filter(Boolean);
+    const name = nameParts.join(" ");
+
+    if (name && jobTitle) {
+      filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
+    } else if (name) {
+      filename = `${name}.${viewSuffix}.pdf`;
     }
+  }
 
-    const lang = currentLanguage || DEFAULT_LANGUAGE;
-    const view = currentViewMode || DEFAULT_VIEW_MODE;
-    const viewSuffix = view === 'ats-friendly' ? 'ats' : 'hr';
+  pdfButton.setAttribute("download", filename);
 
-    // Set static PDF link
-    const pdfPath = `data/resume-${lang}.${viewSuffix}.pdf`;
-    pdfButton.href = pdfPath;
-
-    // Generate personalized filename for download attribute
-    let filename = `resume.${viewSuffix}.pdf`;
-    if (currentResumeData) {
-        const firstName = currentResumeData.firstName || '';
-        const lastName = currentResumeData.lastName || '';
-        const jobTitle = currentResumeData.jobTitle || '';
-
-        const nameParts = [firstName, lastName].filter(Boolean);
-        const name = nameParts.join(' ');
-
-        if (name && jobTitle) {
-            filename = `${name} – ${jobTitle}.${viewSuffix}.pdf`;
-        } else if (name) {
-            filename = `${name}.${viewSuffix}.pdf`;
-        }
-    }
-
-    pdfButton.setAttribute('download', filename);
-
-    console.log(`PDF button updated: href="${pdfPath}", download="${filename}"`);
+  console.log(`PDF button updated: href="${pdfPath}", download="${filename}"`);
 }
 
 // ==================== View Mode Switcher Config ====================
 
-const VIEW_MODE_STORAGE_KEY = 'cv-generator-view-mode';
-const DEFAULT_VIEW_MODE = 'user-friendly';
+const VIEW_MODE_STORAGE_KEY = "cv-generator-view-mode";
+const DEFAULT_VIEW_MODE = "user-friendly";
 let currentViewMode = DEFAULT_VIEW_MODE;
 let currentResumeData = null; // Store current resume data for PDF filename generation
 
@@ -691,26 +480,29 @@ let currentResumeData = null; // Store current resume data for PDF filename gene
  * Read view mode from localStorage
  */
 function readStoredViewMode() {
-    try {
-        const stored = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
-        if (stored === 'user-friendly' || stored === 'ats-friendly') {
-            return stored;
-        }
-    } catch (error) {
-        console.warn('Unable to access localStorage for view mode preferences:', error);
+  try {
+    const stored = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    if (stored === "user-friendly" || stored === "ats-friendly") {
+      return stored;
     }
-    return null;
+  } catch (error) {
+    console.warn(
+      "Unable to access localStorage for view mode preferences:",
+      error,
+    );
+  }
+  return null;
 }
 
 /**
  * Persist selected view mode to localStorage
  */
 function persistViewMode(mode) {
-    try {
-        localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
-    } catch (error) {
-        console.warn('Unable to persist view mode preference:', error);
-    }
+  try {
+    localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
+  } catch (error) {
+    console.warn("Unable to persist view mode preference:", error);
+  }
 }
 
 /**
@@ -720,622 +512,581 @@ function persistViewMode(mode) {
  * - tab: 'hr' | 'ats' (short form)
  */
 function getInitialViewMode() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlView = urlParams.get('view') || urlParams.get('mode') || urlParams.get('tab');
-    if (urlView === 'user-friendly' || urlView === 'ats-friendly') {
-        return urlView;
-    }
-    // Short form: tab=ats | tab=hr
-    if (urlView === 'ats') return 'ats-friendly';
-    if (urlView === 'hr') return 'user-friendly';
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlView =
+    urlParams.get("view") || urlParams.get("mode") || urlParams.get("tab");
+  if (urlView === "user-friendly" || urlView === "ats-friendly") {
+    return urlView;
+  }
+  // Short form: tab=ats | tab=hr
+  if (urlView === "ats") return "ats-friendly";
+  if (urlView === "hr") return "user-friendly";
 
-    const stored = readStoredViewMode();
-    return stored || DEFAULT_VIEW_MODE;
+  const stored = readStoredViewMode();
+  return stored || DEFAULT_VIEW_MODE;
 }
 
 /**
  * Update view mode switcher UI state
  */
 function updateViewModeSwitcherUI(mode) {
-    const options = document.querySelectorAll('.view-mode-switcher__option');
+  const options = document.querySelectorAll(".view-mode-switcher__option");
 
-    options.forEach(option => {
-        const isActive = option.dataset.mode === mode;
-        option.classList.toggle('view-mode-switcher__option--active', isActive);
-        option.setAttribute('aria-pressed', String(isActive));
-    });
+  options.forEach((option) => {
+    const isActive = option.dataset.mode === mode;
+    option.classList.toggle("view-mode-switcher__option--active", isActive);
+    option.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
 /**
  * Apply layout changes based on selected view mode
  */
 function applyViewMode(mode) {
-    const body = document.body;
-    if (!body) return;
-    body.dataset.viewMode = mode;
+  const body = document.body;
+  if (!body) return;
+  body.dataset.viewMode = mode;
 
-    const atsStylesheet = document.getElementById('atsStylesheet');
-    if (atsStylesheet) {
-        atsStylesheet.disabled = mode !== 'ats-friendly';
-    }
+  const atsStylesheet = document.getElementById("atsStylesheet");
+  if (atsStylesheet) {
+    atsStylesheet.disabled = mode !== "ats-friendly";
+  }
 
-    const hrLayout = document.querySelector('.container');
-    const atsLayout = document.getElementById('atsLayout');
+  const hrLayout = document.querySelector(".container");
+  const atsLayout = document.getElementById("atsLayout");
 
-    if (hrLayout) {
-        hrLayout.hidden = mode === 'ats-friendly';
-    }
+  if (hrLayout) {
+    hrLayout.hidden = mode === "ats-friendly";
+  }
 
-    if (atsLayout) {
-        atsLayout.hidden = mode !== 'ats-friendly';
-    }
+  if (atsLayout) {
+    atsLayout.hidden = mode !== "ats-friendly";
+  }
 }
 
 /**
  * Handle view mode change
  */
 function handleViewModeChange(mode) {
-    if (mode === currentViewMode) return;
+  if (mode === currentViewMode) return;
 
-    currentViewMode = mode;
-    persistViewMode(mode);
-    updateViewModeSwitcherUI(mode);
-    applyViewMode(mode);
-    updatePdfButtonLink(); // Update PDF link when view mode changes
-    updateBrowserUrl(); // Sync URL with current tab
-    console.log(`View mode changed to: ${mode}`);
+  currentViewMode = mode;
+  persistViewMode(mode);
+  updateViewModeSwitcherUI(mode);
+  applyViewMode(mode);
+  updatePdfButtonLink(); // Update PDF link when view mode changes
+  updateBrowserUrl(); // Sync URL with current tab
+  console.log(`View mode changed to: ${mode}`);
 }
 
 /**
  * Initialize view mode switcher
  */
 function initViewModeSwitcher() {
-    const switcher = document.getElementById('viewModeSwitcher');
-    if (!switcher) {
-        console.warn('View mode switcher not found.');
-        return;
-    }
+  const switcher = document.getElementById("viewModeSwitcher");
+  if (!switcher) {
+    console.warn("View mode switcher not found.");
+    return;
+  }
 
-    const options = Array.from(switcher.querySelectorAll('.view-mode-switcher__option'));
-    if (options.length === 0) {
-        console.warn('View mode switcher options not found.');
-        return;
-    }
+  const options = Array.from(
+    switcher.querySelectorAll(".view-mode-switcher__option"),
+  );
+  if (options.length === 0) {
+    console.warn("View mode switcher options not found.");
+    return;
+  }
 
-    // Set initial view mode
-    const initialMode = getInitialViewMode();
-    currentViewMode = initialMode;
-    updateViewModeSwitcherUI(initialMode);
-    applyViewMode(initialMode);
+  // Set initial view mode
+  const initialMode = getInitialViewMode();
+  currentViewMode = initialMode;
+  updateViewModeSwitcherUI(initialMode);
+  applyViewMode(initialMode);
 
-    // Add click event listeners
-    options.forEach(option => {
-        option.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            const mode = option.dataset.mode;
-            if (mode) {
-                handleViewModeChange(mode);
-            }
-        });
-
-        option.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                const mode = option.dataset.mode;
-                if (mode) {
-                    handleViewModeChange(mode);
-                }
-            }
-        });
+  // Add click event listeners
+  options.forEach((option) => {
+    option.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const mode = option.dataset.mode;
+      if (mode) {
+        handleViewModeChange(mode);
+      }
     });
+
+    option.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        const mode = option.dataset.mode;
+        if (mode) {
+          handleViewModeChange(mode);
+        }
+      }
+    });
+  });
 }
 
 /**
  * Initialize language switcher interactions
  */
 function initLanguageSwitcher() {
-    const switcher = document.getElementById('languageSwitcher');
-    const trigger = document.getElementById('languageSwitcherTrigger');
-    const options = Array.from(document.querySelectorAll('.language-switcher__option'));
+  const switcher = document.getElementById("languageSwitcher");
+  const trigger = document.getElementById("languageSwitcherTrigger");
+  const options = Array.from(
+    document.querySelectorAll(".language-switcher__option"),
+  );
 
-    if (!switcher || !trigger || options.length === 0) {
-        console.warn('Language switcher markup is missing or incomplete.');
-        return;
+  if (!switcher || !trigger || options.length === 0) {
+    console.warn("Language switcher markup is missing or incomplete.");
+    return;
+  }
+
+  const toggleOpenState = () => {
+    const isOpen = switcher.dataset.open === "true";
+    setLanguageSwitcherOpen(!isOpen);
+  };
+
+  trigger.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleOpenState();
+  });
+
+  trigger.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleOpenState();
     }
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setLanguageSwitcherOpen(true);
+      const activeOption = document.querySelector(
+        '.language-switcher__option[aria-selected="true"]',
+      );
+      if (activeOption) {
+        activeOption.focus();
+      } else if (options[0]) {
+        options[0].focus();
+      }
+    }
+    if (event.key === "Escape") {
+      setLanguageSwitcherOpen(false);
+    }
+  });
 
-    const toggleOpenState = () => {
-        const isOpen = switcher.dataset.open === 'true';
-        setLanguageSwitcherOpen(!isOpen);
-    };
+  options.forEach((option) => {
+    option.setAttribute("tabindex", "0");
+    option.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const languageCode = option.dataset.lang;
+      if (!languageCode || languageCode === currentLanguage) {
+        setLanguageSwitcherOpen(false);
+        focusLanguageTrigger(trigger);
+        return;
+      }
+      await loadResumeData(languageCode);
+      setLanguageSwitcherOpen(false);
+      focusLanguageTrigger(trigger);
+    });
 
-    trigger.addEventListener('click', event => {
+    option.addEventListener("keydown", async (event) => {
+      const languageCode = option.dataset.lang;
+      if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        event.stopPropagation();
-        toggleOpenState();
-    });
-
-    trigger.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            toggleOpenState();
+        if (!languageCode || languageCode === currentLanguage) {
+          setLanguageSwitcherOpen(false);
+          focusLanguageTrigger(trigger);
+          return;
         }
-        if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            setLanguageSwitcherOpen(true);
-            const activeOption = document.querySelector('.language-switcher__option[aria-selected="true"]');
-            if (activeOption) {
-                activeOption.focus();
-            } else if (options[0]) {
-                options[0].focus();
-            }
-        }
-        if (event.key === 'Escape') {
-            setLanguageSwitcherOpen(false);
-        }
+        await loadResumeData(languageCode);
+        setLanguageSwitcherOpen(false);
+        focusLanguageTrigger(trigger);
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setLanguageSwitcherOpen(false);
+        focusLanguageTrigger(trigger);
+      }
     });
+  });
 
-    options.forEach(option => {
-        option.setAttribute('tabindex', '0');
-        option.addEventListener('click', async event => {
-            event.preventDefault();
-            event.stopPropagation();
-            const { lang } = option.dataset;
-            if (!lang || lang === currentLanguage) {
-                setLanguageSwitcherOpen(false);
-                focusLanguageTrigger(trigger);
-                return;
-            }
-            await loadResumeData(lang);
-            setLanguageSwitcherOpen(false);
-            focusLanguageTrigger(trigger);
-        });
+  document.addEventListener("click", (event) => {
+    if (!switcher.contains(event.target)) {
+      setLanguageSwitcherOpen(false);
+    }
+  });
 
-        option.addEventListener('keydown', async event => {
-            const { lang } = option.dataset;
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                if (!lang || lang === currentLanguage) {
-                    setLanguageSwitcherOpen(false);
-                    focusLanguageTrigger(trigger);
-                    return;
-                }
-                await loadResumeData(lang);
-                setLanguageSwitcherOpen(false);
-                focusLanguageTrigger(trigger);
-            }
-            if (event.key === 'Escape') {
-                event.preventDefault();
-                setLanguageSwitcherOpen(false);
-                focusLanguageTrigger(trigger);
-            }
-        });
-    });
-
-    document.addEventListener('click', event => {
-        if (!switcher.contains(event.target)) {
-            setLanguageSwitcherOpen(false);
-        }
-    });
-
-    document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') {
-            setLanguageSwitcherOpen(false);
-        }
-    });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setLanguageSwitcherOpen(false);
+    }
+  });
 }
 
 // ==================== Render Functions ====================
 
 /**
- * Get icon name based on URL or type
- */
-function getIconForLink(url, type) {
-    if (url.includes('linkedin.com')) return 'mdi:linkedin';
-    if (url.includes('github.com')) return 'mdi:github';
-    if (url.includes('t.me') || type === 'telegram') return 'mdi:telegram';
-    if (url.includes('twitter.com') || url.includes('x.com')) return 'mdi:twitter';
-    if (url.includes('facebook.com')) return 'mdi:facebook';
-    if (url.includes('instagram.com')) return 'mdi:instagram';
-    if (type === 'website') return 'mdi:web';
-    return 'mdi:link';
-}
-
-/**
- * Extract readable domain from URL
- */
-function getDomainFromUrl(url) {
-    try {
-        const { hostname } = new URL(url);
-        return hostname.replace(/^www\./, '');
-    } catch (error) {
-        console.warn('Unable to parse domain from URL:', url, error);
-        return url;
-    }
-}
-
-/**
- * Build preview image URL (falls back to favicon)
- */
-function getPreviewImageUrl(url) {
-    // Local dev: server resolves OG image or screenshot via /api/og-image.
-    // Static hosting: no API — use the same favicon-based preview as link tags.
-    if (isLocalDevResumeServer()) {
-        const encodedUrl = encodeURIComponent(url);
-        const previewUrl = `/api/og-image?url=${encodedUrl}`;
-        console.log(`[getPreviewImageUrl] Исходный URL: ${url}`);
-        console.log(`[getPreviewImageUrl] Закодированный URL: ${encodedUrl}`);
-        console.log(`[getPreviewImageUrl] Итоговый preview URL: ${previewUrl}`);
-        return previewUrl;
-    }
-    return getFaviconUrl(url);
-}
-
-/**
  * Handle preview image loading errors
  */
-function handlePreviewImageError(img) {
-    console.error(`[handlePreviewImageError] Ошибка загрузки изображения`);
-    console.error(`[handlePreviewImageError] src: ${img.src}`);
-    console.error(`[handlePreviewImageError] alt: ${img.alt}`);
-    console.error(`[handlePreviewImageError] naturalWidth: ${img.naturalWidth}, naturalHeight: ${img.naturalHeight}`);
+function handlePreviewImageError(imageElement) {
+  console.error(`[handlePreviewImageError] Ошибка загрузки изображения`);
+  console.error(`[handlePreviewImageError] src: ${imageElement.src}`);
+  console.error(`[handlePreviewImageError] alt: ${imageElement.alt}`);
+  console.error(
+    `[handlePreviewImageError] naturalWidth: ${imageElement.naturalWidth}, naturalHeight: ${imageElement.naturalHeight}`,
+  );
 
-    const previewContainer = img.closest('.experience-link__preview');
-    if (previewContainer) {
-        console.log(`[handlePreviewImageError] Добавляем класс fallback`);
-        previewContainer.classList.add('experience-link__preview--fallback');
-        const fallbackIcon = previewContainer.querySelector('.experience-link__fallback');
-        if (fallbackIcon) {
-            fallbackIcon.style.display = 'inline-flex';
-            console.log(`[handlePreviewImageError] Показываем fallback иконку`);
-        }
+  const previewContainer = imageElement.closest(".experience-link__preview");
+  if (previewContainer) {
+    console.log(`[handlePreviewImageError] Добавляем класс fallback`);
+    previewContainer.classList.add("experience-link__preview--fallback");
+    const fallbackIcon = previewContainer.querySelector(
+      ".experience-link__fallback",
+    );
+    if (fallbackIcon) {
+      fallbackIcon.style.display = "inline-flex";
+      console.log(`[handlePreviewImageError] Показываем fallback иконку`);
     }
-    img.remove();
-    console.log(`[handlePreviewImageError] Изображение удалено из DOM`);
-}
-
-/**
- * Build favicon URL that preserves original icon colors
- */
-function getFaviconUrl(url) {
-    // Special handling for GitHub to use mdi:github icon instead of favicon
-    if (url.includes('github.com')) {
-        // Return invalid URL to trigger onerror and show fallback icon
-        return 'data:,';
-    }
-
-    // Special handling for Twitter/X to use old Twitter logo
-    if (url.includes('twitter.com') || url.includes('x.com')) {
-        // Use old Twitter favicon
-        return 'https://abs.twimg.com/favicons/twitter.2.ico';
-    }
-
-    let target = url;
-
-    try {
-        const parsed = new URL(url);
-        target = `${parsed.protocol}//${parsed.hostname}`;
-    } catch (error) {
-        // If URL parsing fails (e.g., missing protocol), attempt to normalize
-        const sanitized = url.replace(/^[^a-zA-Z0-9]+/, '');
-        target = `https://${sanitized}`;
-        console.warn('Invalid URL provided for favicon. Attempting to normalize:', url, error);
-    }
-
-    const encoded = encodeURIComponent(target);
-    return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
+  }
+  imageElement.remove();
+  console.log(`[handlePreviewImageError] Изображение удалено из DOM`);
 }
 
 /**
  * Safely get language configuration
  */
 function getLanguageConfig(language) {
-    return LANGUAGE_CONFIG[language] || LANGUAGE_CONFIG[DEFAULT_LANGUAGE];
+  return LANGUAGE_CONFIG[language] || LANGUAGE_CONFIG[DEFAULT_LANGUAGE];
 }
 
 /**
  * Show or hide language switcher based on multilanguage support
  */
 function toggleLanguageSwitcherVisibility(show) {
-    const switcher = document.getElementById('languageSwitcher');
-    if (switcher) {
-        switcher.style.display = show ? '' : 'none';
-    }
+  const switcher = document.getElementById("languageSwitcher");
+  if (switcher) {
+    switcher.style.display = show ? "" : "none";
+  }
 }
 
 /**
  * Update language switcher UI state
  */
 function updateLanguageSwitcherUI(language) {
-    const config = getLanguageConfig(language);
-    const switcher = document.getElementById('languageSwitcher');
-    const currentLabel = document.getElementById('languageSwitcherCurrent');
-    const trigger = document.getElementById('languageSwitcherTrigger');
-    const options = document.querySelectorAll('.language-switcher__option');
+  const config = getLanguageConfig(language);
+  const switcher = document.getElementById("languageSwitcher");
+  const currentLabel = document.getElementById("languageSwitcherCurrent");
+  const trigger = document.getElementById("languageSwitcherTrigger");
+  const options = document.querySelectorAll(".language-switcher__option");
 
-    if (currentLabel) {
-        currentLabel.textContent = config.label;
-    }
+  if (currentLabel) {
+    currentLabel.textContent = config.label;
+  }
 
-    if (trigger) {
-        trigger.setAttribute('aria-label', `Switch language, current ${config.label}`);
-        trigger.setAttribute('aria-expanded', 'false');
-    }
+  if (trigger) {
+    trigger.setAttribute(
+      "aria-label",
+      `Switch language, current ${config.label}`,
+    );
+    trigger.setAttribute("aria-expanded", "false");
+  }
 
-    options.forEach(option => {
-        const isSelected = option.dataset.lang === language;
-        option.setAttribute('aria-selected', String(isSelected));
-        option.classList.toggle('language-switcher__option--active', isSelected);
-    });
+  options.forEach((option) => {
+    const isSelected = option.dataset.lang === language;
+    option.setAttribute("aria-selected", String(isSelected));
+    option.classList.toggle("language-switcher__option--active", isSelected);
+  });
 
-    setLanguageSwitcherOpen(false);
+  setLanguageSwitcherOpen(false);
 }
 
 /**
  * Update section titles based on current language
  */
 function updateSectionTitles(language) {
-    // Update "About Me" section title
-    const aboutTitleElement = document.querySelector('#aboutSection .section-title');
-    if (aboutTitleElement) {
-        const titleRu = aboutTitleElement.getAttribute('data-title-ru');
-        const titleEn = aboutTitleElement.getAttribute('data-title-en');
-        const iconElement = aboutTitleElement.querySelector('.icon');
+  // Update "About Me" section title
+  const aboutTitleElement = document.querySelector(
+    "#aboutSection .section-title",
+  );
+  if (aboutTitleElement) {
+    const titleRu = aboutTitleElement.getAttribute("data-title-ru");
+    const titleEn = aboutTitleElement.getAttribute("data-title-en");
+    const iconElement = aboutTitleElement.querySelector(".icon");
 
-        if (iconElement) {
-            const title = language === 'ru' ? titleRu : titleEn;
-            aboutTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
-        }
+    if (iconElement) {
+      const title = language === "ru" ? titleRu : titleEn;
+      aboutTitleElement.innerHTML = iconElement.outerHTML + " " + title;
     }
+  }
 
-    // Update "What I'm Looking For" section title
-    const expectationTitleElement = document.querySelector('#expectationSection .section-title');
-    if (expectationTitleElement) {
-        const titleRu = expectationTitleElement.getAttribute('data-title-ru');
-        const titleEn = expectationTitleElement.getAttribute('data-title-en');
-        const iconElement = expectationTitleElement.querySelector('.icon');
-        const hasAccentClass = expectationTitleElement.classList.contains('accent-red');
+  // Update "What I'm Looking For" section title
+  const expectationTitleElement = document.querySelector(
+    "#expectationSection .section-title",
+  );
+  if (expectationTitleElement) {
+    const titleRu = expectationTitleElement.getAttribute("data-title-ru");
+    const titleEn = expectationTitleElement.getAttribute("data-title-en");
+    const iconElement = expectationTitleElement.querySelector(".icon");
+    const hasAccentClass =
+      expectationTitleElement.classList.contains("accent-red");
 
-        if (iconElement) {
-            const title = language === 'ru' ? titleRu : titleEn;
-            expectationTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
-            if (hasAccentClass) {
-                expectationTitleElement.classList.add('accent-red');
-            }
-        }
+    if (iconElement) {
+      const title = language === "ru" ? titleRu : titleEn;
+      expectationTitleElement.innerHTML = iconElement.outerHTML + " " + title;
+      if (hasAccentClass) {
+        expectationTitleElement.classList.add("accent-red");
+      }
     }
+  }
 
-    // Update "Interests" section title
-    const interestsTitleElement = document.querySelector('#interestsSection .section-title');
-    if (interestsTitleElement) {
-        const titleRu = interestsTitleElement.getAttribute('data-title-ru');
-        const titleEn = interestsTitleElement.getAttribute('data-title-en');
-        const iconElement = interestsTitleElement.querySelector('.icon');
+  // Update "Interests" section title
+  const interestsTitleElement = document.querySelector(
+    "#interestsSection .section-title",
+  );
+  if (interestsTitleElement) {
+    const titleRu = interestsTitleElement.getAttribute("data-title-ru");
+    const titleEn = interestsTitleElement.getAttribute("data-title-en");
+    const iconElement = interestsTitleElement.querySelector(".icon");
 
-        if (iconElement) {
-            const title = language === 'ru' ? titleRu : titleEn;
-            interestsTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
-        }
+    if (iconElement) {
+      const title = language === "ru" ? titleRu : titleEn;
+      interestsTitleElement.innerHTML = iconElement.outerHTML + " " + title;
     }
+  }
 
-    // Update "Education & Languages" section title
-    const educationLanguagesTitleElement = document.querySelector('#educationLanguagesSection .section-title');
-    if (educationLanguagesTitleElement) {
-        const hasEducation = currentResumeData && currentResumeData.education && currentResumeData.education.length > 0;
-        const titleRu = hasEducation
-            ? educationLanguagesTitleElement.getAttribute('data-title-ru')
-            : educationLanguagesTitleElement.getAttribute('data-title-no-edu-ru');
-        const titleEn = hasEducation
-            ? educationLanguagesTitleElement.getAttribute('data-title-en')
-            : educationLanguagesTitleElement.getAttribute('data-title-no-edu-en');
-        const iconElement = educationLanguagesTitleElement.querySelector('.icon');
-        const hasAccentClass = educationLanguagesTitleElement.classList.contains('accent-green');
+  // Update "Education & Languages" section title
+  const educationLanguagesTitleElement = document.querySelector(
+    "#educationLanguagesSection .section-title",
+  );
+  if (educationLanguagesTitleElement) {
+    const hasEducation = (currentResumeData?.education?.length ?? 0) > 0;
+    const titleRu = hasEducation
+      ? educationLanguagesTitleElement.getAttribute("data-title-ru")
+      : educationLanguagesTitleElement.getAttribute("data-title-no-edu-ru");
+    const titleEn = hasEducation
+      ? educationLanguagesTitleElement.getAttribute("data-title-en")
+      : educationLanguagesTitleElement.getAttribute("data-title-no-edu-en");
+    const iconElement = educationLanguagesTitleElement.querySelector(".icon");
+    const hasAccentClass =
+      educationLanguagesTitleElement.classList.contains("accent-green");
 
-        if (iconElement) {
-            const title = language === 'ru' ? titleRu : titleEn;
-            educationLanguagesTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
-            if (hasAccentClass) {
-                educationLanguagesTitleElement.classList.add('accent-green');
-            }
-        }
+    if (iconElement) {
+      const title = language === "ru" ? titleRu : titleEn;
+      educationLanguagesTitleElement.innerHTML =
+        iconElement.outerHTML + " " + title;
+      if (hasAccentClass) {
+        educationLanguagesTitleElement.classList.add("accent-green");
+      }
     }
+  }
 }
 
 /**
  * Update PDF button text based on current language
  */
 function updatePdfButtonText(language) {
-    const pdfButton = document.getElementById('pdfDownloadBtn');
-    if (!pdfButton) return;
+  const pdfButton = document.getElementById("pdfDownloadBtn");
+  if (!pdfButton) return;
 
-    const buttonText = pdfButton.querySelector('.pdf-download-btn__text');
-    if (buttonText) {
-        buttonText.textContent = language === 'ru' ? 'Скачать PDF' : 'Download PDF';
-    }
+  const buttonText = pdfButton.querySelector(".pdf-download-btn__text");
+  if (buttonText) {
+    buttonText.textContent = language === "ru" ? "Скачать PDF" : "Download PDF";
+  }
 
-    const ariaLabel = language === 'ru' ? 'Скачать резюме в PDF' : 'Download resume as PDF';
-    pdfButton.setAttribute('aria-label', ariaLabel);
+  const ariaLabel =
+    language === "ru" ? "Скачать резюме в PDF" : "Download resume as PDF";
+  pdfButton.setAttribute("aria-label", ariaLabel);
 }
 
 /**
  * Render header section
  */
 function renderHeader(data) {
-    // Update page title using profile name
-    if (data.firstName && data.lastName) {
-        const fullName = `${data.firstName} ${data.lastName}`;
-        if (data.jobTitle) {
-            document.title = `${fullName} - ${data.jobTitle}`;
-        } else {
-            document.title = `${fullName} - Resume`;
-        }
+  // Update page title using profile name
+  if (data.firstName && data.lastName) {
+    const fullName = `${data.firstName} ${data.lastName}`;
+    if (data.jobTitle) {
+      document.title = `${fullName} - ${data.jobTitle}`;
+    } else {
+      document.title = `${fullName} - Resume`;
     }
+  }
 
-    // Full name
-    const fullName = document.getElementById('fullName');
-    if (fullName && data.firstName && data.lastName) {
-        fullName.textContent = `${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()}`;
-    }
+  // Full name
+  const fullName = document.getElementById("fullName");
+  if (fullName && data.firstName && data.lastName) {
+    fullName.textContent = `${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()}`;
+  }
 
-    // Job title
-    const jobTitle = document.getElementById('jobTitle');
-    if (jobTitle) {
-        jobTitle.innerHTML = parseFormatting(data.jobTitle || '');
-    }
+  // Job title
+  const jobTitle = document.getElementById("jobTitle");
+  if (jobTitle) {
+    jobTitle.innerHTML = parseFormatting(data.jobTitle || "");
+  }
 
-    // Contact info - render all items in one flow layout
-    const contactInfoElement = document.getElementById('contactInfo');
-    if (contactInfoElement) {
-        contactInfoElement.innerHTML = '';
+  // Contact info - render all items in one flow layout
+  const contactInfoElement = document.getElementById("contactInfo");
+  if (contactInfoElement) {
+    contactInfoElement.innerHTML = "";
 
-        // Email
-        if (data.email) {
-            const emailItem = document.createElement('a');
-            emailItem.href = `mailto:${data.email}`;
-            emailItem.className = 'contact-item';
-            emailItem.innerHTML = `
+    // Email
+    if (data.email) {
+      const emailItem = document.createElement("a");
+      emailItem.href = `mailto:${data.email}`;
+      emailItem.className = "contact-item";
+      emailItem.innerHTML = `
                 <span class="icon">
                     <span class="iconify" data-icon="mdi:email"></span>
                 </span>
                 <span class="text">${data.email}</span>
             `;
-            contactInfoElement.appendChild(emailItem);
-        }
+      contactInfoElement.appendChild(emailItem);
+    }
 
-        // Location
-        if (data.location) {
-            const locationItem = document.createElement('span');
-            locationItem.className = 'contact-item';
-            locationItem.setAttribute('data-contact-type', 'location');
-            locationItem.innerHTML = `
+    // Location
+    if (data.location) {
+      const locationItem = document.createElement("span");
+      locationItem.className = "contact-item";
+      locationItem.setAttribute("data-contact-type", "location");
+      locationItem.innerHTML = `
                 <span class="icon">
                     <span class="iconify" data-icon="mdi:map-marker"></span>
                 </span>
                 <span class="text">${data.location}</span>
             `;
-            contactInfoElement.appendChild(locationItem);
-        }
+      contactInfoElement.appendChild(locationItem);
+    }
 
-        // Phone
-        if (data.phone) {
-            const phoneItem = document.createElement('a');
-            phoneItem.href = `tel:${data.phone.replace(/\s/g, '')}`;
-            phoneItem.className = 'contact-item';
-            phoneItem.innerHTML = `
+    // Phone
+    if (data.phone) {
+      const phoneItem = document.createElement("a");
+      // Remove whitespace so tel: href is a single continuous number
+      phoneItem.href = `tel:${data.phone.replace(/\s/g, "")}`;
+      phoneItem.className = "contact-item";
+      phoneItem.innerHTML = `
                 <span class="icon">
                     <span class="iconify" data-icon="mdi:phone-dial"></span>
                 </span>
                 <span class="text">${data.phone}</span>
             `;
-            contactInfoElement.appendChild(phoneItem);
-        }
+      contactInfoElement.appendChild(phoneItem);
+    }
 
-        // References (links)
-        const references = Array.isArray(data.references) ? data.references : [];
-        references.forEach(ref => {
-            const link = document.createElement('a');
-            link.href = ref.url;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.className = 'contact-item';
+    // References (links) — normalized data always has an array
+    data.references.forEach((referenceEntry) => {
+      const link = document.createElement("a");
+      link.href = referenceEntry.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.className = "contact-item";
 
-            const iconContainer = document.createElement('span');
-            iconContainer.className = 'icon';
+      const iconContainer = document.createElement("span");
+      iconContainer.className = "icon";
 
-            // For GitHub, always use iconify icon instead of favicon
-            const isGitHub = ref.url.includes('github.com');
+      // For GitHub, always use iconify icon instead of favicon
+      const isGitHub = referenceEntry.url.includes("github.com");
 
-            if (isGitHub) {
-                // For GitHub, show iconify icon directly
-                const fallbackIcon = document.createElement('span');
-                fallbackIcon.className = 'iconify';
-                fallbackIcon.dataset.icon = getIconForLink(ref.url, ref.type);
-                fallbackIcon.setAttribute('aria-hidden', 'true');
-                iconContainer.appendChild(fallbackIcon);
-            } else {
-                // For other links, try favicon first, fallback to iconify
-                const favicon = document.createElement('img');
-                favicon.className = 'favicon';
-                favicon.src = getFaviconUrl(ref.url);
-                favicon.alt = `${ref.text} favicon`;
-                favicon.loading = 'lazy';
-                favicon.decoding = 'async';
+      if (isGitHub) {
+        // For GitHub, show iconify icon directly
+        const fallbackIcon = document.createElement("span");
+        fallbackIcon.className = "iconify";
+        fallbackIcon.dataset.icon = getIconForLink(
+          referenceEntry.url,
+          referenceEntry.type,
+        );
+        fallbackIcon.setAttribute("aria-hidden", "true");
+        iconContainer.appendChild(fallbackIcon);
+      } else {
+        // For other links, try favicon first, fallback to iconify
+        const favicon = document.createElement("img");
+        favicon.className = "favicon";
+        favicon.src = getFaviconUrl(referenceEntry.url);
+        favicon.alt = `${referenceEntry.text} favicon`;
+        favicon.loading = "lazy";
+        favicon.decoding = "async";
 
-                const fallbackIcon = document.createElement('span');
-                fallbackIcon.className = 'iconify fallback-icon';
-                fallbackIcon.dataset.icon = getIconForLink(ref.url, ref.type);
-                fallbackIcon.setAttribute('aria-hidden', 'true');
-                fallbackIcon.style.display = 'none';
+        const fallbackIcon = document.createElement("span");
+        fallbackIcon.className = "iconify fallback-icon";
+        fallbackIcon.dataset.icon = getIconForLink(
+          referenceEntry.url,
+          referenceEntry.type,
+        );
+        fallbackIcon.setAttribute("aria-hidden", "true");
+        fallbackIcon.style.display = "none";
 
-                favicon.addEventListener('error', () => {
-                    favicon.style.display = 'none';
-                    fallbackIcon.style.display = 'inline-flex';
-                });
-
-                iconContainer.appendChild(favicon);
-                iconContainer.appendChild(fallbackIcon);
-            }
-
-            const textElement = document.createElement('span');
-            textElement.className = 'text';
-            textElement.textContent = ref.text;
-
-            link.appendChild(iconContainer);
-            link.appendChild(textElement);
-
-            contactInfoElement.appendChild(link);
+        favicon.addEventListener("error", () => {
+          favicon.style.display = "none";
+          fallbackIcon.style.display = "inline-flex";
         });
-    }
 
-    // Avatar
-    const avatar = document.getElementById('avatar');
-    if (avatar && data.avatar) {
-        loadOptimizedAvatar(avatar, data.avatar, data.firstName, data.lastName);
-    }
+        iconContainer.appendChild(favicon);
+        iconContainer.appendChild(fallbackIcon);
+      }
+
+      const textElement = document.createElement("span");
+      textElement.className = "text";
+      textElement.textContent = referenceEntry.text;
+
+      link.appendChild(iconContainer);
+      link.appendChild(textElement);
+
+      contactInfoElement.appendChild(link);
+    });
+  }
+
+  // Avatar
+  const avatar = document.getElementById("avatar");
+  if (avatar && data.avatar) {
+    loadOptimizedAvatar(avatar, data.avatar, data.firstName, data.lastName);
+  }
 }
 
 /**
  * Render about section
  */
 function renderAbout(data) {
-    const aboutElement = document.getElementById('about');
-    const content = parseLists(data.about || '');
-    aboutElement.innerHTML = content || '<p></p>';
+  const aboutElement = document.getElementById("about");
+  const content = parseLists(data.about || "");
+  aboutElement.innerHTML = content || "<p></p>";
 }
 
 /**
  * Render expectation section
  */
 function renderExpectation(data) {
-    if (!data.expectation || (typeof data.expectation === 'string' && data.expectation.trim() === '')) {
-        document.getElementById('expectationSection').style.display = 'none';
-        return;
-    }
+  if (!data.expectation) {
+    document.getElementById("expectationSection").style.display = "none";
+    return;
+  }
 
-    document.getElementById('expectationSection').style.display = '';
-    const expectationElement = document.getElementById('expectation');
-    const content = parseLists(data.expectation || '');
-    expectationElement.innerHTML = content || '<p></p>';
+  document.getElementById("expectationSection").style.display = "";
+  const expectationElement = document.getElementById("expectation");
+  const content = parseLists(data.expectation);
+  expectationElement.innerHTML = content || "<p></p>";
 }
 
 /**
  * Render languages section
  */
 function renderLanguages(data) {
-    const languagesElement = document.getElementById('languages');
+  const languagesElement = document.getElementById("languages");
 
-    // Extract level from parentheses if exists, otherwise use full level
-    const formatLanguageTag = (lang) => {
-        const levelMatch = lang.level.match(/\(([^)]+)\)/);
-        const levelText = levelMatch ? levelMatch[1] : lang.level;
-        return `${lang.name} – ${levelText}`;
-    };
+  // Extract level from parentheses if exists, otherwise use full level
+  const formatLanguageTag = (languageEntry) => {
+    const levelMatch = languageEntry.level.match(/\(([^)]+)\)/);
+    const levelText = levelMatch ? levelMatch[1] : languageEntry.level;
+    return `${languageEntry.name} – ${levelText}`;
+  };
 
-    languagesElement.innerHTML = `
+  languagesElement.innerHTML = `
         <div class="skill-keywords">
-            ${data.languages.map(lang =>
-        `<span class="skill-keyword">${formatLanguageTag(lang)}</span>`
-    ).join('\n            ')}
+            ${data.languages
+              .map(
+                (languageEntry) =>
+                  `<span class="skill-keyword">${formatLanguageTag(languageEntry)}</span>`,
+              )
+              .join("\n            ")}
         </div>
     `;
 }
@@ -1344,59 +1095,66 @@ function renderLanguages(data) {
  * Render skills introduction text
  */
 function renderSkillsIntro(data) {
-    const skillsIntroElement = document.getElementById('skillsIntro');
-    if (!skillsIntroElement) return;
+  const skillsIntroElement = document.getElementById("skillsIntro");
+  if (!skillsIntroElement) return;
 
-    const intro = data.skillsIntro;
-    if (!intro) return;
-    skillsIntroElement.innerHTML = parseFormatting(intro);
+  const intro = data.skillsIntro;
+  if (!intro) return;
+  skillsIntroElement.innerHTML = parseFormatting(intro);
 }
 
 /**
  * Render skills section
  */
 function renderSkills(data) {
-    const skillsElement = document.getElementById('skills');
-    skillsElement.innerHTML = data.skills.map(skill => `
+  const skillsElement = document.getElementById("skills");
+  skillsElement.innerHTML = data.skills
+    .map(
+      (skillCategory) => `
         <div class="skill-category">
-            <div class="skill-category-title">${skill.category}</div>
+            <div class="skill-category-title">${skillCategory.category}</div>
             <div class="skill-keywords">
-                ${skill.keywords.map(keyword =>
-        `<span class="skill-keyword">${keyword}</span>`
-    ).join('')}
+                ${skillCategory.keywords
+                  .map(
+                    (keyword) =>
+                      `<span class="skill-keyword">${keyword}</span>`,
+                  )
+                  .join("")}
             </div>
         </div>
-    `).join('');
+    `,
+    )
+    .join("");
 }
 
 /**
  * Render extra skills section
  */
 function renderExtraSkills(data) {
-    if (!data.extraSkills || (typeof data.extraSkills === 'string' && data.extraSkills.trim() === '')) {
-        document.getElementById('extraSkillsSection').style.display = 'none';
-        return;
-    }
+  if (!data.extraSkills) {
+    document.getElementById("extraSkillsSection").style.display = "none";
+    return;
+  }
 
-    document.getElementById('extraSkillsSection').style.display = '';
-    const extraSkillsElement = document.getElementById('extraSkills');
-    const content = parseLists(data.extraSkills || '');
-    extraSkillsElement.innerHTML = content || '<p></p>';
+  document.getElementById("extraSkillsSection").style.display = "";
+  const extraSkillsElement = document.getElementById("extraSkills");
+  const content = parseLists(data.extraSkills);
+  extraSkillsElement.innerHTML = content || "<p></p>";
 }
 
 /**
  * Render interests section
  */
 function renderInterests(data) {
-    if (!data.interests || (typeof data.interests === 'string' && data.interests.trim() === '')) {
-        document.getElementById('interestsSection').style.display = 'none';
-        return;
-    }
+  if (!data.interests) {
+    document.getElementById("interestsSection").style.display = "none";
+    return;
+  }
 
-    document.getElementById('interestsSection').style.display = '';
-    const interestsElement = document.getElementById('interests');
-    const content = parseLists(data.interests || '');
-    interestsElement.innerHTML = content || '<p></p>';
+  document.getElementById("interestsSection").style.display = "";
+  const interestsElement = document.getElementById("interests");
+  const content = parseLists(data.interests);
+  interestsElement.innerHTML = content || "<p></p>";
 }
 
 /**
@@ -1404,106 +1162,117 @@ function renderInterests(data) {
  * Positions links in bottom-left of experience-content if they fit, otherwise keeps them at the bottom
  */
 function adjustExperienceLinksPosition() {
-    const experienceItems = document.querySelectorAll('.experience-item');
+  const experienceItems = document.querySelectorAll(".experience-item");
 
-    experienceItems.forEach(item => {
-        const links = item.querySelector('.experience-links');
-        const responsibilities = item.querySelector('.experience-responsibilities');
-        const experienceContent = item.querySelector('.experience-content');
+  experienceItems.forEach((experienceItemElement) => {
+    const links = experienceItemElement.querySelector(".experience-links");
+    const responsibilities =
+      experienceItemElement.querySelector(".experience-responsibilities");
+    const experienceContent =
+      experienceItemElement.querySelector(".experience-content");
 
-        if (!links || !responsibilities || !experienceContent) return;
+    if (!links || !responsibilities || !experienceContent) return;
 
-        // Store current parent
-        const currentParent = links.parentElement;
-        const isInContent = currentParent === experienceContent;
-        const isInResponsibilities = currentParent === responsibilities;
+    // Store current parent
+    const currentParent = links.parentElement;
+    const isInContent = currentParent === experienceContent;
+    const isInResponsibilities = currentParent === responsibilities;
 
-        // Always measure from bottom position to get natural width
-        // Temporarily move to bottom if currently in responsibilities or content
-        let wasMoved = false;
-        if (isInResponsibilities || isInContent) {
-            item.appendChild(links);
-            wasMoved = true;
-            // Force reflow to ensure accurate measurement
-            void links.offsetWidth;
-        }
+    // Always measure from bottom position to get natural width
+    // Temporarily move to bottom if currently in responsibilities or content
+    let wasMoved = false;
+    if (isInResponsibilities || isInContent) {
+      experienceItemElement.appendChild(links);
+      wasMoved = true;
+      // Force reflow to ensure accurate measurement
+      void links.offsetWidth;
+    }
 
-        // Measure natural width of links (scrollWidth gives content width)
-        const linksNaturalWidth = links.scrollWidth;
+    // Measure natural width of links (scrollWidth gives content width)
+    const linksNaturalWidth = links.scrollWidth;
 
-        // Measure available width in responsibilities column
-        const responsibilitiesWidth = responsibilities.offsetWidth;
+    // Measure available width in responsibilities column
+    const responsibilitiesWidth = responsibilities.offsetWidth;
 
-        // Check if links fit in responsibilities column (with small margin for safety)
-        const margin = 5; // Small margin to account for rounding
-        if (linksNaturalWidth <= responsibilitiesWidth - margin) {
-            // Move links inside experience-content with absolute positioning
-            if (!isInContent || links.parentElement !== experienceContent) {
-                experienceContent.appendChild(links);
-            }
-        } else {
-            // Keep links at the bottom (after experience-content)
-            if (isInContent || wasMoved) {
-                item.appendChild(links);
-            }
-        }
-    });
+    // Check if links fit in responsibilities column (with small margin for safety)
+    const margin = 5; // Small margin to account for rounding
+    if (linksNaturalWidth <= responsibilitiesWidth - margin) {
+      // Move links inside experience-content with absolute positioning
+      if (!isInContent || links.parentElement !== experienceContent) {
+        experienceContent.appendChild(links);
+      }
+    } else {
+      // Keep links at the bottom (after experience-content)
+      if (isInContent || wasMoved) {
+        experienceItemElement.appendChild(links);
+      }
+    }
+  });
 }
 
 /**
  * Render experience section
  */
 function renderExperience(data) {
-    const experienceElement = document.getElementById('experience');
-    experienceElement.innerHTML = data.experience.map(exp => {
-        const companyUrlRaw =
-          exp &&
-          (exp.url ||
-            exp["company.url"] ||
-            (exp.company && (exp.company.url || exp.companyUrl)));
-        const companyUrl =
-          typeof companyUrlRaw === "string" ? companyUrlRaw.trim() : "";
-        const safeCompanyUrl = companyUrl
-          ? companyUrl.replace(/"/g, "&quot;")
-          : "";
-        const companyForAriaLabel = String(exp.company ?? "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-        const siteLinkStretchLabel =
-          currentLanguage === "ru"
-            ? `Открыть сайт: ${companyForAriaLabel}`
-            : `Open website: ${companyForAriaLabel}`;
+  const experienceElement = document.getElementById("experience");
+  experienceElement.innerHTML = data.experience
+    .map((experienceEntry) => {
+      const companyUrl = getExperienceCompanyUrl(experienceEntry);
+      const safeCompanyUrl = companyUrl
+        ? // Escape double quotes for safe use inside HTML attribute values
+          companyUrl.replace(/"/g, "&quot;")
+        : "";
+      const companyForAriaLabel = String(experienceEntry.company ?? "");
+      // Escape &, <, > so company text is safe inside aria-label / interpolated HTML
+      const companyForAriaLabelEscaped = companyForAriaLabel
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      const siteLinkStretchLabel =
+        currentLanguage === "ru"
+          ? `Открыть сайт: ${companyForAriaLabelEscaped}`
+          : `Open website: ${companyForAriaLabelEscaped}`;
 
-        let linksHTML = '';
-        if (exp.links && exp.links.length > 0) {
-            linksHTML = `
+      let linksHTML = "";
+      if (experienceEntry.links && experienceEntry.links.length > 0) {
+        linksHTML = `
                 <div class="experience-links">
-                    ${exp.links.map(link =>
-                `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="experience-link ${!link.description ? 'experience-link--no-description' : ''}">
+                    ${experienceEntry.links
+                      .map(
+                        (experienceLink) =>
+                          `<a href="${experienceLink.url}" target="_blank" rel="noopener noreferrer" class="experience-link ${!experienceLink.description ? "experience-link--no-description" : ""}">
                             <div class="experience-link__preview">
                                 <img
-                                    src="${getFaviconUrl(link.url)}"
-                                    alt="Favicon of ${getDomainFromUrl(link.url)}"
+                                    src="${getFaviconUrl(experienceLink.url)}"
+                                    alt="Favicon of ${getDomainFromUrl(experienceLink.url)}"
                                     class="experience-link__favicon"
                                     loading="eager"
                                     decoding="async"
                                     referrerpolicy="no-referrer"
                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
                                 >
-                                <span class="experience-link__fallback iconify" data-icon="${getIconForLink(link.url)}" aria-hidden="true" style="display: none;"></span>
+                                <span class="experience-link__fallback iconify" data-icon="${getIconForLink(experienceLink.url)}" aria-hidden="true" style="display: none;"></span>
                             </div>
                             <div class="experience-link__content">
-                                <div class="experience-link__title">${link.title}</div>
-                                ${link.description ? `<div class="experience-link__description">${parseFormatting(link.description)}</div>` : ''}
+                                <div class="experience-link__title">${experienceLink.title}</div>
+                                ${experienceLink.description ? `<div class="experience-link__description">${parseFormatting(experienceLink.description)}</div>` : ""}
                             </div>
-                        </a>`
-            ).join('')}
+                        </a>`,
+                      )
+                      .join("")}
                 </div>
             `;
-        }
+      }
 
-        return `
+      let experienceAboutSection = "";
+      if (experienceEntry.about) {
+        const aboutBodyHtml = safeCompanyUrl
+          ? parseListsNoLinks(experienceEntry.about)
+          : parseLists(experienceEntry.about);
+        experienceAboutSection = `<div class="experience-about">${aboutBodyHtml}</div>`;
+      }
+
+      return `
             <div class="experience-item">
                 ${
                   safeCompanyUrl
@@ -1534,24 +1303,24 @@ function renderExperience(data) {
                                 `
                                 : ""
                             }
-                            <div class="experience-company">${exp.company}</div>
-                            <div class="experience-position">${exp.position}</div>
+                            <div class="experience-company">${experienceEntry.company}</div>
+                            <div class="experience-position">${experienceEntry.position}</div>
                         </div>
                         <div class="experience-meta">
                             <span class="icon">
                                 <span class="iconify" data-icon="mdi:calendar"></span>
                             </span>
-                            <span>${exp.period}</span>
+                            <span>${experienceEntry.period}</span>
                         </div>
                     </div>
-                    ${exp.about ? `<div class="experience-about">${safeCompanyUrl ? parseListsNoLinks(exp.about) : parseLists(exp.about)}</div>` : ""}
+                    ${experienceAboutSection}
                 ${safeCompanyUrl ? `</div></div>` : `</div>`}
                 <div class="experience-content">
                     <div class="experience-responsibilities">
-                        ${parseLists(exp.responsibilities)}
+                        ${parseLists(experienceEntry.responsibilities)}
                     </div>
                     ${
-                      exp.achievements
+                      experienceEntry.achievements
                         ? `
                         <div class="experience-achievements">
                             <div class="experience-achievements__header">
@@ -1561,7 +1330,7 @@ function renderExperience(data) {
                                 <span class="experience-achievements__title">${currentLanguage === "ru" ? "Ключевые достижения" : "Key Achievements"}</span>
                             </div>
                             <div class="experience-achievements__content">
-                                ${parseLists(exp.achievements)}
+                                ${parseLists(experienceEntry.achievements)}
                             </div>
                         </div>
                     `
@@ -1571,206 +1340,233 @@ function renderExperience(data) {
                 ${linksHTML}
             </div>
         `;
-    }).join('');
+    })
+    .join("");
 
-    // Adjust links position after rendering and images load
-    // Use setTimeout to ensure DOM is fully rendered
-    setTimeout(() => {
-        adjustExperienceLinksPosition();
+  // Adjust links position after rendering and images load
+  // Use setTimeout to ensure DOM is fully rendered
+  setTimeout(() => {
+    adjustExperienceLinksPosition();
 
-        // Also adjust after all images in links are loaded
-        const linkImages = experienceElement.querySelectorAll('.experience-link__favicon');
-        let imagesLoaded = 0;
-        const totalImages = linkImages.length;
+    // Also adjust after all images in links are loaded
+    const linkImages = experienceElement.querySelectorAll(
+      ".experience-link__favicon",
+    );
+    let imagesLoaded = 0;
+    const totalImages = linkImages.length;
 
-        if (totalImages === 0) {
+    if (totalImages === 0) {
+      adjustExperienceLinksPosition();
+    } else {
+      linkImages.forEach((faviconImage) => {
+        if (faviconImage.complete) {
+          imagesLoaded++;
+          if (imagesLoaded === totalImages) {
             adjustExperienceLinksPosition();
+          }
         } else {
-            linkImages.forEach(img => {
-                if (img.complete) {
-                    imagesLoaded++;
-                    if (imagesLoaded === totalImages) {
-                        adjustExperienceLinksPosition();
-                    }
-                } else {
-                    img.addEventListener('load', () => {
-                        imagesLoaded++;
-                        if (imagesLoaded === totalImages) {
-                            adjustExperienceLinksPosition();
-                        }
-                    });
-                    img.addEventListener('error', () => {
-                        imagesLoaded++;
-                        if (imagesLoaded === totalImages) {
-                            adjustExperienceLinksPosition();
-                        }
-                    });
-                }
-            });
+          faviconImage.addEventListener("load", () => {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) {
+              adjustExperienceLinksPosition();
+            }
+          });
+          faviconImage.addEventListener("error", () => {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) {
+              adjustExperienceLinksPosition();
+            }
+          });
         }
-    }, 0);
+      });
+    }
+  }, 0);
 }
 
 /**
  * Render projects section
  */
 function renderProjects(data) {
-    const projectsElement = document.getElementById('projects');
-    const projectsSection = document.getElementById('projectsSection');
+  const projectsElement = document.getElementById("projects");
+  const projectsSection = document.getElementById("projectsSection");
 
-    // Hide section if no projects
-    const hasProjects = data.projects && data.projects.length > 0;
-    if (!hasProjects) {
-        if (projectsSection) {
-            projectsSection.style.display = 'none';
-        }
-        return;
-    }
-
-    // Show section if projects exist
+  // Hide section if no projects
+  const hasProjects = data.projects.length > 0;
+  if (!hasProjects) {
     if (projectsSection) {
-        projectsSection.style.display = '';
+      projectsSection.style.display = "none";
     }
+    return;
+  }
 
-    console.log(`[renderProjects] Начинаем рендеринг ${data.projects.length} проектов`);
+  // Show section if projects exist
+  if (projectsSection) {
+    projectsSection.style.display = "";
+  }
 
-    const linksHTML = data.projects.map((project, index) => {
-        console.log(`[renderProjects] Проект ${index + 1}: "${project.title}"`);
-        console.log(`[renderProjects] Ссылка проекта: ${project.link}`);
+  console.log(
+    `[renderProjects] Начинаем рендеринг ${data.projects.length} проектов`,
+  );
 
-        const accessoryHTML = project.accessory && (project.accessory.icon || project.accessory.value) ? `
+  const linksHTML = data.projects
+    .map((projectEntry, projectIndex) => {
+      console.log(
+        `[renderProjects] Проект ${projectIndex + 1}: "${projectEntry.title}"`,
+      );
+      console.log(`[renderProjects] Ссылка проекта: ${projectEntry.link}`);
+
+      const accessoryHTML =
+        projectEntry.accessory &&
+        (projectEntry.accessory.icon || projectEntry.accessory.value)
+          ? `
             <div class="experience-link__accessory">
-                ${project.accessory.icon ? `<span class="iconify experience-link__accessory-icon" data-icon="${project.accessory.icon}" aria-hidden="true"></span>` : ''}
-                ${project.accessory.value ? `<div class="experience-link__accessory-value">${project.accessory.value}</div>` : ''}
+                ${projectEntry.accessory.icon ? `<span class="iconify experience-link__accessory-icon" data-icon="${projectEntry.accessory.icon}" aria-hidden="true"></span>` : ""}
+                ${projectEntry.accessory.value ? `<div class="experience-link__accessory-value">${projectEntry.accessory.value}</div>` : ""}
             </div>
-        ` : '';
+        `
+          : "";
 
-        return `
-            <a href="${project.link}" target="_blank" rel="noopener noreferrer" class="experience-link ${!project.description ? 'experience-link--no-description' : ''}">
+      return `
+            <a href="${projectEntry.link}" target="_blank" rel="noopener noreferrer" class="experience-link ${!projectEntry.description ? "experience-link--no-description" : ""}">
                 <div class="experience-link__preview">
                     <img
-                        src="${getFaviconUrl(project.link)}"
-                        alt="Favicon of ${getDomainFromUrl(project.link)}"
+                        src="${getFaviconUrl(projectEntry.link)}"
+                        alt="Favicon of ${getDomainFromUrl(projectEntry.link)}"
                         class="experience-link__favicon"
                         loading="eager"
                         decoding="async"
                         referrerpolicy="no-referrer"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
                     >
-                    <span class="experience-link__fallback iconify" data-icon="${getIconForLink(project.link)}" aria-hidden="true" style="display: none;"></span>
+                    <span class="experience-link__fallback iconify" data-icon="${getIconForLink(projectEntry.link)}" aria-hidden="true" style="display: none;"></span>
                 </div>
                 <div class="experience-link__content">
-                    <div class="experience-link__title">${project.title}</div>
-                    ${project.description ? `<div class="experience-link__description">${parseFormatting(project.description)}</div>` : ''}
+                    <div class="experience-link__title">${projectEntry.title}</div>
+                    ${projectEntry.description ? `<div class="experience-link__description">${parseFormatting(projectEntry.description)}</div>` : ""}
                 </div>
                 ${accessoryHTML}
             </a>
         `;
-    }).join('');
+    })
+    .join("");
 
-    projectsElement.innerHTML = `
+  projectsElement.innerHTML = `
         <div class="experience-links">
             ${linksHTML}
         </div>
     `;
-    console.log(`[renderProjects] Рендеринг завершен`);
+  console.log(`[renderProjects] Рендеринг завершен`);
 }
 
 /**
  * Render education section
  */
 function renderEducation(data) {
-    const educationElement = document.getElementById('education');
-    educationElement.innerHTML = data.education.map(edu => `
+  const educationElement = document.getElementById("education");
+  educationElement.innerHTML = data.education
+    .map(
+      (educationEntry) => `
         <div class="education-item">
-            <div class="education-degree">${edu.degree}</div>
-            <div class="education-university">${edu.university}</div>
+            <div class="education-degree">${educationEntry.degree}</div>
+            <div class="education-university">${educationEntry.university}</div>
             <div class="education-period">
                 <span class="icon">
                     <span class="iconify" data-icon="mdi:calendar"></span>
                 </span>
-                <span>${edu.period}</span>
+                <span>${educationEntry.period}</span>
             </div>
         </div>
-    `).join('');
+    `,
+    )
+    .join("");
 }
 
 /**
  * Render education & languages section (combined)
  */
 function renderEducationLanguages(data) {
-    const educationLanguagesElement = document.getElementById('educationLanguages');
-    const educationLanguagesSection = document.getElementById('educationLanguagesSection');
+  const educationLanguagesElement =
+    document.getElementById("educationLanguages");
+  const educationLanguagesSection = document.getElementById(
+    "educationLanguagesSection",
+  );
 
-    // Check if education exists
-    const hasEducation = data.education && data.education.length > 0;
+  const hasEducation = data.education.length > 0;
 
-    // Always show section (even if no education, we show languages)
-    if (educationLanguagesSection) {
-        educationLanguagesSection.style.display = '';
+  // Always show section (even if no education, we show languages)
+  if (educationLanguagesSection) {
+    educationLanguagesSection.style.display = "";
+  }
+
+  // Update section title based on education presence
+  const educationLanguagesTitleElement =
+    educationLanguagesSection?.querySelector(".section-title");
+  if (educationLanguagesTitleElement) {
+    const titleRu = hasEducation
+      ? educationLanguagesTitleElement.getAttribute("data-title-ru")
+      : educationLanguagesTitleElement.getAttribute("data-title-no-edu-ru");
+    const titleEn = hasEducation
+      ? educationLanguagesTitleElement.getAttribute("data-title-en")
+      : educationLanguagesTitleElement.getAttribute("data-title-no-edu-en");
+    const iconElement = educationLanguagesTitleElement.querySelector(".icon");
+    const hasAccentClass =
+      educationLanguagesTitleElement.classList.contains("accent-green");
+
+    if (iconElement && titleRu && titleEn) {
+      const title = currentLanguage === "ru" ? titleRu : titleEn;
+      educationLanguagesTitleElement.innerHTML =
+        iconElement.outerHTML + " " + title;
+      if (hasAccentClass) {
+        educationLanguagesTitleElement.classList.add("accent-green");
+      }
     }
+  }
 
-    // Update section title based on education presence
-    const educationLanguagesTitleElement = educationLanguagesSection?.querySelector('.section-title');
-    if (educationLanguagesTitleElement) {
-        const titleRu = hasEducation
-            ? educationLanguagesTitleElement.getAttribute('data-title-ru')
-            : educationLanguagesTitleElement.getAttribute('data-title-no-edu-ru');
-        const titleEn = hasEducation
-            ? educationLanguagesTitleElement.getAttribute('data-title-en')
-            : educationLanguagesTitleElement.getAttribute('data-title-no-edu-en');
-        const iconElement = educationLanguagesTitleElement.querySelector('.icon');
-        const hasAccentClass = educationLanguagesTitleElement.classList.contains('accent-green');
+  // Extract level from parentheses if exists, otherwise use full level
+  const formatLanguageTag = (languageEntry) => {
+    const levelMatch = languageEntry.level.match(/\(([^)]+)\)/);
+    const levelText = levelMatch ? levelMatch[1] : languageEntry.level;
+    return `${languageEntry.name} – ${levelText}`;
+  };
 
-        if (iconElement && titleRu && titleEn) {
-            const title = currentLanguage === 'ru' ? titleRu : titleEn;
-            educationLanguagesTitleElement.innerHTML = iconElement.outerHTML + ' ' + title;
-            if (hasAccentClass) {
-                educationLanguagesTitleElement.classList.add('accent-green');
-            }
-        }
-    }
+  let content = "";
 
-    // Extract level from parentheses if exists, otherwise use full level
-    const formatLanguageTag = (lang) => {
-        const levelMatch = lang.level.match(/\(([^)]+)\)/);
-        const levelText = levelMatch ? levelMatch[1] : lang.level;
-        return `${lang.name} – ${levelText}`;
-    };
-
-    let content = '';
-
-    // Render education items
-    if (data.education && data.education.length > 0) {
-        content += data.education.map(edu => `
+  if (data.education.length > 0) {
+    content += data.education
+      .map(
+        (educationEntry) => `
             <div class="education-item">
-                <div class="education-degree">${edu.degree}</div>
-                <div class="education-university">${edu.university}</div>
+                <div class="education-degree">${educationEntry.degree}</div>
+                <div class="education-university">${educationEntry.university}</div>
                 <div class="education-period">
                     <span class="icon">
                         <span class="iconify" data-icon="mdi:calendar"></span>
                     </span>
-                    <span>${edu.period}</span>
+                    <span>${educationEntry.period}</span>
                 </div>
             </div>
-        `).join('');
-    }
+        `,
+      )
+      .join("");
+  }
 
-    // Render languages
-    if (data.languages && data.languages.length > 0) {
-        if (content) {
-            content += '<div style="margin-top: 12px;"></div>';
-        }
-        content += `
+  if (data.languages.length > 0) {
+    if (content) {
+      content += '<div style="margin-top: 12px;"></div>';
+    }
+    content += `
             <div class="skill-keywords">
-                ${data.languages.map(lang =>
-            `<span class="skill-keyword">${formatLanguageTag(lang)}</span>`
-        ).join('\n                ')}
+                ${data.languages
+                  .map(
+                    (languageEntry) =>
+                      `<span class="skill-keyword">${formatLanguageTag(languageEntry)}</span>`,
+                  )
+                  .join("\n                ")}
             </div>
         `;
-    }
+  }
 
-    educationLanguagesElement.innerHTML = content || '<p></p>';
+  educationLanguagesElement.innerHTML = content || "<p></p>";
 }
 
 // ==================== Main Init Function ====================
@@ -1779,94 +1575,99 @@ function renderEducationLanguages(data) {
  * Load resume data from JSON and render
  */
 async function loadResumeData(language = currentLanguage) {
-    const config = getLanguageConfig(language);
+  const config = getLanguageConfig(language);
 
-    try {
-        // Local dev: try API first; static hosting (GitHub Pages): use JSON from /data only
-        let response = null;
-        if (isLocalDevResumeServer()) {
-            const apiUrl = `/api/resume?lang=${encodeURIComponent(language)}`;
-            response = await fetch(apiUrl, { cache: 'no-cache' }).catch(() => null);
-        }
+  try {
+    // Local dev: try API first; static hosting (GitHub Pages): use JSON from /data only
+    let response = null;
+    if (isLocalDevResumeServer()) {
+      const apiUrl = `/api/resume?lang=${encodeURIComponent(language)}`;
+      response = await fetch(apiUrl, { cache: "no-cache" }).catch(() => null);
+    }
 
-        if (!response || !response.ok) {
-            if (isLocalDevResumeServer()) {
-                console.log(`API unavailable, trying static file: ${config.staticPath}`);
-            }
-            response = await fetch(config.staticPath, { cache: 'no-cache' }).catch((fetchError) => {
-                console.error(`Failed to fetch static file ${config.staticPath}:`, fetchError);
-                throw new Error(`Failed to load resume data from ${config.staticPath}. Make sure the file exists and the build process completed successfully.`);
-            });
+    if (!response || !response.ok) {
+      if (isLocalDevResumeServer()) {
+        console.log(
+          `API unavailable, trying static file: ${config.staticPath}`,
+        );
+      }
+      response = await fetch(config.staticPath, { cache: "no-cache" }).catch(
+        (fetchError) => {
+          console.error(
+            `Failed to fetch static file ${config.staticPath}:`,
+            fetchError,
+          );
+          throw new Error(
+            `Failed to load resume data from ${config.staticPath}. Make sure the file exists and the build process completed successfully.`,
+          );
+        },
+      );
 
-            if (!response || !response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}. Failed to load ${config.staticPath}`);
-            }
-        }
+      if (!response || !response.ok) {
+        throw new Error(
+          `HTTP error! status: ${response.status}. Failed to load ${config.staticPath}`,
+        );
+      }
+    }
 
-        const data = await response.json();
-        const normalized = normalizeResumeData(data);
+    const data = await response.json();
+    const normalized = normalizeResumeData(data);
 
-        currentLanguage = language;
-        currentResumeData = normalized; // Store resume data for PDF filename generation
+    currentLanguage = language;
+    currentResumeData = normalized; // Store resume data for PDF filename generation
 
-        // Debug: log accentColor if present
-        if (currentResumeData.accentColor) {
-            console.log('loadResumeData: accentColor found:', currentResumeData.accentColor);
-        } else {
-            console.log('loadResumeData: accentColor not found in data. Available keys:', Object.keys(currentResumeData).slice(0, 10));
-        }
+    persistLanguage(language);
+    setDocumentLanguage(config);
 
-        persistLanguage(language);
-        setDocumentLanguage(config);
+    toggleLanguageSwitcherVisibility(normalized.hasMultilanguageFields);
 
-        // Show/hide language switcher based on multilanguage support
-        const hasMultilang = normalized.hasMultilanguageFields !== false; // Default to true for backward compatibility
-        toggleLanguageSwitcherVisibility(hasMultilang);
+    if (normalized.hasMultilanguageFields) {
+      updateLanguageSwitcherUI(language);
+    }
 
-        if (hasMultilang) {
-            updateLanguageSwitcherUI(language);
-        }
+    updatePdfButtonText(language);
+    updateSectionTitles(language);
+    updatePdfButtonLink(); // Update PDF link when language changes
+    updateBrowserUrl(); // Sync URL with current language
 
-        updatePdfButtonText(language);
-        updateSectionTitles(language);
-        updatePdfButtonLink(); // Update PDF link when language changes
-        updateBrowserUrl(); // Sync URL with current language
+    // Apply accent colors from TOML
+    applyAccentColors();
 
-        // Apply accent colors from TOML
-        applyAccentColors();
+    // Render all sections
+    renderHeader(normalized);
+    renderAbout(normalized);
+    renderExpectation(normalized);
+    renderSkillsIntro(normalized);
+    renderSkills(normalized);
+    renderExtraSkills(normalized);
+    renderInterests(normalized);
+    renderExperience(normalized);
+    renderProjects(normalized);
+    renderEducationLanguages(normalized);
 
-        // Render all sections
-        renderHeader(normalized);
-        renderAbout(normalized);
-        renderExpectation(normalized);
-        renderSkillsIntro(normalized);
-        renderSkills(normalized);
-        renderExtraSkills(normalized);
-        renderInterests(normalized);
-        renderExperience(normalized);
-        renderProjects(normalized);
-        renderEducationLanguages(normalized);
+    if (window.AtsLayout && typeof window.AtsLayout.render === "function") {
+      window.AtsLayout.render(normalized, { language: currentLanguage });
+    } else {
+      console.warn("AtsLayout renderer is not available");
+    }
 
-        if (window.AtsLayout && typeof window.AtsLayout.render === 'function') {
-            window.AtsLayout.render(normalized, { language: currentLanguage });
-        } else {
-            console.warn('AtsLayout renderer is not available');
-        }
+    console.log("Resume data loaded successfully!");
+  } catch (error) {
+    console.error(
+      `Error loading resume data for language "${language}":`,
+      error,
+    );
+    if (isLocalDevResumeServer()) {
+      console.error(`Tried API: /api/resume?lang=${language}`);
+    }
+    console.error(`Tried static file: ${config.staticPath}`);
 
-        console.log('Resume data loaded successfully!');
-    } catch (error) {
-        console.error(`Error loading resume data for language "${language}":`, error);
-        if (isLocalDevResumeServer()) {
-            console.error(`Tried API: /api/resume?lang=${language}`);
-        }
-        console.error(`Tried static file: ${config.staticPath}`);
+    const apiLine = isLocalDevResumeServer()
+      ? `<li>API: /api/resume?lang=${language}</li>`
+      : "";
 
-        const apiLine = isLocalDevResumeServer()
-            ? `<li>API: /api/resume?lang=${language}</li>`
-            : '';
-
-        // Show error message to user
-        document.body.innerHTML = `
+    // Show error message to user
+    document.body.innerHTML = `
             <div style="padding: 40px; text-align: center; font-family: sans-serif;">
                 <h1 style="color: #E53935;">Error Loading Resume</h1>
                 <p>Could not load resume data. Tried:</p>
@@ -1878,113 +1679,121 @@ async function loadResumeData(language = currentLanguage) {
                 <p style="color: #999; font-size: 12px; margin-top: 10px;">Please check the browser console for more details.</p>
             </div>
         `;
-    }
+  }
 }
 
 // ==================== Initialize on Page Load ====================
 
 // Wait for DOM to be fully loaded
 function initializeResume() {
-    const initialLanguage = getInitialLanguage();
-    currentLanguage = initialLanguage;
+  const initialLanguage = getInitialLanguage();
+  currentLanguage = initialLanguage;
 
-    const initialConfig = getLanguageConfig(initialLanguage);
-    setDocumentLanguage(initialConfig);
-    updatePdfButtonText(initialLanguage);
-    updateSectionTitles(initialLanguage);
-    updatePdfButtonLink(); // Initialize PDF button link
-    initThemeToggle();
-    initLanguageSwitcher();
-    initViewModeSwitcher();
-    // Language switcher visibility will be set after data is loaded
-    loadResumeData(initialLanguage);
+  const initialConfig = getLanguageConfig(initialLanguage);
+  setDocumentLanguage(initialConfig);
+  updatePdfButtonText(initialLanguage);
+  updateSectionTitles(initialLanguage);
+  updatePdfButtonLink(); // Initialize PDF button link
+  initThemeToggle();
+  initLanguageSwitcher();
+  initViewModeSwitcher();
+  // Language switcher visibility will be set after data is loaded
+  loadResumeData(initialLanguage);
 
-    // Adjust experience links position on window resize
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            adjustExperienceLinksPosition();
-        }, 100);
-    });
+  // Adjust experience links position on window resize
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      adjustExperienceLinksPosition();
+    }, 100);
+  });
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeResume);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeResume);
 } else {
-    initializeResume();
+  initializeResume();
 }
 
 /**
- * Normalize resume data to expected structure and defaults
+ * Normalize resume data to expected structure and defaults.
+ * After this, render code may assume: arrays are arrays; optional text fields are undefined or non-empty string.
  */
 function normalizeResumeData(data) {
-    const safeString = (v) => (typeof v === 'string' ? v.trim() : '');
-    const safeArray = (v) => (Array.isArray(v) ? v : []);
-    // For optional fields: return undefined if field is missing, empty string if empty
-    const optionalString = (v) => {
-        if (v === undefined || v === null) return undefined;
-        if (typeof v === 'string') {
-            const trimmed = v.trim();
-            return trimmed === '' ? undefined : trimmed;
-        }
-        return undefined;
-    };
+  const src = data && typeof data === "object" ? data : {};
 
-    const trimStringFields = (obj) => {
-        if (!obj || typeof obj !== 'object') return obj;
-        const trimmed = {};
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                const value = obj[key];
-                if (typeof value === 'string') {
-                    trimmed[key] = value.trim();
-                } else if (Array.isArray(value)) {
-                    trimmed[key] = value.map(item => typeof item === 'string' ? item.trim() : trimStringFields(item));
-                } else if (typeof value === 'object' && value !== null) {
-                    trimmed[key] = trimStringFields(value);
-                } else {
-                    trimmed[key] = value;
-                }
-            }
-        }
-        return trimmed;
-    };
+  const optionalString = (value) => {
+    if (value == null || typeof value !== "string") return undefined;
+    const trimmed = value.trim();
+    return trimmed === "" ? undefined : trimmed;
+  };
 
-    const normalized = {
-        // Header/basic
-        avatar: data && data.avatar,
-        firstName: data && data.firstName ? String(data.firstName).trim() : data && data.firstName,
-        lastName: data && data.lastName ? String(data.lastName).trim() : data && data.lastName,
-        jobTitle: safeString(data && data.jobTitle),
-        email: data && data.email ? String(data.email).trim() : data && data.email,
-        phone: data && data.phone ? String(data.phone).trim() : data && data.phone,
-        location: safeString(data && data.location),
-        references: safeArray(data && data.references).map(ref => trimStringFields(ref)),
-        // Content
-        about: safeString(data && data.about),
-        expectation: optionalString(data && data.expectation),
-        languages: safeArray(data && data.languages).map(lang => trimStringFields(lang)),
-        skillsIntro: optionalString(data && data.skillsIntro),
-        skills: safeArray(data && data.skills).map(skill => trimStringFields(skill)),
-        extraSkills: optionalString(data && data.extraSkills),
-        interests: optionalString(data && data.interests),
-        experience: safeArray(data && data.experience).map(exp => trimStringFields(exp)),
-        projects: safeArray(data && data.projects).map(proj => trimStringFields(proj)),
-        education: safeArray(data && data.education).map(edu => trimStringFields(edu)),
-        // Accent colors for Human Friendly page
-        // Supports both string (single color) and object (light/dark) formats
-        accentColor: data && data.accentColor
-            ? (typeof data.accentColor === 'string'
-                ? String(data.accentColor).trim()
-                : trimStringFields(data.accentColor))
-            : undefined,
-        // Multilanguage support flag
-        hasMultilanguageFields: data && typeof data.hasMultilanguageFields === 'boolean'
-            ? data.hasMultilanguageFields
-            : true, // Default to true for backward compatibility
-    };
+  const trimStringFields = (obj) => {
+    if (obj == null || typeof obj !== "object") return obj;
+    const trimmed = {};
+    for (const key of Object.keys(obj)) {
+      const value = obj[key];
+      if (typeof value === "string") {
+        trimmed[key] = value.trim();
+      } else if (Array.isArray(value)) {
+        trimmed[key] = value.map((element) =>
+          typeof element === "string"
+            ? element.trim()
+            : trimStringFields(element),
+        );
+      } else if (value !== null && typeof value === "object") {
+        trimmed[key] = trimStringFields(value);
+      } else {
+        trimmed[key] = value;
+      }
+    }
+    return trimmed;
+  };
 
-    return normalized;
+  let normalizedAccentColor;
+  if (src.accentColor) {
+    if (typeof src.accentColor === "string") {
+      normalizedAccentColor = String(src.accentColor).trim();
+    } else {
+      normalizedAccentColor = trimStringFields(src.accentColor);
+    }
+  } else {
+    normalizedAccentColor = undefined;
+  }
+
+  return {
+    avatar: src.avatar,
+    firstName: src.firstName != null ? String(src.firstName).trim() : undefined,
+    lastName: src.lastName != null ? String(src.lastName).trim() : undefined,
+    jobTitle: typeof src.jobTitle === "string" ? src.jobTitle.trim() : "",
+    email: src.email != null ? String(src.email).trim() : undefined,
+    phone: src.phone != null ? String(src.phone).trim() : undefined,
+    location: typeof src.location === "string" ? src.location.trim() : "",
+    references: (Array.isArray(src.references) ? src.references : []).map(
+      (referenceEntry) => trimStringFields(referenceEntry),
+    ),
+    about: typeof src.about === "string" ? src.about.trim() : "",
+    expectation: optionalString(src.expectation),
+    languages: (Array.isArray(src.languages) ? src.languages : []).map(
+      (languageEntry) => trimStringFields(languageEntry),
+    ),
+    skillsIntro: optionalString(src.skillsIntro),
+    skills: (Array.isArray(src.skills) ? src.skills : []).map((skillCategory) =>
+      trimStringFields(skillCategory),
+    ),
+    extraSkills: optionalString(src.extraSkills),
+    interests: optionalString(src.interests),
+    experience: (Array.isArray(src.experience) ? src.experience : []).map(
+      (experienceEntry) => trimStringFields(experienceEntry),
+    ),
+    projects: (Array.isArray(src.projects) ? src.projects : []).map(
+      (projectEntry) => trimStringFields(projectEntry),
+    ),
+    education: (Array.isArray(src.education) ? src.education : []).map(
+      (educationEntry) => trimStringFields(educationEntry),
+    ),
+    accentColor: normalizedAccentColor,
+    hasMultilanguageFields: src.hasMultilanguageFields ?? true,
+  };
 }
-

@@ -217,6 +217,7 @@
         }
     </style>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script src="resume-links.js"></script>
 </head>
 
 <body>
@@ -254,27 +255,6 @@
     </div>
 
     <script>
-        // Get favicon URL for a given URL (same as in index.html)
-        function getFaviconUrl(url) {
-            let target = url;
-
-            try {
-                const parsed = new URL(url);
-                target = `${parsed.protocol}//${parsed.hostname}`;
-            } catch (error) {
-                const sanitized = url.replace(/^[^a-zA-Z0-9]+/, '');
-                target = `https://${sanitized}`;
-            }
-
-            const encoded = encodeURIComponent(target);
-            return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
-        }
-
-        function isLocalDevResumeServer() {
-            const h = location.hostname;
-            return h === 'localhost' || h === '127.0.0.1' || h === '[::1]';
-        }
-
         // Load resume data: static JSON (GitHub Pages); optional API on local dev only
         async function loadResumeData() {
             const sources = ['data/resume-en.json'];

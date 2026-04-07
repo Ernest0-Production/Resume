@@ -39,23 +39,24 @@ function getMimeType(filePath) {
  * Handles non-ASCII characters properly
  */
 function encodeContentDispositionFilename(filename) {
-    // Check if filename contains non-ASCII characters
-    const hasNonAscii = /[^\x00-\x7F]/.test(filename);
+  // Check if filename contains non-ASCII characters
+  const hasNonAscii = /[^\x00-\x7F]/.test(filename);
 
-    if (!hasNonAscii) {
-        // Simple ASCII filename - use standard format
-        return `attachment; filename="${filename}"`;
-    }
+  if (!hasNonAscii) {
+    // Simple ASCII filename - use standard format
+    return `attachment; filename="${filename}"`;
+  }
 
-    // For non-ASCII: use RFC 5987 encoding
-    // Create ASCII fallback (replace non-ASCII with safe characters)
-    const asciiFallback = filename.replace(/[^\x00-\x7F]/g, '_');
+  // For non-ASCII: use RFC 5987 encoding
+  // Create ASCII fallback (replace non-ASCII with safe characters)
+  // Replace non-ASCII code units with underscores for the ASCII filename= parameter
+  const asciiFallback = filename.replace(/[^\x00-\x7F]/g, "_");
 
-    // URL-encode the original filename for filename* parameter
-    const encoded = encodeURIComponent(filename);
+  // URL-encode the original filename for filename* parameter
+  const encoded = encodeURIComponent(filename);
 
-    // Return both fallback and encoded version
-    return `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encoded}`;
+  // Return both fallback and encoded version
+  return `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encoded}`;
 }
 
 /**
@@ -187,52 +188,59 @@ async function handlePdfRequest(req, res, parsed) {
         // In headless PDF generation there is no user scroll, so native lazy-loading might never trigger.
         await page.evaluate(() => {
             try {
-                const imgs = Array.from(document.images || []);
-                imgs.forEach(img => {
-                    const loadingAttr = (img.getAttribute('loading') || '').toLowerCase();
-                    if (img.loading === 'lazy' || loadingAttr === 'lazy') {
-                        img.loading = 'eager';
-                        img.setAttribute('loading', 'eager');
-                        // Nudge the browser to (re)consider the request.
-                        const src = img.currentSrc || img.src;
-                        if (src) img.src = src;
-                    }
-                });
-            } catch (e) {
-                // Ignore
+              const imgs = Array.from(document.images || []);
+              imgs.forEach((imageElement) => {
+                const loadingAttr = (
+                  imageElement.getAttribute("loading") || ""
+                ).toLowerCase();
+                if (imageElement.loading === "lazy" || loadingAttr === "lazy") {
+                  imageElement.loading = "eager";
+                  imageElement.setAttribute("loading", "eager");
+                  // Nudge the browser to (re)consider the request.
+                  const src = imageElement.currentSrc || imageElement.src;
+                  if (src) imageElement.src = src;
+                }
+              });
+            } catch (error) {
+              // Ignore
             }
         });
 
         // Trigger potential viewport-bound loading by scrolling once.
         await page.evaluate(async () => {
-            const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-            const total = Math.max(
-                document.body?.scrollHeight || 0,
-                document.documentElement?.scrollHeight || 0
-            );
-            const step = Math.max(window.innerHeight || 800, 400);
-            for (let y = 0; y <= total; y += step) {
-                window.scrollTo(0, y);
-                await sleep(40);
-            }
-            window.scrollTo(0, 0);
+          const total = Math.max(
+            document.body?.scrollHeight || 0,
+            document.documentElement?.scrollHeight || 0,
+          );
+          const step = Math.max(window.innerHeight || 800, 400);
+          for (
+            let scrollPosition = 0;
+            scrollPosition <= total;
+            scrollPosition += step
+          ) {
+            window.scrollTo(0, scrollPosition);
+            await new Promise((resolve) => setTimeout(resolve, 40));
+          }
+          window.scrollTo(0, 0);
         });
 
         // Wait for fonts and images to settle (do not fail the PDF if some remote icons error out).
         await page.evaluate(async () => {
             try {
-                if (document.fonts && document.fonts.ready) {
-                    await document.fonts.ready;
-                }
-            } catch (e) {
-                // Ignore
+              if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+              }
+            } catch (error) {
+              // Ignore
             }
         });
         await page.waitForFunction(() => {
             try {
-                return Array.from(document.images || []).every(img => img.complete);
-            } catch (e) {
-                return true;
+              return Array.from(document.images || []).every(
+                (img) => img.complete,
+              );
+            } catch (error) {
+              return true;
             }
         }, { timeout: 15000 }).catch(() => { });
 
@@ -296,106 +304,139 @@ const server = http.createServer((req, res) => {
 
     // API: Resolve Open Graph image and redirect to it
     try {
-        const parsed = new URL(req.url, `http://${HOST}:${PORT}`);
-        if (parsed.pathname === '/api/og-image') {
-            console.log(`\n[API] ========== ЗАПРОС /api/og-image ==========`);
-            const targetParam = parsed.searchParams.get('url') || '';
-            console.log(`[API] Получен параметр url: ${targetParam}`);
-            const targetUrl = normalizeTargetUrl(targetParam);
-            console.log(`[API] Нормализованный URL: ${targetUrl}`);
+      const parsed = new URL(req.url, `http://${HOST}:${PORT}`);
+      if (parsed.pathname === "/api/og-image") {
+        console.log(`\n[API] ========== ЗАПРОС /api/og-image ==========`);
+        const targetParam = parsed.searchParams.get("url") || "";
+        console.log(`[API] Получен параметр url: ${targetParam}`);
+        const targetUrl = normalizeTargetUrl(targetParam);
+        console.log(`[API] Нормализованный URL: ${targetUrl}`);
 
-            if (!targetUrl) {
-                console.error(`[API] ❌ Невалидный или отсутствующий URL параметр`);
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Invalid or missing url parameter' }));
-                return;
-            }
-
-            resolveOpenGraphImage(targetUrl)
-                .then((imageUrl) => {
-                    console.log(`[API] ✅ Успешно получен URL изображения: ${imageUrl}`);
-                    console.log(`[API] Редирект на: ${imageUrl}`);
-                    // Redirect to actual image URL so <img> can load it напрямую
-                    res.writeHead(302, {
-                        Location: imageUrl,
-                        'Cache-Control': 'public, max-age=3600',
-                    });
-                    res.end();
-                    console.log(`[API] ========== КОНЕЦ ЗАПРОСА ==========\n`);
-                })
-                .catch((error) => {
-                    console.error(`[API] ❌ Ошибка при получении OG изображения: ${error && error.message ? error.message : error}`);
-                    console.error(`[API] Stack: ${error && error.stack ? error.stack : 'N/A'}`);
-                    // Final fallback — универсальный сервис opengraph (скриншот/OG)
-                    const fallback = `https://v1.opengraph.11ty.dev/${encodeURIComponent(targetUrl)}/`;
-                    console.log(`[API] Используем fallback: ${fallback}`);
-                    res.writeHead(302, {
-                        Location: fallback,
-                        'Cache-Control': 'public, max-age=300',
-                    });
-                    res.end();
-                    console.log(`[API] ========== КОНЕЦ ЗАПРОСА (fallback) ==========\n`);
-                });
-            return;
+        if (!targetUrl) {
+          console.error(`[API] ❌ Невалидный или отсутствующий URL параметр`);
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(
+            JSON.stringify({ error: "Invalid or missing url parameter" }),
+          );
+          return;
         }
-        if (parsed.pathname === '/api/resume') {
-            if (req.method !== 'GET') {
-                res.writeHead(405, { 'Content-Type': 'application/json', 'Allow': 'GET' });
-                res.end(JSON.stringify({ error: 'Method Not Allowed' }));
-                return;
-            }
-            const lang = (parsed.searchParams.get('lang') || 'ru').toLowerCase();
-            const allowedLangs = new Set(['ru', 'en']);
-            if (!allowedLangs.has(lang)) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Unsupported language. Use "ru" or "en".' }));
-                return;
-            }
-            const tomlPath = path.join(__dirname, 'resume.toml');
-            fs.readFile(tomlPath, 'utf8', (err, text) => {
-                if (err) {
-                    if (err.code === 'ENOENT') {
-                        res.writeHead(500, { 'Content-Type': 'application/json' });
-                        res.end(JSON.stringify({ error: 'resume.toml not found' }));
-                        return;
-                    }
-                    res.writeHead(500, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: 'Failed to read resume.toml' }));
-                    return;
-                }
-                try {
-                    const parsedToml = TOML.parse(text);
-                    const localized = localizeResumeData(parsedToml, lang);
-                    // Add flag indicating if multilanguage fields exist
-                    localized.hasMultilanguageFields = hasMultilanguageFields(parsedToml);
-                    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
-                    res.end(JSON.stringify(localized));
-                } catch (parseError) {
-                    console.error('TOML parse error:', parseError && parseError.message ? parseError.message : parseError);
-                    res.writeHead(500, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: 'Invalid TOML format in resume.toml' }));
-                }
+
+        resolveOpenGraphImage(targetUrl)
+          .then((imageUrl) => {
+            console.log(
+              `[API] ✅ Успешно получен URL изображения: ${imageUrl}`,
+            );
+            console.log(`[API] Редирект на: ${imageUrl}`);
+            // Redirect to actual image URL so <img> can load it напрямую
+            res.writeHead(302, {
+              Location: imageUrl,
+              "Cache-Control": "public, max-age=3600",
             });
-            return;
+            res.end();
+            console.log(`[API] ========== КОНЕЦ ЗАПРОСА ==========\n`);
+          })
+          .catch((error) => {
+            console.error(
+              `[API] ❌ Ошибка при получении OG изображения: ${error && error.message ? error.message : error}`,
+            );
+            console.error(
+              `[API] Stack: ${error && error.stack ? error.stack : "N/A"}`,
+            );
+            // Final fallback — универсальный сервис opengraph (скриншот/OG)
+            const fallback = `https://v1.opengraph.11ty.dev/${encodeURIComponent(targetUrl)}/`;
+            console.log(`[API] Используем fallback: ${fallback}`);
+            res.writeHead(302, {
+              Location: fallback,
+              "Cache-Control": "public, max-age=300",
+            });
+            res.end();
+            console.log(
+              `[API] ========== КОНЕЦ ЗАПРОСА (fallback) ==========\n`,
+            );
+          });
+        return;
+      }
+      if (parsed.pathname === "/api/resume") {
+        if (req.method !== "GET") {
+          res.writeHead(405, {
+            "Content-Type": "application/json",
+            Allow: "GET",
+          });
+          res.end(JSON.stringify({ error: "Method Not Allowed" }));
+          return;
         }
-        if (parsed.pathname === '/api/pdf') {
-            handlePdfRequest(req, res, parsed);
-            return;
+        const lang = (parsed.searchParams.get("lang") || "ru").toLowerCase();
+        const allowedLangs = new Set(["ru", "en"]);
+        if (!allowedLangs.has(lang)) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(
+            JSON.stringify({
+              error: 'Unsupported language. Use "ru" or "en".',
+            }),
+          );
+          return;
         }
-        // Handle short PDF links: /data/resume.ats.pdf or /data/resume.hr.pdf
-        if (parsed.pathname === '/data/resume.ats.pdf' || parsed.pathname === '/data/resume.hr.pdf') {
-            handleShortPdfLink(req, res, parsed);
+        const tomlPath = path.join(__dirname, "resume.toml");
+        fs.readFile(tomlPath, "utf8", (err, text) => {
+          if (err) {
+            if (err.code === "ENOENT") {
+              res.writeHead(500, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ error: "resume.toml not found" }));
+              return;
+            }
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Failed to read resume.toml" }));
             return;
-        }
-    } catch (e) {
-        // Ignore parsing errors and proceed to static handling
+          }
+          try {
+            const parsedToml = TOML.parse(text);
+            const localized = localizeResumeData(parsedToml, lang);
+            // Add flag indicating if multilanguage fields exist
+            localized.hasMultilanguageFields =
+              hasMultilanguageFields(parsedToml);
+            res.writeHead(200, {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache",
+            });
+            res.end(JSON.stringify(localized));
+          } catch (parseError) {
+            console.error(
+              "TOML parse error:",
+              parseError && parseError.message
+                ? parseError.message
+                : parseError,
+            );
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(
+              JSON.stringify({ error: "Invalid TOML format in resume.toml" }),
+            );
+          }
+        });
+        return;
+      }
+      if (parsed.pathname === "/api/pdf") {
+        handlePdfRequest(req, res, parsed);
+        return;
+      }
+      // Handle short PDF links: /data/resume.ats.pdf or /data/resume.hr.pdf
+      if (
+        parsed.pathname === "/data/resume.ats.pdf" ||
+        parsed.pathname === "/data/resume.hr.pdf"
+      ) {
+        handleShortPdfLink(req, res, parsed);
+        return;
+      }
+    } catch (error) {
+      // Ignore parsing errors and proceed to static handling
     }
 
     // Parse URL and handle root (serve only from our directory)
     const requestPathname = req.url.split('?')[0] || '/';
-    const relativePath = requestPathname === '/'
-        ? 'index.html'
-        : decodeURIComponent(requestPathname).replace(/^\/+/, '');
+    const relativePath =
+      requestPathname === "/"
+        ? "index.html"
+        : // Strip leading slashes from the path segment (avoid empty dirname parts)
+          decodeURIComponent(requestPathname).replace(/^\/+/, "");
     const filePath = path.join(__dirname, relativePath);
 
     // Security check: prevent directory traversal
@@ -533,7 +574,11 @@ function localizeResumeData(data, lang) {
                         });
                     } else {
                         // Simple array, trim strings
-                        targetObj[key] = value.map(v => typeof v === 'string' ? v.trim() : v);
+                        targetObj[key] = value.map((element) =>
+                          typeof element === "string"
+                            ? element.trim()
+                            : element,
+                        );
                     }
                 } else if (typeof value === 'object' && value !== null) {
                     // Nested object
@@ -562,10 +607,11 @@ function normalizeTargetUrl(input) {
         url = `https://${url}`;
     }
     try {
-        const u = new URL(url);
+        const parsedUrl = new URL(url);
         // Only allow http/https
-        if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
-        return u.toString();
+        if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:")
+          return null;
+        return parsedUrl.toString();
     } catch {
         return null;
     }
@@ -609,7 +655,7 @@ function httpGetBuffer(url, redirectsLeft = 5, headers = {}) {
                 return;
             }
             const chunks = [];
-            res.on('data', (c) => chunks.push(c));
+            res.on("data", (chunk) => chunks.push(chunk));
             res.on('end', () => {
                 const buffer = Buffer.concat(chunks);
                 console.log(`[httpGetBuffer] Получено данных: ${buffer.length} байт (сжато: ${contentEncoding})`);
@@ -666,52 +712,63 @@ function httpGetBuffer(url, redirectsLeft = 5, headers = {}) {
  * Декодировать HTML-сущности в строке (минимально необходимый набор)
  */
 function decodeHtmlEntities(text) {
-    if (!text || typeof text !== 'string') return text;
-    const named = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': "'",
-        '&#x27;': "'",
-    };
-    let decoded = text.replace(/&(amp|lt|gt|quot);|&#(?:39|x27);/g, (m) => named[m] || m);
-    decoded = decoded.replace(/&#(\d+);/g, (_, num) => {
-        const code = parseInt(num, 10);
-        return Number.isFinite(code) ? String.fromCharCode(code) : _;
-    });
-    decoded = decoded.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
-        const code = parseInt(hex, 16);
-        return Number.isFinite(code) ? String.fromCharCode(code) : _;
-    });
-    return decoded;
+  if (!text || typeof text !== "string") return text;
+  const named = {
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&quot;": '"',
+    "&#39;": "'",
+    "&#x27;": "'",
+  };
+  // Decode a small set of named entities and numeric &#39;/&#x27; forms
+  let decoded = text.replace(
+    /&(amp|lt|gt|quot);|&#(?:39|x27);/g,
+    (fullMatch) => named[fullMatch] || fullMatch,
+  );
+  // Decimal numeric character references &#digits;
+  decoded = decoded.replace(/&#(\d+);/g, (fullMatch, decimalDigits) => {
+    const code = parseInt(decimalDigits, 10);
+    return Number.isFinite(code) ? String.fromCharCode(code) : fullMatch;
+  });
+  // Hexadecimal numeric character references &#xhex;
+  decoded = decoded.replace(/&#x([0-9a-fA-F]+);/g, (fullMatch, hexDigits) => {
+    const code = parseInt(hexDigits, 16);
+    return Number.isFinite(code) ? String.fromCharCode(code) : fullMatch;
+  });
+  return decoded;
 }
 
 /**
  * Извлечь content из meta-тега по имени/свойству (без зависимостей)
  */
 function findMetaContent(html, attr, value) {
-    console.log(`[findMetaContent] Ищем мета-тег: ${attr}="${value}"`);
-    // Escape special regex characters in value
-    const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern = new RegExp(`<meta[^>]+${attr}\\s*=\\s*["']${escapedValue}["'][^>]*>`, 'i');
-    const tagMatch = html.match(pattern);
-    if (!tagMatch) {
-        console.log(`[findMetaContent] Мета-тег не найден для ${attr}="${value}"`);
-        return null;
-    }
-    console.log(`[findMetaContent] Найден тег: ${tagMatch[0].substring(0, 100)}...`);
-    const contentMatch = tagMatch[0].match(/content\s*=\s*["']([^"']+)["']/i);
-    if (!contentMatch) {
-        console.log(`[findMetaContent] Атрибут content не найден в теге`);
-        return null;
-    }
-    const rawContent = contentMatch[1];
-    console.log(`[findMetaContent] Сырое значение content: ${rawContent}`);
-    // Decode HTML entities in the content attribute value
-    const decoded = decodeHtmlEntities(rawContent);
-    console.log(`[findMetaContent] Декодированное значение: ${decoded}`);
-    return decoded;
+  console.log(`[findMetaContent] Ищем мета-тег: ${attr}="${value}"`);
+  // Escape regex metacharacters so attribute values are matched literally
+  const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp(
+    `<meta[^>]+${attr}\\s*=\\s*["']${escapedValue}["'][^>]*>`,
+    "i",
+  );
+  const tagMatch = html.match(pattern);
+  if (!tagMatch) {
+    console.log(`[findMetaContent] Мета-тег не найден для ${attr}="${value}"`);
+    return null;
+  }
+  console.log(
+    `[findMetaContent] Найден тег: ${tagMatch[0].substring(0, 100)}...`,
+  );
+  const contentMatch = tagMatch[0].match(/content\s*=\s*["']([^"']+)["']/i);
+  if (!contentMatch) {
+    console.log(`[findMetaContent] Атрибут content не найден в теге`);
+    return null;
+  }
+  const rawContent = contentMatch[1];
+  console.log(`[findMetaContent] Сырое значение content: ${rawContent}`);
+  // Decode HTML entities in the content attribute value
+  const decoded = decodeHtmlEntities(rawContent);
+  console.log(`[findMetaContent] Декодированное значение: ${decoded}`);
+  return decoded;
 }
 
 /**
@@ -798,19 +855,23 @@ async function resolveOpenGraphImage(pageUrl) {
         console.log(`[resolveOpenGraphImage] OG-изображение не найдено, пробуем fallback для Raycast...`);
         // Domain-specific lightweight fallback for Raycast extensions (если мета-тегов нет)
         try {
-            const u = new URL(pageUrl);
-            if (u.hostname.endsWith('raycast.com')) {
-                const parts = u.pathname.split('/').filter(Boolean);
-                if (parts.length >= 2) {
-                    const handle = parts[0];
-                    const name = parts[1];
-                    const fallbackUrl = `https://www.raycast.com/api/extension-og?handle=${encodeURIComponent(handle)}&name=${encodeURIComponent(name)}`;
-                    console.log(`[resolveOpenGraphImage] Используем Raycast fallback: ${fallbackUrl}`);
-                    return fallbackUrl;
-                }
+          const parsedPageUrl = new URL(pageUrl);
+          if (parsedPageUrl.hostname.endsWith("raycast.com")) {
+            const parts = parsedPageUrl.pathname.split("/").filter(Boolean);
+            if (parts.length >= 2) {
+              const handle = parts[0];
+              const name = parts[1];
+              const fallbackUrl = `https://www.raycast.com/api/extension-og?handle=${encodeURIComponent(handle)}&name=${encodeURIComponent(name)}`;
+              console.log(
+                `[resolveOpenGraphImage] Используем Raycast fallback: ${fallbackUrl}`,
+              );
+              return fallbackUrl;
             }
-        } catch (e) {
-            console.log(`[resolveOpenGraphImage] Ошибка при создании Raycast fallback: ${e.message}`);
+          }
+        } catch (error) {
+          console.log(
+            `[resolveOpenGraphImage] Ошибка при создании Raycast fallback: ${error.message}`,
+          );
         }
 
         // Fallback: сервис, который умеет вытаскивать og-image/сделать скриншот
@@ -880,7 +941,7 @@ if (require.main === module) {
             console.log(`🔗 Open in browser: ${url}`);
           }
         });
-      } catch (e) {
+      } catch (error) {
         console.log(`🔗 Open in browser: ${url}`);
       }
 

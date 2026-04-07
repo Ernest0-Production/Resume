@@ -66,7 +66,11 @@ function localizeResumeData(data, lang) {
                         });
                     } else {
                         // Simple array, trim strings
-                        targetObj[key] = value.map(v => typeof v === 'string' ? v.trim() : v);
+                        targetObj[key] = value.map((element) =>
+                          typeof element === "string"
+                            ? element.trim()
+                            : element,
+                        );
                     }
                 } else if (typeof value === 'object' && value !== null) {
                     // Nested object
@@ -88,15 +92,17 @@ function localizeResumeData(data, lang) {
  * Wait for server to be ready
  */
 async function waitForServer(url, maxAttempts = 30) {
-    for (let i = 0; i < maxAttempts; i++) {
-        try {
-            await fetch(url);
-            console.log(`✅ Server is ready at ${url}`);
-            return true;
-        } catch (error) {
-            console.log(`⏳ Waiting for server... (attempt ${i + 1}/${maxAttempts})`);
-            await new Promise(resolve => setTimeout(resolve, 1000));
-        }
+    for (let attemptIndex = 0; attemptIndex < maxAttempts; attemptIndex++) {
+      try {
+        await fetch(url);
+        console.log(`✅ Server is ready at ${url}`);
+        return true;
+      } catch (error) {
+        console.log(
+          `⏳ Waiting for server... (attempt ${attemptIndex + 1}/${maxAttempts})`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     }
     throw new Error(`Server did not start within ${maxAttempts} seconds`);
 }
@@ -135,45 +141,57 @@ async function generatePDF(browser, lang, view, outputDir) {
         // Ensure lazy images are loaded
         await page.evaluate(() => {
             try {
-                const imgs = Array.from(document.images || []);
-                imgs.forEach(img => {
-                    const loadingAttr = (img.getAttribute('loading') || '').toLowerCase();
-                    if (img.loading === 'lazy' || loadingAttr === 'lazy') {
-                        img.loading = 'eager';
-                        img.setAttribute('loading', 'eager');
-                        const src = img.currentSrc || img.src;
-                        if (src) img.src = src;
-                    }
-                });
-            } catch (e) {
-                // Ignore
+              const imgs = Array.from(document.images || []);
+              imgs.forEach((imageElement) => {
+                const loadingAttr = (
+                  imageElement.getAttribute("loading") || ""
+                ).toLowerCase();
+                if (imageElement.loading === "lazy" || loadingAttr === "lazy") {
+                  imageElement.loading = "eager";
+                  imageElement.setAttribute("loading", "eager");
+                  const src = imageElement.currentSrc || imageElement.src;
+                  if (src) imageElement.src = src;
+                }
+              });
+            } catch (error) {
+              // Ignore
             }
         });
 
         // Scroll through the page to trigger lazy loading
         await page.evaluate(async () => {
-            const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-            const total = Math.max(
-                document.body?.scrollHeight || 0,
-                document.documentElement?.scrollHeight || 0
-            );
-            const step = Math.max(window.innerHeight || 800, 400);
-            for (let y = 0; y <= total; y += step) {
-                window.scrollTo(0, y);
-                await sleep(50);
-            }
-            window.scrollTo(0, 0);
+          const total = Math.max(
+            document.body?.scrollHeight || 0,
+            document.documentElement?.scrollHeight || 0,
+          );
+          const step = Math.max(window.innerHeight || 800, 400);
+          for (
+            let scrollPosition = 0;
+            scrollPosition <= total;
+            scrollPosition += step
+          ) {
+            window.scrollTo(0, scrollPosition);
+            await new Promise((resolve) => setTimeout(resolve, 50));
+          }
+          window.scrollTo(0, 0);
         });
 
         // Wait for images to load
         await page.evaluate(() => {
             return Promise.all(
-                Array.from(document.images || [])
-                    .filter(img => !img.complete)
-                    .map(img => new Promise((resolve) => {
-                        img.addEventListener('load', resolve, { once: true });
-                        img.addEventListener('error', resolve, { once: true });
-                    }))
+              Array.from(document.images || [])
+                .filter((imageElement) => !imageElement.complete)
+                .map(
+                  (imageElement) =>
+                    new Promise((resolve) => {
+                      imageElement.addEventListener("load", resolve, {
+                        once: true,
+                      });
+                      imageElement.addEventListener("error", resolve, {
+                        once: true,
+                      });
+                    }),
+                ),
             );
         });
 
