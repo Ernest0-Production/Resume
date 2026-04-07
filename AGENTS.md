@@ -7,4 +7,6 @@
 
 - Repository is a resume generator with `resume.toml` as the main data source.
 - There are HR/user-friendly and ATS-friendly resume views/layouts, and the site supports a dark theme (including Dark Reader opt-out via `darkreader-lock` meta).
+- The project is assumed to run on macOS (ok to rely on `pbcopy` and avoid `process.platform` branching).
+- The project must be developed with GitHub Pages static hosting constraints in mind (no required server-side runtime in production; assets/links must work under a repo subpath/base URL).
 

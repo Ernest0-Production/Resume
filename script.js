@@ -54,6 +54,25 @@ function parseFormatting(text) {
 }
 
 /**
+ * Parse text formatting without rendering markdown links as <a>.
+ * Keeps link titles as plain text to avoid nested anchors.
+ */
+function parseFormattingNoLinks(text) {
+    if (!text) return '';
+
+    // Remove markdown links: [title](url) -> title
+    let formatted = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
+
+    formatted = formatted
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/__([^_]+)__/g, '<u>$1</u>')
+        .replace(/\n/g, '<br>');
+
+    return formatted;
+}
+
+/**
  * Convert bullet point markers (-, •, *, etc.) to HTML list tags (<ul><li>)
  * Supports various bullet markers: -, •, *, ◦, ▪, ▫
  * Also supports numbered lists (1., 2., etc.) which are converted to <ol><li>
@@ -119,6 +138,69 @@ function parseLists(text) {
     flushList(); // Flush any remaining list
 
     return result.join('');
+}
+
+function parseListsNoLinks(text) {
+  if (!text) return "";
+
+  const lines = text.split("\n");
+  const result = [];
+  let currentList = [];
+  let inList = false;
+  let isNumberedList = false;
+
+  function flushList() {
+    if (currentList.length > 0) {
+      const listItems = currentList
+        .map((item) => {
+          let cleaned;
+          if (isNumberedList) {
+            cleaned = item.replace(/^[\s]*\d+\.\s*/, "").trim();
+          } else {
+            cleaned = item.replace(/^[\s]*[-•*◦▪▫]\s*/, "").trim();
+          }
+          return `<li>${parseFormattingNoLinks(cleaned)}</li>`;
+        })
+        .join("");
+      const listTag = isNumberedList ? "ol" : "ul";
+      result.push(`<${listTag}>${listItems}</${listTag}>`);
+      currentList = [];
+    }
+    inList = false;
+    isNumberedList = false;
+  }
+
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+    const isBulletListItem = /^[-•*◦▪▫]\s+/.test(trimmed);
+    const isNumberedListItem = /^\d+\.\s+/.test(trimmed);
+
+    if (isBulletListItem || isNumberedListItem) {
+      if (
+        inList &&
+        ((isNumberedListItem && !isNumberedList) ||
+          (isBulletListItem && isNumberedList))
+      ) {
+        flushList();
+      }
+
+      if (!inList) {
+        inList = true;
+        isNumberedList = isNumberedListItem;
+      }
+      currentList.push(trimmed);
+    } else {
+      flushList();
+      if (trimmed) {
+        result.push(`<p>${parseFormattingNoLinks(trimmed)}</p>`);
+      } else {
+        result.push("<br>");
+      }
+    }
+  });
+
+  flushList();
+  return result.join("");
 }
 
 /**
@@ -1401,11 +1483,16 @@ function renderExperience(data) {
 
         return `
             <div class="experience-item">
-                <div class="experience-header">
+                ${
+                  safeCompanyUrl
+                    ? `<a class="experience-header experience-header--link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">`
+                    : `<div class="experience-header">`
+                }
                     <div class="experience-title-row">
-                        ${
-                          safeCompanyUrl
-                            ? `<div class="experience-title-row__left experience-company-block experience-company-block--link" role="link" tabindex="0" data-company-url="${safeCompanyUrl}">
+                        <div class="experience-title-row__left">
+                            ${
+                              safeCompanyUrl
+                                ? `
                                   <span class="experience-company__favicon-wrap" aria-hidden="true">
                                     <img
                                       src="${getFaviconUrl(safeCompanyUrl)}"
@@ -1418,14 +1505,12 @@ function renderExperience(data) {
                                     >
                                     <span class="iconify experience-company__favicon-fallback" data-icon="mdi:link-variant" aria-hidden="true" style="display: none;"></span>
                                   </span>
-                                  <span class="experience-company experience-company--link">${exp.company}</span>
-                                  <div class="experience-position">${exp.position}</div>
-                               </div>`
-                            : `<div class="experience-title-row__left">
-                                  <div class="experience-company">${exp.company}</div>
-                                  <div class="experience-position">${exp.position}</div>
-                               </div>`
-                        }
+                                `
+                                : ""
+                            }
+                            <div class="experience-company">${exp.company}</div>
+                            <div class="experience-position">${exp.position}</div>
+                        </div>
                         <div class="experience-meta">
                             <span class="icon">
                                 <span class="iconify" data-icon="mdi:calendar"></span>
@@ -1433,14 +1518,8 @@ function renderExperience(data) {
                             <span>${exp.period}</span>
                         </div>
                     </div>
-                    ${
-                      exp.about && safeCompanyUrl
-                        ? `<div class="experience-about experience-company-block experience-company-block--link" role="link" tabindex="0" data-company-url="${safeCompanyUrl}">${parseLists(exp.about)}</div>`
-                        : exp.about
-                          ? `<div class="experience-about">${parseLists(exp.about)}</div>`
-                          : ""
-                    }
-                </div>
+                    ${exp.about ? `<div class="experience-about">${safeCompanyUrl ? parseListsNoLinks(exp.about) : parseLists(exp.about)}</div>` : ""}
+                ${safeCompanyUrl ? `</a>` : `</div>`}
                 <div class="experience-content">
                     <div class="experience-responsibilities">
                         ${parseLists(exp.responsibilities)}
@@ -1467,37 +1546,6 @@ function renderExperience(data) {
             </div>
         `;
     }).join('');
-
-    if (experienceElement && !experienceElement.dataset.companyBlockLinkBound) {
-      experienceElement.dataset.companyBlockLinkBound = "true";
-
-      experienceElement.addEventListener("click", (event) => {
-        const target = event.target;
-        if (!(target instanceof Element)) return;
-        if (target.closest("a")) return;
-
-        const block = target.closest(".experience-company-block--link");
-        if (!block) return;
-        const url = block.getAttribute("data-company-url");
-        if (!url) return;
-
-        window.open(url, "_blank", "noopener,noreferrer");
-      });
-
-      experienceElement.addEventListener("keydown", (event) => {
-        const target = event.target;
-        if (!(target instanceof Element)) return;
-        const block = target.closest(".experience-company-block--link");
-        if (!block) return;
-
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-
-        const url = block.getAttribute("data-company-url");
-        if (!url) return;
-        window.open(url, "_blank", "noopener,noreferrer");
-      });
-    }
 
     // Adjust links position after rendering and images load
     // Use setTimeout to ensure DOM is fully rendered

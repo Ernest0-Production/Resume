@@ -107,10 +107,6 @@
           typeof companyUrlRaw === "string" ? companyUrlRaw.trim() : "";
         const safeCompanyUrl = companyUrl ? escapeHTML(companyUrl) : "";
         const companyHTML = `<span class="ats-experience__company">${company}</span>`;
-        const companyWrapperTag = safeCompanyUrl ? "a" : "span";
-        const companyWrapperAttrs = safeCompanyUrl
-          ? ` class="ats-experience__company-wrapper ats-experience__company-wrapper--link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer"`
-          : ` class="ats-experience__company-wrapper"`;
         const aboutText = stripMarkdownSyntax((exp.about || '').replace(/\n+/g, ' '))
             .replace(/\s+/g, ' ')
             .trim();
@@ -131,17 +127,28 @@
             </div>`;
         }
 
+        const companyRowInner = `
+                <span class="ats-experience__company-wrapper">
+                    <span class="iconify ats-experience__company-icon" data-icon="mdi:flag-variant" aria-hidden="true"></span>
+                    ${companyHTML}
+                    ${position ? ` <span class="ats-experience__separator">•</span> <span class="ats-experience__position">${position}</span>` : ""}
+                </span>
+                ${period ? `<span class="ats-experience__period">${period}</span>` : ""}`;
+
+        const aboutRowHTML = aboutText
+          ? `<div class="ats-experience__row"><span class="ats-experience__company-about">${escapeHTML(aboutText)}</span></div>`
+          : "";
+
+        const experienceHeaderHTML = safeCompanyUrl
+          ? `<a class="ats-experience__header-link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">
+                <div class="ats-experience__row ats-experience__row--company">${companyRowInner}</div>
+                ${aboutRowHTML}
+            </a>`
+          : `<div class="ats-experience__row ats-experience__row--company">${companyRowInner}</div>${aboutRowHTML}`;
+
         return `
             <article class="ats-experience__item">
-                <div class="ats-experience__row ats-experience__row--company">
-                    <${companyWrapperTag}${companyWrapperAttrs}>
-                        <span class="iconify ats-experience__company-icon" data-icon="mdi:flag-variant" aria-hidden="true"></span>
-                        ${companyHTML}
-                        ${position ? ` <span class="ats-experience__separator">•</span> <span class="ats-experience__position">${position}</span>` : ""}
-                    </${companyWrapperTag}>
-                    ${period ? `<span class="ats-experience__period">${period}</span>` : ""}
-                </div>
-                ${aboutText ? `<div class="ats-experience__row"><span class="ats-experience__company-about">${escapeHTML(aboutText)}</span></div>` : ""}
+                ${experienceHeaderHTML}
                 ${responsibilitiesHTML}
                 ${achievementsHTML}
             </article>

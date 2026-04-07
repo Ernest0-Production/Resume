@@ -1174,36 +1174,39 @@ u {
     break-after: avoid;
 }
 
-.experience-company--link {
-    display: inline;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-.experience-company-block--link {
-    cursor: pointer;
+.experience-header--link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
 }
 
-.experience-company-block--link:focus-visible {
+/* Перебить глобальное `a:hover { text-decoration: underline }` — иначе линия на всём блоке (в т.ч. у даты). */
+a.experience-header--link:hover {
+    text-decoration: none;
+}
+
+.experience-header--link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
     border-radius: 6px;
 }
 
-/* Unified underline across title+subtitle blocks */
-.experience-header:has(.experience-company-block--link:hover) .experience-company-block--link,
-.experience-header:has(.experience-company-block--link:hover) .experience-company-block--link * {
+/* Не подчёркивать сам <a> — иначе линия тянется на всю ширину блока (включая дату справа). */
+.experience-header--link:hover .experience-title-row__left,
+.experience-header--link:hover .experience-title-row__left *,
+.experience-header--link:hover .experience-about,
+.experience-header--link:hover .experience-about * {
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
     text-decoration-color: currentColor;
 }
 
-.experience-header:has(.experience-company-block--link:hover) .experience-company__favicon,
-.experience-header:has(.experience-company-block--link:hover) .experience-company__favicon-fallback,
-.experience-header:has(.experience-company-block--link:hover) .experience-company__favicon-wrap,
-.experience-header:has(.experience-company-block--link:hover) .iconify,
-.experience-header:has(.experience-company-block--link:hover) img {
+.experience-header--link:hover .experience-title-row__left .experience-company__favicon,
+.experience-header--link:hover .experience-title-row__left .experience-company__favicon-fallback,
+.experience-header--link:hover .experience-title-row__left .experience-company__favicon-wrap,
+.experience-header--link:hover .experience-title-row__left .iconify,
+.experience-header--link:hover .experience-title-row__left img {
     text-decoration: none;
 }
     .experience-company__favicon-wrap {

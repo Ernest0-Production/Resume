@@ -264,20 +264,40 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     gap: 6px;
 }
 
-.ats-experience__company-wrapper--link {
-    text-decoration: none;
+/* Один нативный <a> на компанию + сабтайтл (как Human Friendly); перебиваем глобальное a:hover из styles.hr.css */
+.ats-experience__header-link {
+    display: block;
     color: inherit;
-    cursor: pointer;
+    text-decoration: none;
 }
 
-.ats-experience__company-wrapper--link:hover .ats-experience__company {
-    text-decoration: underline;
+a.ats-experience__header-link:hover {
+    text-decoration: none;
 }
 
-.ats-experience__company-wrapper--link:focus-visible {
+.ats-experience__header-link:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 2px;
     border-radius: 3px;
+}
+.ats-experience__header-link:hover .ats-experience__company-wrapper,
+.ats-experience__header-link:hover .ats-experience__company-wrapper *,
+.ats-experience__header-link:hover .ats-experience__company-about,
+.ats-experience__header-link:hover .ats-experience__company-about * {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    text-decoration-color: currentColor;
+}
+
+.ats-experience__header-link:hover .ats-experience__company-icon,
+.ats-experience__header-link:hover .ats-experience__company-wrapper .iconify {
+    text-decoration: none;
+}
+
+.ats-experience__header-link:hover .ats-experience__period,
+.ats-experience__header-link:hover .ats-experience__period * {
+    text-decoration: none;
 }
 .ats-experience__company-icon {
     width: 14px;
