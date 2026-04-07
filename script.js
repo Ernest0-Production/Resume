@@ -513,17 +513,28 @@ function initThemeToggle() {
 
 // ==================== Language Switcher Config ====================
 
+/**
+ * True when the page is served by the local dev server (server.js) that exposes /api/*.
+ * GitHub Pages project sites must not use root-absolute /api (it targets the wrong path).
+ */
+function isLocalDevResumeServer() {
+    try {
+        const h = window.location.hostname;
+        return h === 'localhost' || h === '127.0.0.1' || h === '[::1]';
+    } catch (e) {
+        return false;
+    }
+}
+
 const LANGUAGE_STORAGE_KEY = 'cv-generator-language';
 const LANGUAGE_CONFIG = {
     ru: {
         label: '🇷🇺 RUS',
-        path: '/api/resume?lang=ru',
         staticPath: 'data/resume-ru.json',
         htmlLang: 'ru',
     },
     en: {
         label: '🇬🇧 ENG',
-        path: '/api/resume?lang=en',
         staticPath: 'data/resume-en.json',
         htmlLang: 'en',
     },
@@ -947,14 +958,17 @@ function getDomainFromUrl(url) {
  * Build preview image URL (falls back to favicon)
  */
 function getPreviewImageUrl(url) {
-    // Universal path: the server will redirect to the actual Open Graph image
-    // or a safe fallback (screenshot) — no domain-specific hacks required.
-    const encodedUrl = encodeURIComponent(url);
-    const previewUrl = `/api/og-image?url=${encodedUrl}`;
-    console.log(`[getPreviewImageUrl] Исходный URL: ${url}`);
-    console.log(`[getPreviewImageUrl] Закодированный URL: ${encodedUrl}`);
-    console.log(`[getPreviewImageUrl] Итоговый preview URL: ${previewUrl}`);
-    return previewUrl;
+    // Local dev: server resolves OG image or screenshot via /api/og-image.
+    // Static hosting: no API — use the same favicon-based preview as link tags.
+    if (isLocalDevResumeServer()) {
+        const encodedUrl = encodeURIComponent(url);
+        const previewUrl = `/api/og-image?url=${encodedUrl}`;
+        console.log(`[getPreviewImageUrl] Исходный URL: ${url}`);
+        console.log(`[getPreviewImageUrl] Закодированный URL: ${encodedUrl}`);
+        console.log(`[getPreviewImageUrl] Итоговый preview URL: ${previewUrl}`);
+        return previewUrl;
+    }
+    return getFaviconUrl(url);
 }
 
 /**
@@ -1756,12 +1770,17 @@ async function loadResumeData(language = currentLanguage) {
     const config = getLanguageConfig(language);
 
     try {
-        // Try API first (for local development), fallback to static JSON (for GitHub Pages)
-        let response = await fetch(config.path, { cache: 'no-cache' }).catch(() => null);
+        // Local dev: try API first; static hosting (GitHub Pages): use JSON from /data only
+        let response = null;
+        if (isLocalDevResumeServer()) {
+            const apiUrl = `/api/resume?lang=${encodeURIComponent(language)}`;
+            response = await fetch(apiUrl, { cache: 'no-cache' }).catch(() => null);
+        }
 
         if (!response || !response.ok) {
-            // Fallback to static JSON file
-            console.log(`API unavailable, trying static file: ${config.staticPath}`);
+            if (isLocalDevResumeServer()) {
+                console.log(`API unavailable, trying static file: ${config.staticPath}`);
+            }
             response = await fetch(config.staticPath, { cache: 'no-cache' }).catch((fetchError) => {
                 console.error(`Failed to fetch static file ${config.staticPath}:`, fetchError);
                 throw new Error(`Failed to load resume data from ${config.staticPath}. Make sure the file exists and the build process completed successfully.`);
@@ -1825,8 +1844,14 @@ async function loadResumeData(language = currentLanguage) {
         console.log('Resume data loaded successfully!');
     } catch (error) {
         console.error(`Error loading resume data for language "${language}":`, error);
-        console.error(`Tried API: ${config.path}`);
+        if (isLocalDevResumeServer()) {
+            console.error(`Tried API: /api/resume?lang=${language}`);
+        }
         console.error(`Tried static file: ${config.staticPath}`);
+
+        const apiLine = isLocalDevResumeServer()
+            ? `<li>API: /api/resume?lang=${language}</li>`
+            : '';
 
         // Show error message to user
         document.body.innerHTML = `
@@ -1834,7 +1859,7 @@ async function loadResumeData(language = currentLanguage) {
                 <h1 style="color: #E53935;">Error Loading Resume</h1>
                 <p>Could not load resume data. Tried:</p>
                 <ul style="text-align: left; display: inline-block; color: #666;">
-                    <li>API: ${config.path}</li>
+                    ${apiLine}
                     <li>Static file: ${config.staticPath}</li>
                 </ul>
                 <p style="color: #666; font-size: 14px; margin-top: 20px;">Error: ${error.message}</p>

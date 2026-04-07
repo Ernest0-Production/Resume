@@ -58,7 +58,8 @@
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:type" content="profile">
-    <meta property="og:url" content="https://ernest0n.github.io/cv-generator/">
+    <!-- og:url / og:image: canonical URLs set on load (GitHub Pages project base path) -->
+    <meta property="og:url" content="">
     <meta property="profile:first_name" content="">
     <meta property="profile:last_name" content="">
 
@@ -87,21 +88,49 @@
     </script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <script>
-        // Update OpenGraph meta tags from resume.toml (English version)
+        function isLocalDevResumeServer() {
+            const h = location.hostname;
+            return h === 'localhost' || h === '127.0.0.1' || h === '[::1]';
+        }
+
+        function updateMetaTag(attr, value, content) {
+            const selector = `meta[${attr}="${value}"]`;
+            const metaTag = document.querySelector(selector);
+            if (metaTag) {
+                metaTag.setAttribute('content', content);
+            }
+        }
+
+        // Canonical page URL and absolute og:image for crawlers (works under any repo base path)
+        (function setCanonicalSharingMeta() {
+            try {
+                const canonicalPage = new URL(location.pathname + location.search, location.origin).href;
+                const ogImageAbs = new URL('og-image.png', location.href).href;
+                updateMetaTag('property', 'og:url', canonicalPage);
+                updateMetaTag('property', 'og:image', ogImageAbs);
+                updateMetaTag('name', 'twitter:image', ogImageAbs);
+            } catch (e) {
+                // Ignore
+            }
+        })();
+
+        // Update OpenGraph meta tags from resume data (English) — API only on local dev
         async function updateOpenGraphMetaTags() {
             try {
-                const response = await fetch('/api/resume?lang=en');
-                if (!response.ok) {
-                    // Try static file as fallback
+                let data;
+                if (isLocalDevResumeServer()) {
+                    const response = await fetch('/api/resume?lang=en');
+                    if (response.ok) {
+                        data = await response.json();
+                    }
+                }
+                if (!data) {
                     const staticResponse = await fetch('data/resume-en.json');
                     if (!staticResponse.ok) {
                         throw new Error(`HTTP error! status: ${staticResponse.status}`);
                     }
-                    const data = await staticResponse.json();
-                    updateMetaTags(data);
-                    return;
+                    data = await staticResponse.json();
                 }
-                const data = await response.json();
                 updateMetaTags(data);
             } catch (error) {
                 console.error('Error loading resume data for OpenGraph meta tags:', error);
@@ -147,14 +176,6 @@
                 document.title = `${fullName} - ${jobTitle}`;
             } else if (fullName) {
                 document.title = `${fullName} - Resume`;
-            }
-        }
-
-        function updateMetaTag(attr, value, content) {
-            const selector = `meta[${attr}="${value}"]`;
-            const metaTag = document.querySelector(selector);
-            if (metaTag) {
-                metaTag.setAttribute('content', content);
             }
         }
 

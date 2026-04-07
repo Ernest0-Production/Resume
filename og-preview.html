@@ -270,13 +270,17 @@
             return `https://www.google.com/s2/favicons?sz=32&domain_url=${encoded}`;
         }
 
-        // Load resume data from static JSON first (fallback to API in dev)
+        function isLocalDevResumeServer() {
+            const h = location.hostname;
+            return h === 'localhost' || h === '127.0.0.1' || h === '[::1]';
+        }
+
+        // Load resume data: static JSON (GitHub Pages); optional API on local dev only
         async function loadResumeData() {
-            const sources = [
-                'data/resume-en.json',
-                '/data/resume-en.json',
-                '/api/resume?lang=en',
-            ];
+            const sources = ['data/resume-en.json'];
+            if (isLocalDevResumeServer()) {
+                sources.push('/api/resume?lang=en');
+            }
 
             for (const url of sources) {
                 try {
