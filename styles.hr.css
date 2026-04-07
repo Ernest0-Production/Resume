@@ -1157,9 +1157,10 @@ u {
 }
 
 .experience-position {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--color-black);
+    line-height: 1.2;
     page-break-after: avoid;
     break-after: avoid;
 }
@@ -1168,6 +1169,7 @@ u {
     font-size: 18px;
     font-weight: 600;
     color: var(--color-accent);
+    line-height: 1.2;
     page-break-after: avoid;
     break-after: avoid;
 }
@@ -1177,7 +1179,7 @@ u {
         text-decoration: none;
         cursor: pointer;
     }
-    
+
     .experience-company__favicon-wrap {
     display: inline-flex;
     align-items: center;
