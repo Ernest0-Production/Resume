@@ -1406,7 +1406,19 @@ function renderExperience(data) {
                         <div class="experience-title-row__left">
                             ${
                               safeCompanyUrl
-                                ? `<a class="experience-company experience-company--link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">${exp.company}</a>`
+                                ? `<a class="experience-company experience-company--link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">
+                                    <img
+                                        src="${getFaviconUrl(safeCompanyUrl)}"
+                                        alt="Favicon of ${getDomainFromUrl(safeCompanyUrl)}"
+                                        class="experience-company__favicon"
+                                        loading="eager"
+                                        decoding="async"
+                                        referrerpolicy="no-referrer"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+                                    >
+                                    <span class="iconify experience-company__favicon-fallback" data-icon="mdi:link-variant" aria-hidden="true" style="display: none;"></span>
+                                    ${exp.company}
+                                </a>`
                                 : `<div class="experience-company">${exp.company}</div>`
                             }
                             <div class="experience-position">${exp.position}</div>

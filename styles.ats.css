@@ -264,6 +264,21 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     gap: 6px;
 }
 
+.ats-experience__company-wrapper--link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.ats-experience__company-wrapper--link:hover .ats-experience__company {
+    text-decoration: underline;
+}
+
+.ats-experience__company-wrapper--link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 3px;
+}
 .ats-experience__company-icon {
     width: 14px;
     height: 14px;

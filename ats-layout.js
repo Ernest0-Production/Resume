@@ -106,9 +106,11 @@
         const companyUrl =
           typeof companyUrlRaw === "string" ? companyUrlRaw.trim() : "";
         const safeCompanyUrl = companyUrl ? escapeHTML(companyUrl) : "";
-        const companyHTML = safeCompanyUrl
-          ? `<a class="ats-experience__company ats-experience__company-link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">${company}</a>`
-          : `<span class="ats-experience__company">${company}</span>`;
+        const companyHTML = `<span class="ats-experience__company">${company}</span>`;
+        const companyWrapperTag = safeCompanyUrl ? "a" : "span";
+        const companyWrapperAttrs = safeCompanyUrl
+          ? ` class="ats-experience__company-wrapper ats-experience__company-wrapper--link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer"`
+          : ` class="ats-experience__company-wrapper"`;
         const aboutText = stripMarkdownSyntax((exp.about || '').replace(/\n+/g, ' '))
             .replace(/\s+/g, ' ')
             .trim();
@@ -132,11 +134,11 @@
         return `
             <article class="ats-experience__item">
                 <div class="ats-experience__row ats-experience__row--company">
-                    <span class="ats-experience__company-wrapper">
+                    <${companyWrapperTag}${companyWrapperAttrs}>
                         <span class="iconify ats-experience__company-icon" data-icon="mdi:flag-variant" aria-hidden="true"></span>
                         ${companyHTML}
                         ${position ? ` <span class="ats-experience__separator">•</span> <span class="ats-experience__position">${position}</span>` : ""}
-                    </span>
+                    </${companyWrapperTag}>
                     ${period ? `<span class="ats-experience__period">${period}</span>` : ""}
                 </div>
                 ${aboutText ? `<div class="ats-experience__row"><span class="ats-experience__company-about">${escapeHTML(aboutText)}</span></div>` : ""}
