@@ -131,9 +131,8 @@ category = "DevOps & Infrastructure"
 keywords = [
     "CocoaPods",
     "SPM",
-    "Tuist",
-    "Fastlane",
-    "Ruby",
+    "Tuist / XcodeGen",
+    "Ruby / Fastlane",
     "Bash",
     "SwiftGen",
     "SwiftLint",
