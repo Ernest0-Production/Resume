@@ -1174,47 +1174,93 @@ u {
     break-after: avoid;
 }
 
-.experience-header--link {
-    display: block;
-    color: inherit;
+/* Один интерактивный элемент на весь заголовок: визуально тот же UI, без «матрёшки» из <a> вокруг блоков — клик/hover идут на stretch-link. */
+.experience-header--has-site-link {
+    position: relative;
+    isolation: isolate;
+}
+
+a.experience-header__stretch-link {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     text-decoration: none;
 }
 
-/* Перебить глобальное `a:hover { text-decoration: underline }` — иначе линия на всём блоке (в т.ч. у даты). */
-a.experience-header--link:hover {
-    text-decoration: none;
-}
-
-.experience-header--link:focus-visible {
+a.experience-header__stretch-link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
     border-radius: 6px;
 }
 
-/* Не подчёркивать сам <a> — иначе линия тянется на всю ширину блока (включая дату справа). */
-.experience-header--link:hover .experience-title-row__left,
-.experience-header--link:hover .experience-title-row__left *,
-.experience-header--link:hover .experience-about,
-.experience-header--link:hover .experience-about * {
+.experience-header__surface {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.experience-header__surface a,
+.experience-header__surface button {
+    pointer-events: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.experience-header__stretch-link-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Перебить глобальное `a:hover { text-decoration: underline }` — подчёркивание только у текста, не у «простыни» ссылки. */
+a.experience-header__stretch-link:hover,
+a.experience-header__stretch-link:focus-visible {
+    text-decoration: none;
+}
+
+.experience-header--has-site-link:hover .experience-title-row__left,
+.experience-header--has-site-link:hover .experience-title-row__left *,
+.experience-header--has-site-link:hover .experience-about,
+.experience-header--has-site-link:hover .experience-about *,
+.experience-header--has-site-link:focus-within .experience-title-row__left,
+.experience-header--has-site-link:focus-within .experience-title-row__left *,
+.experience-header--has-site-link:focus-within .experience-about,
+.experience-header--has-site-link:focus-within .experience-about * {
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
     text-decoration-color: currentColor;
 }
 
-.experience-header--link:hover .experience-title-row__left .experience-company__favicon,
-.experience-header--link:hover .experience-title-row__left .experience-company__favicon-fallback,
-.experience-header--link:hover .experience-title-row__left .experience-company__favicon-wrap,
-.experience-header--link:hover .experience-title-row__left .iconify,
-.experience-header--link:hover .experience-title-row__left img {
+.experience-header--has-site-link:hover .experience-title-row__left .experience-company__favicon,
+.experience-header--has-site-link:hover .experience-title-row__left .experience-company__favicon-fallback,
+.experience-header--has-site-link:hover .experience-title-row__left .experience-company__favicon-wrap,
+.experience-header--has-site-link:hover .experience-title-row__left .iconify,
+.experience-header--has-site-link:hover .experience-title-row__left img,
+.experience-header--has-site-link:focus-within .experience-title-row__left .experience-company__favicon,
+.experience-header--has-site-link:focus-within .experience-title-row__left .experience-company__favicon-fallback,
+.experience-header--has-site-link:focus-within .experience-title-row__left .experience-company__favicon-wrap,
+.experience-header--has-site-link:focus-within .experience-title-row__left .iconify,
+.experience-header--has-site-link:focus-within .experience-title-row__left img {
     text-decoration: none;
 }
-    .experience-company__favicon-wrap {
+
+.experience-header--has-site-link:hover .experience-company__favicon-wrap,
+.experience-header--has-site-link:focus-within .experience-company__favicon-wrap {
+    opacity: 1;
+}
+.experience-company__favicon-wrap {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-        width: 16px;
-        height: 16px;
+    width: 16px;
+    height: 16px;
         flex: 0 0 auto;
         align-self: center;
         opacity: 0.9;
@@ -1235,19 +1281,6 @@ a.experience-header--link:hover {
     display: block;
     border-radius: 4px;
     object-fit: contain;
-}
-
-.experience-company--link:hover {
-    text-decoration: underline;
-}
-
-.experience-title-row__left:hover .experience-company__favicon-wrap {
-    opacity: 1;
-}
-.experience-company--link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-    border-radius: 4px;
 }
 
 #extraSkillsSection .section-title {

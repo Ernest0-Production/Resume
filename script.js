@@ -1466,6 +1466,14 @@ function renderExperience(data) {
         const safeCompanyUrl = companyUrl
           ? companyUrl.replace(/"/g, "&quot;")
           : "";
+        const companyForAriaLabel = String(exp.company ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        const siteLinkStretchLabel =
+          currentLanguage === "ru"
+            ? `Открыть сайт: ${companyForAriaLabel}`
+            : `Open website: ${companyForAriaLabel}`;
 
         let linksHTML = '';
         if (exp.links && exp.links.length > 0) {
@@ -1499,7 +1507,11 @@ function renderExperience(data) {
             <div class="experience-item">
                 ${
                   safeCompanyUrl
-                    ? `<a class="experience-header experience-header--link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">`
+                    ? `<div class="experience-header experience-header--has-site-link">
+                    <a class="experience-header__stretch-link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">
+                      <span class="experience-header__stretch-link-label">${siteLinkStretchLabel}</span>
+                    </a>
+                    <div class="experience-header__surface">`
                     : `<div class="experience-header">`
                 }
                     <div class="experience-title-row">
@@ -1533,7 +1545,7 @@ function renderExperience(data) {
                         </div>
                     </div>
                     ${exp.about ? `<div class="experience-about">${safeCompanyUrl ? parseListsNoLinks(exp.about) : parseLists(exp.about)}</div>` : ""}
-                ${safeCompanyUrl ? `</a>` : `</div>`}
+                ${safeCompanyUrl ? `</div></div>` : `</div>`}
                 <div class="experience-content">
                     <div class="experience-responsibilities">
                         ${parseLists(exp.responsibilities)}
