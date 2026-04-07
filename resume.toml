@@ -196,6 +196,7 @@ keywords = ["Xcode", "Instruments", "Cursor", "Proxyman", "Charles", "Git"]
 [[experience]]
 position = "Senior iOS Developer • Infra Architect"
 company = "OKKO"
+url = "https://about.okko.tv"
 period = "Apr 2023 – Present"
 
 "about.ru" = "Онлайн-кинотеатр • стриминговый сервис • MAU > 35млн"
@@ -256,6 +257,7 @@ url = "https://apps.apple.com/ru/app/id448868000"
 [[experience]]
 position = "Senior iOS Developer • Founding Engineer"
 company = "OZON"
+url = "https://corp.ozon.com"
 period = "Feb 2022 – Apr 2023"
 
 "about.ru" = "БигТех • Маркетплейс • Логистика • MAU > 60млн"
@@ -317,6 +319,7 @@ url = "https://apps.apple.com/app/id407804998"
 [[experience]]
 position = "Senior iOS Developer"
 company = "BestDoctor"
+url = "https://bestdoctor.ru/about/"
 period = "Sep 2021 – Feb 2022"
 
 "about.ru" = "Стартап • Услуги мед.страхования сотрудников для бизнеса • Телемедицина • MAU > 30тыс"
@@ -362,6 +365,7 @@ url = "https://apps.apple.com/app/id1367539047"
 [[experience]]
 position = "Middle → Senior → Team Lead iOS Developer"
 company = "Binet"
+url = "https://bnet.su/en"
 period = "May 2019 – Sep 2021"
 
 "about.ru" = "Аутсорс • Разработка под ключ"

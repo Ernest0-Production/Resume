@@ -107,6 +107,7 @@ keywords    = ["skill1", "skill2", "..."]
 [[experience]]
 position = "Job title"
 company  = "Company name"
+url      = "https://company.com..."
 period   = "MM/YYYY - MM/YYYY"
 
 "about.ru" = "О компании/проекте"

@@ -862,28 +862,40 @@ function startServer(port = PORT, host = HOST) {
 // Only start server if this file is run directly (not imported as module)
 if (require.main === module) {
     startServer(PORT, HOST).then((serverInstance) => {
-        // Auto-open browser (optional - works on macOS)
-        if (process.platform === 'darwin') {
-            const { exec } = require('child_process');
-            exec(`open http://${HOST}:${PORT}/`, (error) => {
-                if (error) {
-                    console.log('Could not auto-open browser. Please open manually.');
-                }
-            });
-        }
+      // Copy server URL to clipboard (macOS) instead of auto-opening browser
+      const url = `http://${HOST}:${PORT}/`;
+      const { spawn } = require("child_process");
 
-        /**
-         * Handle graceful shutdown
-         */
-        process.on('SIGINT', () => {
-            console.log('\n\n👋 Shutting down server...');
-            serverInstance.close(() => {
-                console.log('✅ Server stopped successfully');
-                process.exit(0);
-            });
+      try {
+        const p = spawn("pbcopy");
+        p.on("error", () => {
+          console.log(`🔗 Open in browser: ${url}`);
         });
+        p.stdin.write(url);
+        p.stdin.end();
+        p.on("close", (code) => {
+          if (code === 0) {
+            console.log(`🔗 Server URL copied to clipboard: ${url}`);
+          } else {
+            console.log(`🔗 Open in browser: ${url}`);
+          }
+        });
+      } catch (e) {
+        console.log(`🔗 Open in browser: ${url}`);
+      }
+
+      /**
+       * Handle graceful shutdown
+       */
+      process.on("SIGINT", () => {
+        console.log("\n\n👋 Shutting down server...");
+        serverInstance.close(() => {
+          console.log("✅ Server stopped successfully");
+          process.exit(0);
+        });
+      });
     }).catch((err) => {
-        process.exit(1);
+      process.exit(1);
     });
 }
 

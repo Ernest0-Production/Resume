@@ -277,6 +277,21 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     color: #666666;
 }
 
+.ats-experience__company-link {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.ats-experience__company-link:hover {
+    text-decoration: underline;
+}
+
+.ats-experience__company-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
 .ats-experience__position {
     flex: 1 1 auto;
     font-family: 'Calibri', sans-serif;

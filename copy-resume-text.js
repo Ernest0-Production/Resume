@@ -22,24 +22,7 @@ function stripMarkdown(text) {
 }
 
 function copyToClipboard(value) {
-  if (process.platform === "darwin") {
-    return spawnSync("pbcopy", { input: value, encoding: "utf8" });
-  }
-
-  if (process.platform === "win32") {
-    return spawnSync("clip", { input: value, encoding: "utf8", shell: true });
-  }
-
-  const xclip = spawnSync("xclip", ["-selection", "clipboard"], {
-    input: value,
-    encoding: "utf8",
-  });
-  if (xclip.status === 0) return xclip;
-
-  return spawnSync("xsel", ["--clipboard", "--input"], {
-    input: value,
-    encoding: "utf8",
-  });
+  return spawnSync("pbcopy", { input: value, encoding: "utf8" });
 }
 
 function buildCompaniesText(experience) {

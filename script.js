@@ -1360,6 +1360,17 @@ function adjustExperienceLinksPosition() {
 function renderExperience(data) {
     const experienceElement = document.getElementById('experience');
     experienceElement.innerHTML = data.experience.map(exp => {
+        const companyUrlRaw =
+          exp &&
+          (exp.url ||
+            exp["company.url"] ||
+            (exp.company && (exp.company.url || exp.companyUrl)));
+        const companyUrl =
+          typeof companyUrlRaw === "string" ? companyUrlRaw.trim() : "";
+        const safeCompanyUrl = companyUrl
+          ? companyUrl.replace(/"/g, "&quot;")
+          : "";
+
         let linksHTML = '';
         if (exp.links && exp.links.length > 0) {
             linksHTML = `
@@ -1393,7 +1404,11 @@ function renderExperience(data) {
                 <div class="experience-header">
                     <div class="experience-title-row">
                         <div class="experience-title-row__left">
-                            <div class="experience-company">${exp.company}</div>
+                            ${
+                              safeCompanyUrl
+                                ? `<a class="experience-company experience-company--link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">${exp.company}</a>`
+                                : `<div class="experience-company">${exp.company}</div>`
+                            }
                             <div class="experience-position">${exp.position}</div>
                         </div>
                         <div class="experience-meta">
@@ -1403,25 +1418,29 @@ function renderExperience(data) {
                             <span>${exp.period}</span>
                         </div>
                     </div>
-                    ${exp.about ? `<div class="experience-about">${parseLists(exp.about)}</div>` : ''}
+                    ${exp.about ? `<div class="experience-about">${parseLists(exp.about)}</div>` : ""}
                 </div>
                 <div class="experience-content">
                     <div class="experience-responsibilities">
                         ${parseLists(exp.responsibilities)}
                     </div>
-                    ${exp.achievements ? `
+                    ${
+                      exp.achievements
+                        ? `
                         <div class="experience-achievements">
                             <div class="experience-achievements__header">
                                 <span class="icon">
                                     <span class="iconify" data-icon="mdi:trophy"></span>
                                 </span>
-                                <span class="experience-achievements__title">${currentLanguage === 'ru' ? 'Ключевые достижения' : 'Key Achievements'}</span>
+                                <span class="experience-achievements__title">${currentLanguage === "ru" ? "Ключевые достижения" : "Key Achievements"}</span>
                             </div>
                             <div class="experience-achievements__content">
                                 ${parseLists(exp.achievements)}
                             </div>
                         </div>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                 </div>
                 ${linksHTML}
             </div>

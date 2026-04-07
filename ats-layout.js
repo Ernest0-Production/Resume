@@ -98,6 +98,17 @@
 
     function renderAtsExperienceItem(exp = {}, language) {
         const company = escapeHTML(exp.company || '');
+        const companyUrlRaw =
+          exp &&
+          (exp.url ||
+            exp["company.url"] ||
+            (exp.company && (exp.company.url || exp.companyUrl)));
+        const companyUrl =
+          typeof companyUrlRaw === "string" ? companyUrlRaw.trim() : "";
+        const safeCompanyUrl = companyUrl ? escapeHTML(companyUrl) : "";
+        const companyHTML = safeCompanyUrl
+          ? `<a class="ats-experience__company ats-experience__company-link" href="${safeCompanyUrl}" target="_blank" rel="noopener noreferrer">${company}</a>`
+          : `<span class="ats-experience__company">${company}</span>`;
         const aboutText = stripMarkdownSyntax((exp.about || '').replace(/\n+/g, ' '))
             .replace(/\s+/g, ' ')
             .trim();
@@ -123,12 +134,12 @@
                 <div class="ats-experience__row ats-experience__row--company">
                     <span class="ats-experience__company-wrapper">
                         <span class="iconify ats-experience__company-icon" data-icon="mdi:flag-variant" aria-hidden="true"></span>
-                        <span class="ats-experience__company">${company}</span>
-                        ${position ? ` <span class="ats-experience__separator">•</span> <span class="ats-experience__position">${position}</span>` : ''}
+                        ${companyHTML}
+                        ${position ? ` <span class="ats-experience__separator">•</span> <span class="ats-experience__position">${position}</span>` : ""}
                     </span>
-                    ${period ? `<span class="ats-experience__period">${period}</span>` : ''}
+                    ${period ? `<span class="ats-experience__period">${period}</span>` : ""}
                 </div>
-                ${aboutText ? `<div class="ats-experience__row"><span class="ats-experience__company-about">${escapeHTML(aboutText)}</span></div>` : ''}
+                ${aboutText ? `<div class="ats-experience__row"><span class="ats-experience__company-about">${escapeHTML(aboutText)}</span></div>` : ""}
                 ${responsibilitiesHTML}
                 ${achievementsHTML}
             </article>
