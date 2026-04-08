@@ -122,8 +122,7 @@ keywords = [
     "SwiftUI",
     "GCD",
     "Swift Concurrency",
-    "Combine / RxSwift",
-    "XCTest",
+    "Combine / RxSwift"
 ]
 
 [[skills]]
@@ -185,7 +184,7 @@ keywords = [
 
 [[skills]]
 category = "Tools"
-keywords = ["Xcode", "Instruments", "Cursor", "Proxyman", "Charles", "Git"]
+keywords = ["Xcode", "Instruments", "Cursor", "Proxyman", "Charles", "Git", "Figma"]
 
 
 ############################################
