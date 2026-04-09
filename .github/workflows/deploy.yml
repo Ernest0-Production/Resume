@@ -38,7 +38,7 @@ jobs:
         run: npm run build
 
       - name: Generate PDFs
-        run: node generate-pdfs.js
+        run: npm run generate-pdfs
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

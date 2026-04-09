@@ -3,35 +3,24 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const TOML = require("@iarna/toml");
 
+const PROJECT_ROOT = path.join(__dirname, "..");
+
 function stripMarkdown(text) {
   if (typeof text !== "string") return "";
 
-  return (
-    text
-      // Remove markdown images ![alt](url)
-      .replace(/!\[[^\]]*]\([^)]*\)/g, "")
-      // Markdown links [label](url) -> label text only
-      .replace(/\[([^\]]+)]\(([^)]+)\)/g, "$1")
-      // Inline code `x` or ```x``` -> inner text
-      .replace(/`{1,3}([^`]+)`{1,3}/g, "$1")
-      // **bold** -> inner text
-      .replace(/\*\*([^*]+)\*\*/g, "$1")
-      // __bold__ -> inner text
-      .replace(/__([^_]+)__/g, "$1")
-      // *italic* -> inner text
-      .replace(/\*([^*]+)\*/g, "$1")
-      // _italic_ -> inner text
-      .replace(/_([^_]+)_/g, "$1")
-      // Blockquote prefix at line start
-      .replace(/^>\s?/gm, "")
-      // Markdown bullet line prefix (-, *, +)
-      .replace(/^[\t ]*[-*+]\s+/gm, "")
-      // CRLF -> LF
-      .replace(/\r\n/g, "\n")
-      // Collapse 3+ newlines to double newline
-      .replace(/\n{3,}/g, "\n\n")
-      .trim()
-  );
+  return text
+    .replace(/!\[[^\]]*]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)]\(([^)]+)\)/g, "$1")
+    .replace(/`{1,3}([^`]+)`{1,3}/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/_([^_]+)_/g, "$1")
+    .replace(/^>\s?/gm, "")
+    .replace(/^[\t ]*[-*+]\s+/gm, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function copyToClipboard(value) {
@@ -83,7 +72,7 @@ function buildIntroText(data) {
 }
 
 function main() {
-  const tomlPath = path.join(__dirname, "resume.toml");
+  const tomlPath = path.join(PROJECT_ROOT, "resume.toml");
   const content = fs.readFileSync(tomlPath, "utf8");
   const data = TOML.parse(content);
 

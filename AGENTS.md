@@ -5,7 +5,8 @@
 
 ## Learned Workspace Facts
 
-- Node scripts and `server.js` use `path-for-log.js` (`pathForLog`) so filesystem paths in console output are relative to `process.cwd()`, not absolute.
+- Node scripts, `server/`, and `tools/` use `path-for-log.js` (`pathForLog`) so filesystem paths in console output are relative to `process.cwd()`, not absolute.
+- CLI and build steps live under `tools/`; the HTTP server implementation lives under `server/` with a thin root `server.js` entry.
 - JavaScript style expectations for this repo (including descriptive names in callbacks and regex commentary on `replace` chains) live in `.cursor/skills/resume-javascript-style/SKILL.md`.
 - Repository is a resume generator with `resume.toml` as the main data source.
 - There are HR/user-friendly and ATS-friendly resume views/layouts, and the site supports a dark theme (including Dark Reader opt-out via `darkreader-lock` meta).

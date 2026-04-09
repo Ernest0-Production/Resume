@@ -206,13 +206,13 @@ cv-generator/
 ├── script.js           # Data loading and rendering logic
 ├── ats-layout.js       # ATS-friendly layout renderer
 ├── resume.toml         # Resume data
-├── server.js           # Local development server
-├── build.js            # Build script for JSON data generation
-├── generate-og-image.js # OpenGraph image generator
-├── generate-pdfs.js     # PDF generation script
+├── server.js           # Local dev server entry (delegates to server/)
+├── server/             # HTTP server implementation (API, static, PDF, OG)
+├── lib/                # Shared Node helpers (e.g. resume TOML localization)
+├── tools/              # CLI: build JSON, OG image, PDFs, copy resume text
 ├── og-preview.html     # OpenGraph preview template
 ├── package.json        # Project configuration
-└── README.md          # This file
+└── README.md           # This file
 ```
 
 
