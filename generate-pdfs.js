@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const TOML = require('@iarna/toml');
+const { pathForLog } = require("./path-for-log");
 
 // Import server functions
 const server = require('./server.js');
@@ -121,7 +122,7 @@ async function generatePDF(browser, lang, view, outputDir) {
 
     console.log(`📄 Generating PDF: ${lang}-${viewSuffix}`);
     console.log(`   URL: ${url}`);
-    console.log(`   Output: ${outputFile}`);
+    console.log(`   Output: ${pathForLog(outputFile)}`);
 
     const page = await browser.newPage();
 
@@ -213,7 +214,7 @@ async function generatePDF(browser, lang, view, outputDir) {
 
         // Save PDF to file
         fs.writeFileSync(outputFile, pdfBuffer);
-        console.log(`✅ Generated: ${outputFile}`);
+        console.log(`✅ Generated: ${pathForLog(outputFile)}`);
 
     } catch (error) {
         console.error(`❌ Error generating ${lang}-${viewSuffix} PDF:`, error.message);
@@ -271,7 +272,7 @@ async function generateAllPDFs() {
         }
 
         console.log('\n✅ All PDFs generated successfully!');
-        console.log(`📁 Output directory: ${outputDir}`);
+        console.log(`📁 Output directory: ${pathForLog(outputDir)}`);
 
     } catch (error) {
         console.error('❌ PDF generation failed:', error);

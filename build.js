@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const TOML = require('@iarna/toml');
+const { pathForLog } = require("./path-for-log");
 
 /**
  * Check if TOML data contains any language-specific fields (with .ru or .en suffix)
@@ -138,7 +139,7 @@ function build() {
         localized.hasMultilanguageFields = hasMultilang;
         const jsonPath = path.join(outputDir, `resume-${lang}.json`);
         fs.writeFileSync(jsonPath, JSON.stringify(localized, null, 2), 'utf8');
-        console.log(`✅ Generated ${jsonPath}`);
+        console.log(`✅ Generated ${pathForLog(jsonPath)}`);
     });
 
     console.log('\n✅ Build completed successfully!');

@@ -388,6 +388,7 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 • __Real-time__ онлайн-тестирование (олимпиада, учебные курсы, итп)
 • __Аудио-плеер__ для прослушивания подкастов, как в Spotify
 • __Offline-first__ режим приложения с помощью __Realm__
+• Интеграция __Billing__ сервисов и __In-app Purchases__
 • Оптимизация метрики __Hitch Rate__ и __CPU usage__ в in-house движке ArticleReader
 • Кастомные __анимации__ переходов между экранами
 """
@@ -396,6 +397,7 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 • __Real-time__ online testing (olympiad, educational courses, etc.)
 • __Audio-player__ for listening to podcasts, like in Spotify
 • __Offline-first__ mode of the application with __Realm__
+• Integration of __Billing__ services and __In-app Purchases__
 • Optimization of __Hitch Rate__ and __CPU usage__ of in-house ArticleReader engine
 • Custom __animations__ for transitions between screens
 """

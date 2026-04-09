@@ -6,6 +6,7 @@ const { URL } = require('url');
 const zlib = require('zlib');
 const puppeteer = require('puppeteer');
 const TOML = require('@iarna/toml');
+const { pathForLog } = require("./path-for-log");
 
 // Configuration
 const PORT = process.env.PORT || 3000;
@@ -897,7 +898,7 @@ function startServer(port = PORT, host = HOST) {
             console.log('📄 CV Generator Server Started');
             console.log('='.repeat(60));
             console.log(`🌐 Server running at: http://${host}:${port}/`);
-            console.log(`📁 Serving files from: ${__dirname}`);
+            console.log(`📁 Serving files from: ${pathForLog(__dirname)}`);
             console.log('');
             console.log('📝 To view your resume, open the URL above in your browser');
             console.log('📥 To export to PDF: Press Ctrl+P (Cmd+P on Mac) and select "Save as PDF"');

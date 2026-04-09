@@ -5,6 +5,8 @@
 
 ## Learned Workspace Facts
 
+- Node scripts and `server.js` use `path-for-log.js` (`pathForLog`) so filesystem paths in console output are relative to `process.cwd()`, not absolute.
+- JavaScript style expectations for this repo (including descriptive names in callbacks and regex commentary on `replace` chains) live in `.cursor/skills/resume-javascript-style/SKILL.md`.
 - Repository is a resume generator with `resume.toml` as the main data source.
 - There are HR/user-friendly and ATS-friendly resume views/layouts, and the site supports a dark theme (including Dark Reader opt-out via `darkreader-lock` meta).
 - The project is assumed to run on macOS (ok to rely on `pbcopy` and avoid `process.platform` branching).

@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const puppeteer = require('puppeteer');
+const { pathForLog } = require("./path-for-log");
 
 const MIME_TYPES = {
     '.html': 'text/html; charset=utf-8',
@@ -144,7 +145,7 @@ async function generateOgImage() {
     const outputPath = path.join(rootDir, 'og-image.png');
 
     if (!fs.existsSync(previewPath)) {
-        throw new Error(`Preview file not found: ${previewPath}`);
+        throw new Error(`Preview file not found: ${pathForLog(previewPath)}`);
     }
 
     if (!fs.existsSync(path.join(rootDir, 'data', 'resume-en.json'))) {
@@ -199,7 +200,9 @@ async function generateOgImage() {
             type: 'png',
         });
 
-        console.log(`✅ Generated OpenGraph image at ${outputPath}`);
+        console.log(
+          `✅ Generated OpenGraph image at ${pathForLog(outputPath)}`,
+        );
     } finally {
         await browser.close();
         if (server) {
