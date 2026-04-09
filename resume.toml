@@ -245,7 +245,8 @@ Oversaw the entire iOS department's infrastructure of **30 developers**:
 """
 
 [[experience.links]]
-title = "Okko: кино, сериалы, спорт, ТВ"
+"title.ru" = "Okko: кино, сериалы, спорт, ТВ"
+"title.en" = "Okko: movies, series, sports, TV"
 url = "https://apps.apple.com/ru/app/id448868000"
 
 ############################################
@@ -294,7 +295,8 @@ title = "Ozon Travel"
 url = "https://apps.apple.com/app/id959592459"
 
 [[experience.links]]
-title = "Ozon Курьер"
+"title.ru" = "Ozon Курьер"
+"title.en" = "OZON Courier"
 url = "https://apps.apple.com/app/id6458101936"
 
 [[experience.links]]
@@ -352,7 +354,8 @@ Participated in mobile application development in a team of **6 developers**:
 """
 
 [[experience.links]]
-title = "Лучи Здоровье"
+"title.ru" = "Лучи Здоровье"
+"title.en" = "Best Doctor"
 url = "https://apps.apple.com/app/id1367539047"
 
 
@@ -403,7 +406,8 @@ Over time, as skills and contribution to projects increased, **grew to team lead
 """
 
 [[experience.links]]
-title = "Роза Хутор"
+"title.ru" = "Роза Хутор"
+"title.en" = "Rose Khutor"
 url = "https://apps.apple.com/app/id1325096949"
 
 [[experience.links]]
@@ -411,11 +415,12 @@ title = "TN LEARN"
 url = "https://apps.apple.com/app/id1470670122"
 
 [[experience.links]]
-title = "Revitonica"
+"title" = "Revitonica"
 url = "https://apps.apple.com/app/id1540988867"
 
 [[experience.links]]
-title = "Лекторий «Достоевский»"
+"title.ru" = "Лекторий «Достоевский»"
+"title.en" = "Lectory «Dostoevsky»"
 url = "https://apps.apple.com/app/id1513138478"
 
 [[experience.links]]
@@ -423,7 +428,8 @@ title = "B.R.O."
 url = "https://apps.apple.com/ru/app/id1445191649"
 
 [[experience.links]]
-title = "Аптечная сеть Диалог"
+"title.ru" = "Аптечная сеть Диалог"
+"title.en" = "Pharmacy Dialog"
 url = "https://apps.apple.com/ru/app/id1440467271"
 
 ############################################

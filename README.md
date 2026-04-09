@@ -120,8 +120,9 @@ period   = "MM/YYYY - MM/YYYY"
 "achievements.en" = "Your achievements"
 
 [[experience.links]]
-title = "Link title"
-url   = "https://..."
+"title.ru" = "RU Link Title"
+"title.en" = "EN Link Title"
+url = "https://..."
 
 # Projects with multilanguage description
 [[projects]]
