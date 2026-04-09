@@ -213,7 +213,7 @@
     }
 
     /**
-     * LinkedIn / Telegram / etc.: иконка (favicon или mdi) + текстовая ссылка для ATS-шапки.
+     * Telegram / etc.: иконка (favicon или mdi) + текстовая ссылка для ATS-шапки.
      */
     function renderAtsHeaderReferenceLink(containerElement, referenceEntry) {
       if (!containerElement) return;
@@ -275,7 +275,6 @@
         const emailElement = document.getElementById('atsEmail');
         const phoneElement = document.getElementById('atsPhone');
         const locationElement = document.getElementById('atsLocation');
-        const linkedInElement = document.getElementById('atsLinkedIn');
         const telegramElement = document.getElementById("atsTelegram");
         const aboutElement = document.getElementById('atsAbout');
         const skillsElement = document.getElementById('atsSkills');
@@ -347,14 +346,6 @@
                 locationElement.textContent = '';
                 locationElement.style.display = 'none';
             }
-        }
-
-        if (linkedInElement) {
-          const linkedInRef = data.references.find(
-            (referenceEntry) =>
-              referenceEntry.url && referenceEntry.url.includes("linkedin.com"),
-          );
-          renderAtsHeaderReferenceLink(linkedInElement, linkedInRef);
         }
 
         if (telegramElement) {

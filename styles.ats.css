@@ -371,8 +371,14 @@ a.ats-experience__header-link:hover {
     color: #999999;
 }
 
-.ats-experience__item p {
-    margin-bottom: 8px;
+/* Меньше зазор между абзацами обязанностей, чем у старых 8px; перевешивает .ats-section__content p */
+.ats-section__content .ats-experience__item p {
+    margin-top: 0;
+    margin-bottom: 0px;
+}
+
+.ats-section__content .ats-experience__item p:last-of-type {
+    margin-bottom: 0;
 }
 
 .ats-experience__achievements {

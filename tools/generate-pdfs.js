@@ -46,6 +46,23 @@ async function generatePDF(browser, lang, view, outputDir) {
   const page = await browser.newPage();
 
   try {
+    // Match CI (Linux headless): macOS often has prefers-color-scheme: dark, which
+    // activates data-theme="dark" before print CSS runs and can leave dark gutters in PDFs.
+    await page.emulateMediaFeatures([
+      { name: "prefers-color-scheme", value: "light" },
+    ]);
+    await page.evaluateOnNewDocument(() => {
+      const storageKey = "cv-generator-theme";
+      let storedThemeSnapshot = null;
+      try {
+        storedThemeSnapshot = localStorage.getItem(storageKey);
+        localStorage.removeItem(storageKey);
+      } catch (error) {
+        // Ignore (e.g. disabled storage)
+      }
+      window.__resumePdfThemeLocalStorageSnapshot = storedThemeSnapshot;
+    });
+
     await page.goto(url, { waitUntil: "networkidle0", timeout: 45000 });
 
     await page.emulateMediaType("print");
@@ -132,6 +149,27 @@ async function generatePDF(browser, lang, view, outputDir) {
     );
     throw error;
   } finally {
+    await page
+      .evaluate(() => {
+        const storageKey = "cv-generator-theme";
+        const storedThemeSnapshot = window.__resumePdfThemeLocalStorageSnapshot;
+        delete window.__resumePdfThemeLocalStorageSnapshot;
+        try {
+          if (
+            storedThemeSnapshot === "dark" ||
+            storedThemeSnapshot === "light"
+          ) {
+            localStorage.setItem(storageKey, storedThemeSnapshot);
+          } else {
+            localStorage.removeItem(storageKey);
+          }
+        } catch (error) {
+          // Ignore
+        }
+      })
+      .catch(() => {
+        // Page may be unusable after a failed PDF; ignore restore errors
+      });
     await page.close();
   }
 }
