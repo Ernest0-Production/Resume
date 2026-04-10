@@ -15,7 +15,8 @@ accentColor.dark = "#64B5F6"
 
 jobTitle = "Senior iOS Developer • Tech Lead"
 
-location = "Yerevan, Armenia"
+"location.ru" = "Ереван, Армения (GMT+4)"
+"location.en" = "GMT+4"
 email = "magatar136@gmail.com"
 subtitle = "7 years of experience • founding engineer"
 

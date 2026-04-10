@@ -13,4 +13,5 @@
 - The project is assumed to run on macOS (ok to rely on `pbcopy` and avoid `process.platform` branching).
 - The project must be developed with GitHub Pages static hosting constraints in mind (no required server-side runtime in production; assets/links must work under a repo subpath/base URL).
 - Local development may use Node `server.js` with `/api/*` (e.g. live resume JSON); the published site should rely on prebuilt files under `data/` and avoid depending on root-absolute `/api/...` URLs, which do not map correctly on GitHub Pages project sites.
+- `tools/generate-pdfs.js` uses Puppeteer; macOS dark mode / `prefers-color-scheme` can make local PDFs differ from CI (e.g. dark gutters with `printBackground`). The script forces a light color scheme and snapshots/restores `cv-generator-theme` in `localStorage` so PDFs match CI without clobbering the user's saved theme in a normal browser session.
 

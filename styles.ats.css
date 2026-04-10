@@ -55,6 +55,20 @@ body[data-view-mode="ats-friendly"] .ats-layout {
     flex: 1;
 }
 
+.ats-header__profile-link {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    align-self: stretch;
+    text-decoration: none;
+    color: inherit;
+}
+
+.ats-header__profile-link:hover .ats-header__name,
+.ats-header__profile-link:hover .ats-header__title {
+    text-decoration: underline;
+}
 .ats-header__name {
     font-size: 24pt;
     letter-spacing: 0.08em;

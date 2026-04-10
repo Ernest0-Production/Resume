@@ -270,8 +270,7 @@
 
         const language = options.language || 'ru';
 
-        const fullNameElement = document.getElementById('atsFullName');
-        const jobTitleElement = document.getElementById('atsJobTitle');
+        const atsHeaderLeft = document.getElementById("atsHeaderLeft");
         const emailElement = document.getElementById('atsEmail');
         const phoneElement = document.getElementById('atsPhone');
         const locationElement = document.getElementById('atsLocation');
@@ -282,19 +281,39 @@
         const educationElement = document.getElementById('atsEducation');
         const languagesElement = document.getElementById('atsLanguages');
 
-        if (fullNameElement) {
-            const nameParts = [data.firstName, data.lastName].filter(Boolean).join(' ').trim();
-            fullNameElement.textContent = nameParts || '';
-        }
+        if (atsHeaderLeft) {
+          const nameParts = [data.firstName, data.lastName]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+          const escapedName = escapeHTML(nameParts);
+          const hasJobTitle = Boolean(data.jobTitle);
+          const escapedJobTitle = hasJobTitle ? escapeHTML(data.jobTitle) : "";
+          const linkedInReferenceEntry = (data.references || []).find(
+            (referenceEntry) =>
+              referenceEntry.url && referenceEntry.url.includes("linkedin.com"),
+          );
+          const profileUrl =
+            linkedInReferenceEntry && linkedInReferenceEntry.url
+              ? String(linkedInReferenceEntry.url).trim()
+              : "";
 
-        if (jobTitleElement) {
-            if (data.jobTitle) {
-                jobTitleElement.textContent = data.jobTitle;
-                jobTitleElement.style.display = '';
-            } else {
-                jobTitleElement.textContent = '';
-                jobTitleElement.style.display = 'none';
-            }
+          const jobTitleBlock = hasJobTitle
+            ? `<p class="ats-header__title" id="atsJobTitle">${escapedJobTitle}</p>`
+            : `<p class="ats-header__title" id="atsJobTitle" style="display:none"></p>`;
+
+          if (profileUrl) {
+            const safeHref = escapeHTML(profileUrl);
+            atsHeaderLeft.innerHTML = `
+      <a class="ats-header__profile-link" href="${safeHref}" target="_blank" rel="noopener noreferrer">
+        <h1 class="ats-header__name" id="atsFullName">${escapedName}</h1>
+        ${jobTitleBlock}
+      </a>`;
+          } else {
+            atsHeaderLeft.innerHTML = `
+      <h1 class="ats-header__name" id="atsFullName">${escapedName}</h1>
+      ${jobTitleBlock}`;
+          }
         }
 
         if (emailElement) {
