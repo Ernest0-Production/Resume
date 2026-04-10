@@ -899,6 +899,20 @@ function updatePdfButtonText(language) {
   pdfButton.setAttribute("aria-label", ariaLabel);
 }
 
+function escapeHtmlTextForHeader(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function escapeHtmlAttributeForHeader(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;");
+}
+
 /**
  * Render header section
  */
@@ -913,16 +927,46 @@ function renderHeader(data) {
     }
   }
 
-  // Full name
-  const fullName = document.getElementById("fullName");
-  if (fullName && data.firstName && data.lastName) {
-    fullName.textContent = `${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()}`;
-  }
+  const hrHeaderText = document.getElementById("hrHeaderText");
+  if (hrHeaderText) {
+    const hasFullName = Boolean(data.firstName && data.lastName);
+    const linkedInReferenceEntry = (data.references || []).find(
+      (referenceEntry) =>
+        referenceEntry.url && referenceEntry.url.includes("linkedin.com"),
+    );
+    const profileUrl =
+      linkedInReferenceEntry && linkedInReferenceEntry.url
+        ? String(linkedInReferenceEntry.url).trim()
+        : "";
 
-  // Job title
-  const jobTitle = document.getElementById("jobTitle");
-  if (jobTitle) {
-    jobTitle.innerHTML = parseFormatting(data.jobTitle || "");
+    const jobTitleSource = data.jobTitle || "";
+    const jobTitleInnerHtml = profileUrl
+      ? parseFormattingNoLinks(jobTitleSource)
+      : parseFormatting(jobTitleSource);
+    const hasJobTitle = Boolean(jobTitleSource.trim());
+
+    const nameInnerHtml = hasFullName
+      ? escapeHtmlTextForHeader(
+          `${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()}`,
+        )
+      : "Loading...";
+
+    const jobTitleBlock = hasJobTitle
+      ? `<p class="job-title" id="jobTitle">${jobTitleInnerHtml}</p>`
+      : `<p class="job-title" id="jobTitle" style="display:none"></p>`;
+
+    if (profileUrl) {
+      const safeHref = escapeHtmlAttributeForHeader(profileUrl);
+      hrHeaderText.innerHTML = `
+      <a class="header-profile-link" href="${safeHref}" target="_blank" rel="noopener noreferrer">
+        <h1 class="name" id="fullName">${nameInnerHtml}</h1>
+        ${jobTitleBlock}
+      </a>`;
+    } else {
+      hrHeaderText.innerHTML = `
+      <h1 class="name" id="fullName">${nameInnerHtml}</h1>
+      ${jobTitleBlock}`;
+    }
   }
 
   // Contact info - render all items in one flow layout

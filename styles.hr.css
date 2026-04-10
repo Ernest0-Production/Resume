@@ -774,6 +774,20 @@ u {
     align-items: flex-start;
 }
 
+.header-profile-link {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    align-self: stretch;
+    text-decoration: none;
+    color: inherit;
+}
+
+.header-profile-link:hover .name,
+.header-profile-link:hover .job-title {
+    text-decoration: underline;
+}
 .name {
     font-size: 30px;
     font-weight: 800;
