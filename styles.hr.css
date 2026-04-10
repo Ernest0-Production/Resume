@@ -322,8 +322,16 @@ body {
         text-decoration: none !important;
     }
 
-    [data-theme="dark"] .contact-item a:hover,
-    [data-theme="dark"] .contact-info>a.contact-item:hover {
+        [data-theme="dark"] .contact-item a[href^="mailto:"]:hover,
+        [data-theme="dark"] .contact-item a[href^="http"]:hover,
+        [data-theme="dark"] .contact-info>a.contact-item[href^="mailto:"]:hover,
+        [data-theme="dark"] .contact-info>a.contact-item[href^="http"]:hover {
+            color: #000000 !important;
+            text-decoration: underline !important;
+        }
+    
+        [data-theme="dark"] .contact-item a[href^="tel:"]:hover,
+        [data-theme="dark"] .contact-info>a.contact-item[href^="tel:"]:hover {
         color: #000000 !important;
         text-decoration: none !important;
     }
@@ -838,8 +846,16 @@ u {
     text-decoration: none !important;
 }
 
-.contact-item a:hover,
-.contact-info>a.contact-item:hover {
+.contact-item a[href^="mailto:"]:hover,
+.contact-item a[href^="http"]:hover,
+.contact-info>a.contact-item[href^="mailto:"]:hover,
+.contact-info>a.contact-item[href^="http"]:hover {
+    color: var(--color-black) !important;
+    text-decoration: underline !important;
+}
+
+.contact-item a[href^="tel:"]:hover,
+.contact-info>a.contact-item[href^="tel:"]:hover {
     color: var(--color-black) !important;
     text-decoration: none !important;
 }
