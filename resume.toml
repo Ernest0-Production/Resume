@@ -53,7 +53,7 @@ subtitle = "7 years of experience • founding engineer"
 """
 
 "skillsIntro.ru" = "Перечислены только практические навыки"
-"skillsIntro.en" = "Only practical skills are listed"
+"skillsIntro.en" = "Only hands-on skills are listed"
 
 "extraSkills.ru" = """
 • **Публикация в App Store** и Reject Resolution
@@ -127,23 +127,6 @@ keywords = [
 ]
 
 [[skills]]
-category = "DevOps & Infrastructure"
-keywords = [
-    "CocoaPods",
-    "SPM",
-    "Tuist / XcodeGen",
-    "Ruby / Fastlane",
-    "Bash",
-    "SwiftGen",
-    "SwiftLint",
-    "Sourcery",
-    "Periphery",
-    "Danger",
-    "Jenkins",
-    "GitLab CI",
-]
-
-[[skills]]
 category = "Frameworks"
 keywords = [
     "URLSession",
@@ -163,9 +146,27 @@ keywords = [
     "MapBox",
     "MapKit",
 ]
+
 [[skills]]
 category = "Testing"
 keywords = ["XCTest", "swift-snapshot-testing", "TDD"]
+
+[[skills]]
+category = "DevOps & Infrastructure"
+keywords = [
+    "CocoaPods",
+    "SPM",
+    "Tuist / XcodeGen",
+    "Ruby / Fastlane",
+    "Bash",
+    "SwiftGen",
+    "SwiftLint",
+    "Sourcery",
+    "Periphery",
+    "Danger",
+    "Jenkins",
+    "GitLab CI",
+]
 
 [[skills]]
 category = "Architecture"
