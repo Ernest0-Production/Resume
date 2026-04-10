@@ -1080,9 +1080,20 @@ function renderHeader(data) {
     });
   }
 
+  const hasAvatar = Boolean(
+    typeof data.avatar === "string" && data.avatar.trim(),
+  );
+  const headerContentElement = document.querySelector(".header-content");
+  if (headerContentElement) {
+    headerContentElement.classList.toggle(
+      "header-content--without-avatar",
+      !hasAvatar,
+    );
+  }
+
   const headerAvatarContainer = document.getElementById("hrHeaderAvatar");
   if (headerAvatarContainer) {
-    if (profileUrl) {
+    if (hasAvatar && profileUrl) {
       const safeHref = escapeHtmlAttributeForHeader(profileUrl);
       const linkedInAriaLabel =
         currentLanguage === "ru" ? "Профиль в LinkedIn" : "LinkedIn profile";
@@ -1091,14 +1102,19 @@ function renderHeader(data) {
       <a class="header-avatar-link" href="${safeHref}" target="_blank" rel="noopener noreferrer" aria-label="${safeAriaLabel}">
         <img id="avatar" src="" alt="Avatar" class="avatar">
       </a>`;
-    } else {
+      headerAvatarContainer.hidden = false;
+    } else if (hasAvatar) {
       headerAvatarContainer.innerHTML = `
       <img id="avatar" src="" alt="Avatar" class="avatar">`;
+      headerAvatarContainer.hidden = false;
+    } else {
+      headerAvatarContainer.innerHTML = "";
+      headerAvatarContainer.hidden = true;
     }
   }
 
   const avatar = document.getElementById("avatar");
-  if (avatar && data.avatar) {
+  if (avatar && hasAvatar) {
     loadOptimizedAvatar(avatar, data.avatar, data.firstName, data.lastName);
   }
 }

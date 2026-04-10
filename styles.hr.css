@@ -329,7 +329,7 @@ body {
             color: #000000 !important;
             text-decoration: underline !important;
         }
-    
+
         [data-theme="dark"] .contact-item a[href^="tel:"]:hover,
         [data-theme="dark"] .contact-info>a.contact-item[href^="tel:"]:hover {
         color: #000000 !important;
@@ -765,6 +765,18 @@ u {
     gap: 12px;
 }
 
+.header-content--without-avatar {
+    justify-content: flex-start;
+    gap: 0;
+}
+
+.header-content--without-avatar .header-avatar {
+    display: none;
+}
+
+.header-content--without-avatar .header-info {
+    width: 100%;
+}
 .header-info {
     flex: 1;
     display: flex;
