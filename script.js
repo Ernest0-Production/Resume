@@ -927,17 +927,18 @@ function renderHeader(data) {
     }
   }
 
+  const linkedInReferenceEntry = (data.references || []).find(
+    (referenceEntry) =>
+      referenceEntry.url && referenceEntry.url.includes("linkedin.com"),
+  );
+  const profileUrl =
+    linkedInReferenceEntry && linkedInReferenceEntry.url
+      ? String(linkedInReferenceEntry.url).trim()
+      : "";
+
   const hrHeaderText = document.getElementById("hrHeaderText");
   if (hrHeaderText) {
     const hasFullName = Boolean(data.firstName && data.lastName);
-    const linkedInReferenceEntry = (data.references || []).find(
-      (referenceEntry) =>
-        referenceEntry.url && referenceEntry.url.includes("linkedin.com"),
-    );
-    const profileUrl =
-      linkedInReferenceEntry && linkedInReferenceEntry.url
-        ? String(linkedInReferenceEntry.url).trim()
-        : "";
 
     const jobTitleSource = data.jobTitle || "";
     const jobTitleInnerHtml = profileUrl
@@ -1079,7 +1080,23 @@ function renderHeader(data) {
     });
   }
 
-  // Avatar
+  const headerAvatarContainer = document.getElementById("hrHeaderAvatar");
+  if (headerAvatarContainer) {
+    if (profileUrl) {
+      const safeHref = escapeHtmlAttributeForHeader(profileUrl);
+      const linkedInAriaLabel =
+        currentLanguage === "ru" ? "Профиль в LinkedIn" : "LinkedIn profile";
+      const safeAriaLabel = escapeHtmlAttributeForHeader(linkedInAriaLabel);
+      headerAvatarContainer.innerHTML = `
+      <a class="header-avatar-link" href="${safeHref}" target="_blank" rel="noopener noreferrer" aria-label="${safeAriaLabel}">
+        <img id="avatar" src="" alt="Avatar" class="avatar">
+      </a>`;
+    } else {
+      headerAvatarContainer.innerHTML = `
+      <img id="avatar" src="" alt="Avatar" class="avatar">`;
+    }
+  }
+
   const avatar = document.getElementById("avatar");
   if (avatar && data.avatar) {
     loadOptimizedAvatar(avatar, data.avatar, data.firstName, data.lastName);
