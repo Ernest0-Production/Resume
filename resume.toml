@@ -2,101 +2,77 @@
 # Language-specific properties use format: "propertyName.language"
 
 # Common properties (no language suffix)
-avatar = "avatar.jpg"
+avatar = "avatar.jpeg"
 
 accentColor.light = "#2196F3"
 accentColor.dark = "#64B5F6"
 
+email = "[denthesun@gmail.com](mailto:denthesun@gmail.com)"
+phone = ""
+
 # Multilanguage properties
-"firstName.ru" = "Эрнест"
-"firstName.en" = "Ernest"
-"lastName.ru" = "Бабаян"
-"lastName.en" = "Babayan"
+"firstName.ru" = "Денис"
+"firstName.en" = "Denis"
+
+"lastName.ru" = "Великанов"
+"lastName.en" = "Velikanov"
 
 jobTitle = "Senior iOS Developer • Tech Lead"
 
-"location.ru" = "Ереван, Армения (GMT+4)"
-"location.en" = "GMT+4"
-email = "magatar136@gmail.com"
-subtitle = "7 years of experience • founding engineer"
+"location.ru" = "Moscow, Russia"
+"location.en" = "Moscow, Russia"
+
+"subtitle.ru" = "5+ лет коммерческой разработки"
+"subtitle.en" = "5+ years of commercial development"
 
 "about.ru" = """
-7 лет опыта – **A-player**, неформальный лидер, **founding engineer**
-• Обучился лучшим практикам из аутсорс, **стартап** и **big-tech** компаний
-• С нуля писал приложения и библиотеки в сфере **E-com, EdTech, MedTech, TravelTech, Streaming, HealthTech**
-• Умею решать проблемы **end-to-end** и выступить фича-овнером
-• **Горизонт планирования** целей ~6-12 месяцев
+- Senior iOS Developer с 5+ годами коммерческого опыта в **fintech, proptech** и других продуктовых доменах.
+- Развитие сложных iOS-систем: **декомпозиция legacy, модульная архитектура, контракты и границы ответственности**, развитие iOS-инфраструктуры и developer tooling.
+- Беру **технический ownership за изменения end-to-end** — от проектирования и backend-интеграции до тестирования, релиза и production support. Работаю автономно и участвую в **технических решениях, затрагивающих несколько команд**.
 """
 
 "about.en" = """
-7 years of experience – **A-player**, informal leader, **founding engineer**
-• Gained a wide range of practices from outsourcing, **startup** and **big-tech** companies
-• Built apps and libraries from scratch in industries: **E-com, EdTech, MedTech, TravelTech, Streaming, HealthTech**
-• Can solve problems **end-to-end** and be a feature-owner
-• **Planning horizon** of goals ~6-12 months
+- Senior iOS Developer with 5+ years of commercial experience in **fintech, proptech**, and other product domains.
+- Development of complex iOS systems: **legacy decomposition, modular architecture, contracts and component boundaries**, development of iOS infrastructure and developer tooling.
+- Take **end-to-end technical ownership** of changes — from design and backend integration to testing, release, and production support. Work autonomously and participate in **technical decisions affecting multiple teams**.
 """
 
 "expectation.ru" = """
-• Возможность самостоятельно **принимать решения**
-• Готов **лидить** команду, но продолжать **писать код**
-• **Неформальной коммуникации**
-• Работать в **условиях неопределённости процессов**, если на них можно влиять
-• Расширять зону ответственности в смежных областях, как **T-shaped** специалист
+- Ищу роль, где смогу совмещать **сильную hands-on iOS-разработку с техническим ownership** за сложные инженерные инициативы.
+- Интересны задачи на стыке разработки и архитектуры: **декомпозиция legacy, развитие модульной архитектуры и iOS-инфраструктуры**, повышение поддерживаемости системы и проведение изменений от проектирования до production.
+- Предпочитаю среду, где технические решения требуют **взаимодействия нескольких команд** и позволяют влиять не только на отдельные фичи, но и на качество и устройство системы в целом.
 """
 
 "expectation.en" = """
-• Ability to **make decisions independently**
-• Ready to **lead** a team, but continue **writing code**
-• **Informal communication**
-• Work in **conditions of uncertainty of processes**, if i can influence them
-• Expand the scope of responsibility in adjacent areas, as a **T-shaped** specialist
+- Looking for a role where I can combine **strong hands-on iOS development with technical ownership** of complex engineering initiatives.
+- Interested in challenges at the intersection of development and architecture: **legacy decomposition, development of modular architecture and iOS infrastructure**, improving system maintainability, and driving changes from design through production.
+- Prefer an environment where technical decisions require **cross-team collaboration** and allow me to influence not only individual features, but also the quality and structure of the system as a whole.
 """
 
-"skillsIntro.ru" = "Перечислены только практические навыки"
-"skillsIntro.en" = "Only hands-on skills are listed"
-
 "extraSkills.ru" = """
-• **Публикация в App Store** и Reject Resolution
-• **Mobile DevOps** – настройка инфраструктуры, CI/CD с нуля
-• **Pixel Perfect** верстка и снапшот-тестирование
-• Создание **Backend Driven UI**
-• **Аудио/видео** плееры, скачивание медиа-контента
-• **GIS** системы и картография
+- **Architecture:** модульная архитектура, декомпозиция legacy, контракты и границы ответственности компонентов, MVVM, Dependency Injection, Coordinator pattern
+- **iOS Infrastructure:** Tuist, модульная сборка, dependency management, миграция модулей с podspec на manifests
+- **Developer Tooling:** Ruby-скрипты для автоматизации рабочих процессов, подключение generated mocks/fakes без пересборки проекта
+- **Quality:** Unit/KIF/UI testing, Snapshot testing, code review, regression control, test pyramid
+- **Delivery & Collaboration:** backend integration, cross-team integration, техническая документация, TestFlight/App Store releases, технические интервью
 """
 
 "extraSkills.en" = """
-• **App Store publishing** and Reject Resolution
-• **Mobile DevOps** – project infrastructure setup, CI/CD from scratch
-• **Pixel Perfect** layout and snapshot testing
-• Creating **Backend Driven UI**
-• **Audio/video** players, media content downloading
-• **GIS** systems and cartography
+- **Architecture:** modular architecture, legacy decomposition, contracts and component boundaries, MVVM, Dependency Injection, Coordinator pattern
+- **iOS Infrastructure:** Tuist, modular builds, dependency management, migration of modules from podspecs to manifests
+- **Developer Tooling:** Ruby scripts for workflow automation, integration of generated mocks/fakes without rebuilding the project
+- **Quality:** Unit/KIF/UI testing, Snapshot testing, code review, regression control, test pyramid
+- **Delivery & Collaboration:** backend integration, cross-team integration, technical documentation, TestFlight/App Store releases, technical interviews
 """
 
-"interests.ru" = """
-**Подкасты**: [КОДА КОДА](https://kodakoda.mave.digital), [Podlodka](https://podlodka.io/#rec346446263), [Coffee&Code](https://coffeecodepodcast.mave.digital), [Либо/Либо](https://libolibo.ru/zapuskzavtra), [Хекслет](https://podcast.ru/1734325321/e), [Бреслав и Ложечкин](https://podlodka.io/breslavandlozhechkin)
-**Сообщества**: [Вастрик.Клуб](https://vas3k.club), твиттер
-"""
-
-[[references]]
-type = "website"
-url = "https://www.linkedin.com/in/ernest0n/"
-text = "linkedin.com/in/ernest0n"
+############################################
+################# References ###############
+############################################
 
 [[references]]
 type = "telegram"
-url = "https://t.me/ernest0n"
-text = "t.me/ernest0n"
-
-[[references]]
-type = "github"
-url = "https://github.com/Ernest0-Production"
-text = "github.com/Ernest0-Production"
-
-[[references]]
-type = "twitter"
-url = "https://x.com/ernest0n"
-text = "x.com/ernest0n"
+url = "https://t.me/dnthsn"
+text = "t.me/dnthsn"
 
 ############################################
 ################# Languages ################
@@ -110,6 +86,10 @@ level = "Native"
 name = "🇬🇧 English"
 level = "B2"
 
+[[languages]]
+name = "🇫🇷 French"
+level = "A2"
+
 ############################################
 ################### Skills #################
 ############################################
@@ -118,38 +98,52 @@ level = "B2"
 category = "iOS Development"
 keywords = [
     "Swift",
-    "Objective-C",
-    "UIKit",
-    "SwiftUI",
+    "SnapKit",
     "GCD",
     "Swift Concurrency",
-    "Combine / RxSwift"
+    "Modular architecture",
+    "Dependency management (Gekko, Tuist manifests)",
+    "Coordinator pattern",
+    "WebView (in-app flows)"
+]
+
+[[skills]]
+category = "DevOps & Infrastructure"
+keywords = [
+    "Tuist",
+    "Ruby",
+    "Dependency management",
 ]
 
 [[skills]]
 category = "Frameworks"
 keywords = [
     "URLSession",
-    "Alamofire / Moya",
-    "Nuke / Kingfisher",
-    "Core Animation",
-    "SnapKit",
-    "Lottie",
+    "Alamofire",
+    "Moya",
+    "RxSwift",
     "Swinject",
-    "Core Data",
-    "Realm",
-    "StoreKit",
-    "Keychain",
-    "AVFoundation / AVKit",
-    "Firebase",
-    "Mindbox",
-    "MapBox",
-    "MapKit",
+    "Kingfisher",
+    "Firebase (Analytics)",
+    "YandexMapsMobile",
+    "MapboxMaps",
+    "YandexMobileMetrica",
+    "SwiftDate",
+    "Linphone",
+    "..."
 ]
 
 [[skills]]
 category = "Testing"
-keywords = ["XCTest", "swift-snapshot-testing", "TDD"]
+keywords = [
+    "XCTest",
+    "BaseUnitTest",
+    "Unit testing (~90% coverage)",
+    "KIF",
+    "UI testing",
+    "Snapshot testing (maintenance/fixes)",
+    "Test pyramid"
+]
 
 [[skills]]
 category = "DevOps & Infrastructure"
@@ -174,320 +168,156 @@ keywords = [
     "MVC",
     "MVP",
     "MVVM",
-    "TCA",
-    "VIP",
-    "VIPER",
-    "GoF",
-    "SOLID",
-    "UDF",
-    "OOP",
-    "FRP",
+    "CLEAN",
+    "Modular architecture",
+    "Dependency Injection",
+    "Coordinator pattern"
 ]
 
 [[skills]]
 category = "Tools"
-keywords = ["Xcode", "Instruments", "Cursor", "Proxyman", "Charles", "Git", "Figma"]
-
-
-############################################
-################### Okko ###################
-############################################
-
-[[experience]]
-position = "Senior iOS Developer • Infra Architect"
-company = "OKKO"
-url = "https://about.okko.tv"
-period = "Apr 2023 – Present"
-
-"about.ru" = "Онлайн-кинотеатр • стриминговый сервис • MAU > 35млн"
-"about.en" = "Online cinema • streaming platform (top-3 in Russia) • MAU > 35M"
-
-"responsibilities.ru" = """
-Разрабатывал всю инфраструктуру iOS-отдела из **30-ти разработчиков**:
-• **CI/CD и автоматизация** – улучшение DX/QX, quality gate
-• **Модуляризация** проекта
-• Разработка **core-модулей** приложения
-• Формирование тех.вектора – стэк, архитектура, инструменты итп.
-• **Квартальное планирование**, организация дежурства
-• **Knowledge-sharing** – техническая документация, демо, анонсы, Q&A сессии
-"""
-"responsibilities.en" = """
-Oversaw the entire iOS department's infrastructure of **30 developers**:
-• **CI/CD and automation** – improving DX/QX, quality gate
-• Project **modularization**
-• Development of **core modules** of the application
-• Technical direction – stack, architecture, tools, etc.
-• **Quarterly planning**, organizing on-call shifts
-• **Knowledge-sharing** – technical documentation, demos, announcements, Q&A sessions
-"""
-
-"achievements.ru" = """
-• Ускорение TTFB и Response Time __сетевого слоя__ с 500-800ms до 100-200ms
-• Высоконагруженный сервис in-house __аналитики__ (чанкинг, backoff ретраи, буфферизация, оффлайн, итп)
-• Миграция с __CocoaPods__ на __Tuist + SPM__
-• Самописный анализатор __Objective-C__ Dead Code, удаливший ~40% objc кода
-• Внедрение спектра анализаторов (linters, deadcodes, ownership, security checks итп) в CI/CD pipeline
-• Уменьшение бандла приложения на 25% (~45 МБ)
-• In-house система дистрибуции Ad-Hoc сборок для QA-тестирования
-• Полная автоматизация релизов/меты/скриншотов/сертификатов через __Jenkins CI__
-• __Кодогенератор__ моков/ассетов/локализации
-• RnD интеграция __Kotlin Multiplatform__
-"""
-"achievements.en" = """
-• Accelerated TTFB and Response Time of __network layer__ from 500-800ms to 100-200ms
-• High-load in-house __analytics__ service (batching, backoff retries, caching, offline, etc.)
-• Migration from __CocoaPods__ to __Tuist + SPM__
-• Custom __Objective-C__ Dead Code analyzer, removing ~40% of objc code
-• Integrated a spectrum of analyzers (linters, deadcodes, conventions, code ownership, security checks and etc) in PR __quality gate pipeline__
-• Reduced application bundle size by 25% (~45 MB)
-• In-house Ad-Hoc build distribution system for QA testing
-• Automation of releases/meta/screenshots/certificates through __Jenkins CI__
-• __Code generator__ for unit test mocks/assets/localization
-• RnD integration of __Kotlin Multiplatform__
-"""
-
-[[experience.links]]
-"title.ru" = "Okko: кино, сериалы, спорт, ТВ"
-"title.en" = "Okko: movies, series, sports, TV"
-url = "https://apps.apple.com/ru/app/id448868000"
+keywords = ["Xcode", "Instruments", "Proxyman", "Git"]
 
 ############################################
-################### Ozon ###################
+################### TBank ##################
 ############################################
 
 [[experience]]
-position = "Senior iOS Developer • Founding Engineer"
-company = "OZON"
-url = "https://corp.ozon.com"
-period = "Feb 2022 – Apr 2023"
+position = "iOS Developer (SDE)"
+company = "Т-Банк (Тинькофф)"
+period = "Jul 2024 – Present"
 
-"about.ru" = "БигТех • Маркетплейс • Логистика • MAU > 60млн"
-"about.en" = "Big Tech • Marketplace platform • Logistics (top-2 in Russia) • MAU > 60M"
+"about.ru" = "Финтех • платежи и переводы • высоконагруженные критичные флоу (~2.6–10млн MAU)"
+"about.en" = "Fintech • payments and transfers • high-load critical flows (~2.6–10M MAU)"
 
 "responsibilities.ru" = """
-Был первым разработчиком (основателем) в двух проектах:
-1. MVP-версия приложения для **доставки и трекинга посылок** с использованием **GraphQL**
-2. In-house **картографический SDK** для уменьшения зависимости от внешних вендоров и снижения будущих лицензионных издержек
+
+- Разработка iOS-продуктов отдела **«Платежи и Переводы»**: feature development, legacy и platform tasks.
+- Архитектура: **декомпозиция legacy, модульность**, контракты, границы ответственности компонентов.
+- Quality: code review, Unit/KIF/UI tests, **regression control**.
+- Cross-team development: интеграция iOS-интерфейсов и **инфраструктурных изменений между командами**.
+- Technical interviews, техническая документация.
 """
 
 "responsibilities.en" = """
-Participated in creating two projects as a first developer (founder):
-1. MVP version of the **package delivery and tracking application** with **GraphQL**
-2. In-house **cartographic SDK** for reducing dependencies on external vendors and reducing future licensing costs
+
+- iOS development for the **Payments & Transfers** department: feature development, legacy and platform tasks.
+- Architecture: **legacy decomposition, modularization**, contracts, and component boundaries.
+- Quality: code review, Unit/KIF/UI testing, **regression control**.
+- Cross-team development: integration of iOS interfaces and **infrastructure changes across teams**.
+- Technical interviews and technical documentation.
 """
 
 "achievements.ru" = """
-• Сокращение __TTM__ MVP-версии приложения с 6 месяцев до 3 месяцев
-• Первопроходец по внедрению __Tuist__ в компании
-• Две мажорные версии SDK доведенные до релиза/интеграции в приложения
-• Покрытие библиотеки __интеграционными тестами__ на 70%
-• Полный CI/CD __пайплайн__ сборки, тестирования, деплоя и релиза библиотеки
+
+- Декомпозиция **legacy-флоу «СБП Pull. Исходящий запрос»**: выделение модулей, формализация контрактов и границ ответственности.
+- Реализация **end-to-end Open Banking flow через СБП Pull** (~35K MAU).
+- Поддержка **переводов со скрытых счетов** в legacy-флоу.
+- Автоматизация подключения **generated mocks/fakes** с помощью Ruby/Swift -скриптов без пересборки проекта.
+- **Миграция iOS design system**.
 """
 
 "achievements.en" = """
-• Reduced __TTM__ of MVP version of the application from 6 months to 3 months
-• Pioneer in implementing __Tuist__ in the company
-• Two major versions of the SDK released and integrated into applications
-• __Integration tests__ coverage of the library on 70%
-• CI/CD __pipeline__ for building, testing, deployment and release of the library
+
+- Decomposed the **legacy “SBP Pull. Outgoing Request” flow**: extracted modules and formalized contracts and component boundaries.
+- Implemented an **end-to-end Open Banking flow via SBP Pull** (~35K MAU).
+- Added support for **transfers from hidden accounts** in legacy flows.
+- Automated the integration of **generated mocks/fakes** using Ruby/Swift scripts without rebuilding the project.
+- **Migrated the iOS design system**.
 """
 
-[[experience.links]]
-title = "Ozon Travel"
-url = "https://apps.apple.com/app/id959592459"
-
-[[experience.links]]
-"title.ru" = "Ozon Курьер"
-"title.en" = "OZON Courier"
-url = "https://apps.apple.com/app/id6458101936"
-
-[[experience.links]]
-title = "Вози Ozon"
-url = "https://apps.apple.com/app/id6478118390"
-
-[[experience.links]]
-title = "Ozon ПВЗ"
-url = "https://apps.apple.com/app/id1535791151"
-
-[[experience.links]]
-title = "Ozon Marketplace"
-url = "https://apps.apple.com/app/id407804998"
-
-
 ############################################
-############### BestDoctor ################
+################## Domyland ################
 ############################################
 
 [[experience]]
-position = "Senior iOS Developer"
-company = "BestDoctor"
-url = "https://bestdoctor.ru/about/"
-period = "Sep 2021 – Feb 2022"
+position = "iOS Developer"
+company = "Domyland"
+period = "Apr 2023 – Jul 2024"
 
-"about.ru" = "Стартап • Услуги мед.страхования сотрудников для бизнеса • Телемедицина • MAU > 30тыс"
-"about.en" = "Startup • Medical insurance services for employees of businesses • Telemedicine • MAU > 30K"
+"about.ru" = "Суперапп для жителей новостроек • prop-tech"
+"about.en" = "Super app for new-build residents • prop-tech"
 
 "responsibilities.ru" = """
-Участвовал в развитии мобильного приложения в команде из **6-ти разработчиков**
-• Разработывал ключевые фичи в рамках **OKR** (чат с врачом, профиль пациента и его мед.книжка).
-• Проводил **демо** сделанных фич для фаундеров и менеджеров.
+
+- Разработка и развитие **iOS-приложения prop-tech / super app** для жителей новостроек.
+- Feature development: **end-to-end пользовательские сценарии**, backend integration.
+- Поддержка и развитие **design system**.
+- Legacy: **рефакторинг, оптимизация**, переработка ключевых экранов.
+- Quality: code review, regression control.
+- Release management: TestFlight, App Store.
+- Technical interviews.
 """
 
 "responsibilities.en" = """
-Participated in mobile application development in a team of **6 developers**:
-• Developed new features within **OKR** (chat with a doctor, patient profile and medical history).
-• Conducted **demos** of made features for founders and managers.
+
+- Development and maintenance of a **prop-tech / super app** for new-build residents.
+- Feature development: **end-to-end user flows**, backend integration.
+- Maintenance and development of the **design system**.
+- Legacy: **refactoring, optimization**, and redesign of key screens.
+- Quality: code review, regression control.
+- Release management: TestFlight, App Store.
+- Technical interviews.
 """
 
 "achievements.ru" = """
-• Интерактивные __виджеты в чате__ с терапевтом
-• Раздел управления мед.__документами__ (диагнозы, анализы, назначения, итп)
-• Механизм навигации по __DeepLinks__ из почтовых рассылок и промо-ссылок
-• Рефакторинг __навигации__ по ключевому пользовательскому сценарию записи на прием к врачу
-• Внедрение нового стека технологий (__SwiftUI__ 1.0, __Combine__) в проект
+
+- Реализовал **end-to-end флоу бронирования и покупки квартиры в рассрочку**.
+- Реализовал **custom scroll animation** для основных экранов приложения.
+- Внедрил **WebView-based mini-app flows**.
+- Провёл **legacy refactoring и redesign ключевых экранов**.
+- Выполнил **100+ публикаций в TestFlight и App Store**.
 """
 
 "achievements.en" = """
-• Interactive __chat widgets__ with therapist
-• Medical __documents__ management section/tab (diagnoses, tests, prescriptions, etc.)
-• __DeepLinks__ handling mechanism from email newsletters and promo links
-• Refactoring __navigation__ for doctor appointment booking key user scenario
-• Introducing new technology stack (__SwiftUI__ 1.0, __Combine__) into the project
+
+- Implemented an **end-to-end apartment booking and installment purchase flow**.
+- Implemented a **custom scroll animation** for the main app screens.
+- Introduced **WebView-based mini-app flows**.
+- Performed **legacy refactoring and redesign of key screens**.
+- Completed **100+ releases through TestFlight and the App Store**.
 """
-
-[[experience.links]]
-"title.ru" = "Лучи Здоровье"
-"title.en" = "Best Doctor"
-url = "https://apps.apple.com/app/id1367539047"
-
 
 ############################################
 ################## Binet ###################
 ############################################
 
 [[experience]]
-position = "Middle → Senior → Team Lead iOS Developer"
-company = "Binet"
-url = "https://bnet.su/en"
-period = "May 2019 – Sep 2021"
+position = "iOS Developer"
+company = "IPartner / Binet"
+period = "Jan 2021 – Mar 2023"
 
-"about.ru" = "Аутсорс • Разработка под ключ"
-"about.en" = "Outsourcing • Turn-key development"
+"about.ru" = "Аутсорс"
+"about.en" = "Outsourcing"
 
 "responsibilities.ru" = """
-Разрабатывал с нуля и поддерживал существующие приложения в команде из **3-х разработчиков**.
-По мере увеличения навыков и вклада в проекты, **дорос до тимлида**.
-• Полный цикл разработки приложения от создания репозитория до **публикации в App Store**
-• **Менторство** и проведение **performance reviews** разработчиков
+
+- **Параллельная разработка и поддержка нескольких iOS-приложений** в разных доменах: банковские услуги, edtech, агро.
+- Feature development и backend integration: **networking, error handling, payment flows**.
+- Архитектура: **развитие MVVM, снижение связности компонентов**, повышение поддерживаемости.
+- Quality: code review, Unit-тестирование критичного функционала.
+- Release management: подготовка и публикация приложений в App Store.
 """
 
 "responsibilities.en" = """
-Developed from scratch and maintained existing applications in a team of **3 developers**.
-Over time, as skills and contribution to projects increased, **grew to team lead**.
-• Full application development cycle from repository creation to **App Store publishing**
-• **Mentoring** and conducting **performance reviews** of developers
+
+- **Parallel development and maintenance of multiple iOS applications** across different domains: banking, edtech, and agriculture.
+- Feature development and backend integration: **networking, error handling, payment flows**.
+- Architecture: **MVVM development, reducing component coupling**, and improving maintainability.
+- Quality: code review and unit testing of critical functionality.
+- Release management: preparation and publication of applications in the App Store.
 """
 
 "achievements.ru" = """
-• __Backend Driven UI__ движок для горнолыжного курорта для летнего/зимнего сезона
-• __Real-time__ онлайн-тестирование (олимпиада, учебные курсы, итп)
-• __Аудио-плеер__ для прослушивания подкастов, как в Spotify
-• __Offline-first__ режим приложения с помощью __Realm__
-• Интеграция __Billing__ сервисов и __In-app Purchases__
-• Оптимизация метрики __Hitch Rate__ и __CPU usage__ в in-house движке ArticleReader
-• Кастомные __анимации__ переходов между экранами
+
+- Параллельно вёл **несколько iOS-проектов** в разных доменах.
+- Запустил **iOS-приложение с нуля до публикации в App Store**.
+- Расширил **Unit-тестирование критичных участков** и улучшил процесс code review.
 """
+
 "achievements.en" = """
-• __Backend Driven UI__ engine for ski resort for summer/winter season
-• __Real-time__ online testing (olympiad, educational courses, etc.)
-• __Audio-player__ for listening to podcasts, like in Spotify
-• __Offline-first__ mode of the application with __Realm__
-• Integration of __Billing__ services and __In-app Purchases__
-• Optimization of __Hitch Rate__ and __CPU usage__ of in-house ArticleReader engine
-• Custom __animations__ for transitions between screens
+
+- Worked on **multiple iOS projects in parallel** across different domains.
+- Launched an **iOS application from scratch to App Store publication**.
+- Expanded **unit testing of critical areas** and improved the code review process.
 """
-
-[[experience.links]]
-"title.ru" = "Роза Хутор"
-"title.en" = "Rose Khutor"
-url = "https://apps.apple.com/app/id1325096949"
-
-[[experience.links]]
-title = "TN LEARN"
-url = "https://apps.apple.com/app/id1470670122"
-
-[[experience.links]]
-"title" = "Revitonica"
-url = "https://apps.apple.com/app/id1540988867"
-
-[[experience.links]]
-"title.ru" = "Лекторий «Достоевский»"
-"title.en" = "Lectory «Dostoevsky»"
-url = "https://apps.apple.com/app/id1513138478"
-
-[[experience.links]]
-title = "B.R.O."
-url = "https://apps.apple.com/ru/app/id1445191649"
-
-[[experience.links]]
-"title.ru" = "Аптечная сеть Диалог"
-"title.en" = "Pharmacy Dialog"
-url = "https://apps.apple.com/ru/app/id1440467271"
-
-############################################
-################# Projects #################
-############################################
-
-[[projects]]
-title = "Git Client for Raycast"
-link = "https://www.raycast.com/ernest0n/git"
-"description.ru" = "Полноценный Git GUI клиент"
-"description.en" = "Full-featured Git GUI client"
-accessory = { icon = "hugeicons:download-circle-01", value = "646" }
-
-[[projects]]
-title = "DeclarativeLayoutKit"
-link = "https://github.com/Ernest0-Production/DeclarativeLayoutKit"
-"description.ru" = "Декларативная верстка на UIKit"
-"description.en" = "Declarative layout on UIKit"
-accessory = { icon = "mdi:star-outline", value = "52" }
-
-[[projects]]
-title = "LLM Stats for Raycast"
-link = "https://www.raycast.com/ernest0n/llm-stats"
-"description.ru" = "Benchmark leaderboard LLMs-моделей"
-"description.en" = "Benchmark leaderboard of LLMs"
-accessory = { icon = "hugeicons:download-circle-01", value = "629" }
-
-[[projects]]
-title = "ScreenNavigatorKit"
-link = "https://github.com/Ernest0-Production/ScreenNavigatorKit"
-"description.ru" = "Императивный стиль навигации в SwiftUI"
-"description.en" = "Imperative navigation style in SwiftUI"
-
-[[projects]]
-title = "Mattermost for Raycast"
-link = "https://www.raycast.com/ernest0n/mattermost"
-"description.ru" = "Набор быстрых команд для Mattermost"
-"description.en" = "Quick commands/shortcuts for Mattermost"
-accessory = { icon = "hugeicons:download-circle-01", value = "703" }
-
-[[projects]]
-title = "Resume Generator"
-link = "https://github.com/Ernest0-Production/Resume"
-"description.ru" = "Генератор резюме на основе TOML"
-"description.en" = "Resume generator based on TOML"
-
-
-############################################
-################ Education #################
-############################################
-
-[[education]]
-period = "Sep 2016 - Jul 2020"
-
-"degree.ru" = "Бакалавр"
-"degree.en" = "Bachelor's degree"
-
-"university.ru" = "Московский государственный технологический университет \"Станкин\""
-"university.en" = "Moscow State Technological University \"Stankin\""
